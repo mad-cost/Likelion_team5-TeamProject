@@ -108,18 +108,18 @@
 
 ### 1. 이벤트 스토밍
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/c69962b0-3951-485b-b10a-5bb29576bba8/61eeff96-d659-4858-b279-f562ac12112b/Untitled.png)
+![이벤트 스토밍](weekly_log/image/event.png)
 
 ### 2. 화면 기획
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/c69962b0-3951-485b-b10a-5bb29576bba8/9f6e580c-1d18-4fda-ad23-032cd439a04c/Untitled.png)
+![화면 기획](weekly_log/image/view.png)
 
 ### 3. ERD
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/c69962b0-3951-485b-b10a-5bb29576bba8/a4a8bfdc-2915-458f-8fd5-c48f46596213/Untitled.png)
+![ERD](weekly_log/image/침대가 좋지만 운동왕.png)
 
 ### 4. 스크린샷
 
 Github Repository URL: https://github.com/NarooSister/homeGym_likelion
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/c69962b0-3951-485b-b10a-5bb29576bba8/0dfc8610-1c39-44fd-8922-8c7d61a35d8d/Untitled.png)
+![스크린 샷](weekly_log/image/screenshot.png)
