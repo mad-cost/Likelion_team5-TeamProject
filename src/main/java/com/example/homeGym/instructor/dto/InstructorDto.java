@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class InstructorDto {
     private Long id;
+    private String name;
     private String loginId;
     private String password;
     private String name;
