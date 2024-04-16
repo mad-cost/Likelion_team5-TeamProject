@@ -17,9 +17,10 @@ public class Instructor {
     private Long id;
     private String loginId;
     private String password;
-    private String name;
     @Enumerated(EnumType.STRING)
+    @Setter
     private Gender gender;
+    private String name;
     private String birthyear;
     private String birthday;
     @Setter

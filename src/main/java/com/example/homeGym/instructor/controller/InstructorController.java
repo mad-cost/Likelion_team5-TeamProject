@@ -1,13 +1,14 @@
 package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
-import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.service.InstructorService;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
