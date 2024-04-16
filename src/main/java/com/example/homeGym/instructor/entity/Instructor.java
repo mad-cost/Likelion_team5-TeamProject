@@ -28,6 +28,7 @@ public class Instructor {
     private String profileImageUrl;
     private String certificate;
     private String medal;
+    @Setter
     private String email;
     @Setter
     private String phone;
@@ -35,6 +36,7 @@ public class Instructor {
     private String bank;
     @Setter
     private String bankName;
+    @Setter
     private Integer account;
     @CreationTimestamp
     private LocalDateTime createdAt;
