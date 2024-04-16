@@ -1,6 +1,7 @@
 package com.example.homeGym.toss.entity;
 
 
+import com.example.homeGym.toss.dto.PaymentResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,6 +32,8 @@ public class Payment {
     @Column(nullable = false, name = "order_id")
     private String orderId;
 
+    private boolean paySuccessYN;
+
     @Column(name = "user_id")
     @Setter
     private Long userId;
@@ -53,6 +56,19 @@ public class Payment {
 
     @CreationTimestamp
     private LocalDateTime createAt;
+
+    public PaymentResponseDto toPaymentResponseDto() {
+        return PaymentResponseDto.builder()
+                .payType(payType.getPayTypeDescription())
+                .amount(amount)
+                .orderName(orderName)
+                .orderId(orderId)
+                .userId(userId)
+                .createAt(String.valueOf(getCreateAt()))
+                .cancelYN(cancelYN)
+                .failReason(failReason)
+                .build();
+    }
 
 
 }
