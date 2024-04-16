@@ -5,11 +5,9 @@ import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
