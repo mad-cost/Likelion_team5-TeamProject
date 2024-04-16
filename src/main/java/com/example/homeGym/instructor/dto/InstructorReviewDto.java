@@ -1,7 +1,7 @@
 package com.example.homeGym.instructor.dto;
 
 
-import com.example.homeGym.instructor.entity.InstructorReview;
+import com.example.homeGym.instructor.entity.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +16,7 @@ public class InstructorReviewDto {
     @Setter
     private String content;
 
-    public static InstructorReviewDto fromEntity(InstructorReview entity) {
+    public static InstructorReviewDto fromEntity(Comment entity) {
         InstructorReviewDto dto = new InstructorReviewDto();
         dto.id = entity.getId();
         return dto;

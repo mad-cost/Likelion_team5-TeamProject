@@ -5,9 +5,9 @@ import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.repo.InstructorRepository;
-import com.example.homeGym.instructor.entity.InstructorReview;
-import com.example.homeGym.instructor.repo.InstructorReviewRepository;
+import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.instructor.entity.Comment;
+import com.example.homeGym.instructor.repository.InstructorReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
 
         Instructor currentInstructor = facade.getCurrentInstructor();
-        InstructorReview instructorReview = InstructorReview.builder()
+        Comment instructorReview = Comment.builder()
                 .content(instructorReviewDto.getContent())
                 .instructor(currentInstructor)
                 .instructor(optionalInstructor.get())
@@ -49,12 +49,12 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
-        Optional<InstructorReview> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
+        Optional<Comment> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
 
-        InstructorReview instructorReview = optionalInstructorReview.get();
+        Comment instructorReview = optionalInstructorReview.get();
         // instructorReview가 instructor의 댓글이 아닌 경우
         if (!instructorReview.getInstructor().getId().equals(instructorId))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_MISMATCH);
@@ -77,12 +77,12 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
-        Optional<InstructorReview> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
+        Optional<Comment> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
 
-        InstructorReview instructorReview = optionalInstructorReview.get();
+        Comment instructorReview = optionalInstructorReview.get();
         // instructorReview가 instructor의 댓글이 아닌 경우
         if (!instructorReview.getInstructor().getId().equals(instructorId))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_MISMATCH);
