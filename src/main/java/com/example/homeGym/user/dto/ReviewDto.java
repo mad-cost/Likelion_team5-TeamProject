@@ -18,6 +18,7 @@ public class ReviewDto {
 
     private Long id;
     private Long userProgramId;
+    private Long userId;
     private Integer stars;
     private String imageUrl;
     private String memo;
@@ -27,6 +28,7 @@ public class ReviewDto {
         ReviewDto.ReviewDtoBuilder builder = ReviewDto.builder()
                 .id(entity.getId())
                 .userProgramId(entity.getUserProgramId())
+                .userId(entity.getUserId())
                 .stars(entity.getStars())
                 .imageUrl(entity.getImageUrl())
                 .memo(entity.getMemo())

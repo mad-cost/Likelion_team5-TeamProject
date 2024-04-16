@@ -1,7 +1,11 @@
 package com.example.homeGym.instructor.repository;
 
+import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.entity.UserProgram;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface UserProgramRepository extends JpaRepository<UserProgram, Long> {
+    List<UserProgram> findByUserIdAndState(Long userId, UserProgram.UserProgramState state);
 }

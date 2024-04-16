@@ -16,10 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-
-
-
+  
     public List<UserDto> findAllByOrderByName(){
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : userRepository.findAllByOrderByName()){
@@ -28,4 +25,8 @@ public class UserService {
         return userDtos;
     }
 
+
+    public UserDto findById(Long userId){
+        return UserDto.fromEntity(userRepository.findById(userId).orElseThrow());
+    }
 }
