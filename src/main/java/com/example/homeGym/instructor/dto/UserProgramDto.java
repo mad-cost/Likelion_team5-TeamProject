@@ -1,5 +1,6 @@
 package com.example.homeGym.instructor.dto;
 
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.user.dto.UserDto;
 import lombok.*;
@@ -22,6 +23,8 @@ public class UserProgramDto {
     private LocalDateTime endTime;
     private Long programId;
     private Long userId;
+    @Setter
+    private Program program;
 
     public static UserProgramDto fromEntity(UserProgram entity){
         UserProgramDto.UserProgramDtoBuilder builder = UserProgramDto.builder()
