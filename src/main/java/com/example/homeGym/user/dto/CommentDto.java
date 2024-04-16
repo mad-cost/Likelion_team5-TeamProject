@@ -1,11 +1,7 @@
 package com.example.homeGym.user.dto;
 
-import com.example.homeGym.user.entity.Comment;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.homeGym.instructor.entity.Comment;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 

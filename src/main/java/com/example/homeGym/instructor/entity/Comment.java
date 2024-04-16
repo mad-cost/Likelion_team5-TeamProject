@@ -1,4 +1,4 @@
-package com.example.homeGym.user.entity;
+package com.example.homeGym.instructor.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
