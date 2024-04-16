@@ -21,4 +21,12 @@ logging:
     root: info
 
 jwt:
-  secret: 
+  secret:
+
+
+payment:
+  toss:
+    test_client_api_key: test_ck_jExPeJWYVQRJaBZ76ggor49R5gvN
+    test_secrete_api_key: test_sk_DLJOpm5QrlWwQK71RMaoVPNdxbWn
+    success_url: "http://localhost:8080/"
+    fail_url: "http://localhost:8080/"
