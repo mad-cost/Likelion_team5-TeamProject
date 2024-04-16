@@ -20,6 +20,7 @@ public class UserDto {
     private String gender;
     private String email;
     private String birthday;
+    private String birthyear;
     private String roles = "ROLE_USER";
     private User.UserState state;
     private LocalDateTime createdAt;
@@ -32,6 +33,7 @@ public class UserDto {
                 .gender(entity.getGender())
                 .email(entity.getEmail())
                 .birthday(entity.getBirthday())
+                .birthyear(entity.getBirthyear())
                 .roles(entity.getRoles())
                 .state(entity.getState())
                 .createdAt(entity.getCreatedAt());

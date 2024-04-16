@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
     private final UserProgramService userProgramService;
 
-    @GetMapping("/{userId}/myPage")
+    @GetMapping("/{userId}/mypage")
     public String myPage(
             @PathVariable("userId")
             Long userId,
@@ -33,15 +34,39 @@ public class UserController {
 
         //유저가 진행중인 수업
         List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(userId);
+        //후에 dto에 progrm정보 저장
+//        for (int i = 0; i < inProgressList.size(); i++) {
+//            inProgressList.get(i).setProgram();
+//        }
 
         //유저의 종료된 수업
         List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(userId);
 
         model.addAttribute("userInfo", userDto);
         model.addAttribute("inProgress", inProgressList);
-        model.addAttribute("finish", finishList);
+        model.addAttribute("finishProgress", finishList);
 
 
         return "user/myPage";
+    }
+
+    @GetMapping("/{userId}/program/{userProgramId}")
+    public String userProgramDetail(
+            @PathVariable("userId")
+            Long userId,
+            @PathVariable("userProgramId")
+            Long userProgramId
+    ){
+        UserProgramDto userProgramDto = new UserProgramDto();
+        //유저 프로그램의 정보 하나를 가져온다
+        userProgramDto = userProgramService.findById(userProgramId);
+
+        //프로그램 정보를 가져온다
+//        programService.findById(userProgramDto.getProgramId());
+
+        //내가 이 프로그램에 작성한 후기 가져오기
+
+
+        return "";
     }
 }

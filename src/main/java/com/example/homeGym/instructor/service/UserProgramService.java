@@ -35,4 +35,8 @@ public class UserProgramService {
 //        System.out.println("userProgramDtoList = " + userProgramDtoList);
         return userProgramDtoList;
     }
+
+    public UserProgramDto findById(Long userProgramId){
+        return UserProgramDto.fromEntity(userProgramRepository.findById(userProgramId).orElseThrow());
+    }
 }

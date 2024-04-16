@@ -31,6 +31,9 @@ public class User {
     @Setter
     private String birthday;
 
+    @Setter
+    private String birthyear;
+
     @Builder.Default
     private String roles = "ROLE_USER";
 
