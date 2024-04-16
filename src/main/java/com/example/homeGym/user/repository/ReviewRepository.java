@@ -4,4 +4,5 @@ import com.example.homeGym.user.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    Review findByIdAndUserId(Long userProgramId, Long userId);
 }

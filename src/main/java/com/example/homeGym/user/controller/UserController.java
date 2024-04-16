@@ -2,7 +2,9 @@ package com.example.homeGym.user.controller;
 
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.dto.UserDto;
+import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserProgramService userProgramService;
+    private final ReviewService reviewService;
 
     @GetMapping("/{userId}/mypage")
     public String myPage(
@@ -51,6 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/program/{userProgramId}")
+    @ResponseBody
     public String userProgramDetail(
             @PathVariable("userId")
             Long userId,
@@ -65,8 +69,10 @@ public class UserController {
 //        programService.findById(userProgramDto.getProgramId());
 
         //내가 이 프로그램에 작성한 후기 가져오기
+        ReviewDto reviewDto = new ReviewDto();
+        reviewDto = reviewService.findByIdAndUserId(userProgramId, userId);
+        System.out.println(reviewDto);
 
-
-        return "";
+        return "test";
     }
 }
