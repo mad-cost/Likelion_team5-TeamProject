@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -29,6 +30,9 @@ public class User {
 
     @Setter
     private String birthday;
+
+    @Setter
+    private String birthyear;
 
     @Builder.Default
     private String roles = "ROLE_USER";

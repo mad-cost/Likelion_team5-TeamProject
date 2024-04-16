@@ -36,7 +36,13 @@ out/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
 ### yaml 파일 제외 ###
 .application.yaml
 
 
+=======
+
+### application.yaml ###
+application.yaml
+>>>>>>> 612318f9303886d8bb3035741c27bcfbbfe6e126
