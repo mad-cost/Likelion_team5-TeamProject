@@ -1,30 +1,47 @@
 package com.example.homeGym.instructor.controller;
 
+import com.example.homeGym.instructor.dto.InstructorCreateDto;
+import com.example.homeGym.instructor.dto.InstructorDto;
+import com.example.homeGym.instructor.service.InstructorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
 
+    private final InstructorService instructorService;
+
     // 강사 로그인
+    @GetMapping("/login")
+    public String loginPage(){
+        return "instructor-login";
+    }
+
     @PostMapping("/login")
     public void login() {
-
+        //TODO: 이후 구현
     }
 
     // 강사 로그아웃
     @PostMapping("/logout")
     public void logout() {
-
+        //TODO: 이후 구현
     }
 
     // 강사 신청
+    @GetMapping("/proposal")
+    public String proposalPage(Model model){
+        model.addAttribute("InstructorCreateDto", new InstructorCreateDto());
+        return "proposal";
+    }
     @PostMapping("/proposal")
-    public void proposal() {
-
+    public void proposal(InstructorCreateDto instructorCreateDto) {
+        instructorService.createInstructor(instructorCreateDto);
     }
 
     // 강사 회원탈퇴
@@ -40,7 +57,7 @@ public class InstructorController {
     }
 
     // 강사 정보 수정
-    @PutMapping("/instructorId}/profile")
+    @PutMapping("/{instructorId}/profile")
     public void profile() {
 
     }
@@ -52,7 +69,7 @@ public class InstructorController {
     }
 
     // 강사 프로그램 회원 상세
-    @PostMapping("/{instructorId}/program/{programId}/user/{userId}")
+    @GetMapping("/{instructorId}/program/{programId}/user/{userId}")
     public void userProgramList() {
 
     }
