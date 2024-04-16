@@ -12,9 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 public class InstructorDto {
     private Long id;
+    private String name;
     private String loginId;
     private String password;
-    private String name;
     private Gender gender;
     private String birthyear;
     private String birthday;
@@ -33,10 +33,14 @@ public class InstructorDto {
 
         return InstructorDto.builder()
                 .id(entity.getId())
+                .name(entity.getName())
                 .loginId(entity.getLoginId())
                 .password(entity.getPassword())
                 .name(entity.getName())
                 .gender(entity.getGender())
+                .birthyear(entity.getBirthyear())
+                .birthday(entity.getBirthday())
+                .state(entity.getState())
                 .career(entity.getCareer())
                 .profileImageUrl(entity.getProfileImageUrl())
                 .certificate(entity.getCertificate())
