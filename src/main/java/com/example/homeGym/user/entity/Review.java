@@ -25,6 +25,9 @@ public class Review {
     private Long userProgramId;
 
     @Setter
+    private Long userId;
+
+    @Setter
     private Integer stars;
 
     @Setter

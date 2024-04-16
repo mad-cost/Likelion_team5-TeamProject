@@ -14,7 +14,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+  
     @Setter
     private String content;
 
@@ -22,3 +22,4 @@ public class Comment {
     @ManyToOne
     private Instructor instructor;
 }
+
