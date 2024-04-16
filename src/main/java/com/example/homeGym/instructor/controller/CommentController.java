@@ -1,12 +1,13 @@
 package com.example.homeGym.instructor.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/instructor/{instructorId}/review")
 @RequiredArgsConstructor
-public class ReviewController {
+public class CommentController {
 
     // 강사 후기 페이지
     @PostMapping()
