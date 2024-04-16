@@ -21,4 +21,4 @@ logging:
     root: info
 
 jwt:
-  secret: 
+  secret:
