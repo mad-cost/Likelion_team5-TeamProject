@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class InstructorDto {
     private Long id;
+    private String name;
     private String loginId;
     private String password;
     private String name;
@@ -33,6 +34,7 @@ public class InstructorDto {
 
         return InstructorDto.builder()
                 .id(entity.getId())
+                .name(entity.getName())
                 .loginId(entity.getLoginId())
                 .password(entity.getPassword())
                 .name(entity.getName())
