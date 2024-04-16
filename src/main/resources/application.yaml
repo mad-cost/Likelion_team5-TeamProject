@@ -21,4 +21,4 @@ logging:
     root: info
 
 jwt:
-  secret: asdo42j42jdfjkjhkjhlfj1j5pr3krjfjfj1f3jfsgjgkd7735asrf2
+  secret: 
