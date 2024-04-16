@@ -1,9 +1,10 @@
 package com.example.homeGym.instructor.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("instructor/{instructorId}/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {

@@ -2,9 +2,10 @@ package com.example.homeGym.instructor.controller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
