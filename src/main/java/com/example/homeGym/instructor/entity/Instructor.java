@@ -19,7 +19,6 @@ public class Instructor {
     private String name;
     private String loginId;
     private String password;
-    private String name;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String birthyear;

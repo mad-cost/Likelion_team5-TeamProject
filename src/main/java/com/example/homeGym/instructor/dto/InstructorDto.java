@@ -15,7 +15,6 @@ public class InstructorDto {
     private String name;
     private String loginId;
     private String password;
-    private String name;
     private Gender gender;
     private String birthyear;
     private String birthday;
