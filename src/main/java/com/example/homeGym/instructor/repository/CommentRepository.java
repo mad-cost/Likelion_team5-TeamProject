@@ -1,4 +1,4 @@
-package com.example.homeGym.user.repository;
+package com.example.homeGym.instructor.repository;
 
 import com.example.homeGym.instructor.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
