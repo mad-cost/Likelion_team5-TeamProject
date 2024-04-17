@@ -25,6 +25,12 @@ public class UserController {
     private final UserProgramService userProgramService;
     private final ReviewService reviewService;
 
+    @GetMapping("/loginpage")
+    public String loginPage(){
+        return "user/loginPage";
+    }
+
+
     @GetMapping("/{userId}/mypage")
     public String myPage(
             @PathVariable("userId")
