@@ -53,16 +53,17 @@ public class InstructorController {
         return "/instructor/withdrawProposal";
     }
 
-    // 강사 회원탈퇴
+
     @PostMapping("/withdraw")
-    @ResponseBody
-    public ResponseEntity<?> withdraw() {
-       /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String withdraw(Model model) {
+        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomInstructorDetails userDetails = (CustomInstructorDetails) authentication.getPrincipal();
         Long instructorId = userDetails.getInstructor().getId();*/
-        //테스트용 instructor 1
-        instructorService.withdrawalProposal(1L);
-        return ResponseEntity.ok("탈퇴 신청이 완료되었습니다.");
+
+        Long instructorId = 1L;// 테스트용 1번 ID
+        String resultMessage = instructorService.withdrawalProposal(instructorId);
+        model.addAttribute("message", resultMessage);
+        return "/instructor/withdrawResult"; // 탈퇴 결과를 보여주는 뷰 페이지
     }
 
     // 강사 페이지

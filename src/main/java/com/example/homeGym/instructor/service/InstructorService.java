@@ -21,14 +21,21 @@ public class InstructorService {
     }
 
     //회원탈퇴 신청
-    public void withdrawalProposal(Long instructorId) {
-        Optional<Instructor> instructor = instructorRepository.findById(instructorId);
+    public String withdrawalProposal(Long instructorId) {
+        Optional<Instructor> instructorOpt = instructorRepository.findById(instructorId);
 
-        if (instructor.isPresent()) {
-            Instructor existingInstructor = instructor.get();
-            existingInstructor.setState(Instructor.InstructorState.WITHDRAWAL_PENDING);
-            instructorRepository.save(existingInstructor);
+        if (!instructorOpt.isPresent()) {
+            return "강사 정보를 찾을 수 없습니다.";
         }
+
+        Instructor instructor = instructorOpt.get();
+        if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_PENDING) {
+            return "이미 탈퇴 대기 상태인 회원입니다.";
+        }
+
+        instructor.setState(Instructor.InstructorState.WITHDRAWAL_PENDING);
+        instructorRepository.save(instructor);
+        return "탈퇴 신청이 완료되었습니다.";
     }
 
 }

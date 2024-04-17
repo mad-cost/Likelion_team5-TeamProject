@@ -7,31 +7,21 @@
 </head>
 <body>
 <button id="withdrawButton">회원 탈퇴</button>
-<div id="messageBox" style="display:none;">
-    <p id="messageContent"></p>
-    <button id="confirmButton">확인</button>
-</div>
 
 <script>
-    <!--버튼 클릭시 회원탈퇴신청과정    -->
+    <!--버튼 클릭시 회원탈퇴 신청과정    -->
     document.getElementById('withdrawButton').addEventListener('click', function() {
         fetch('/instructor/withdraw', {
             method: 'POST'
         })
             .then(response => response.text())
             .then(data => {
-                const messageBox = document.getElementById('messageBox');
-                messageBox.textContent = data;
-                messageBox.style.display = 'block';  // 메시지 박스를 보이게 설정
-
-                // 메시지 박스 클릭 시 홈 화면으로 이동
-                messageBox.addEventListener('click', () => {
-                    window.location.href = '/';  // 홈 화면 URL로 이동
-                });
+                alert(data);  // 응답 데이터를 알림 창으로 표시
+                window.location.href = '/';  // 확인을 누르면 홈 화면으로 리디렉션
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('탈퇴 신청 과정에서 오류가 발생했습니다.');
+                alert('탈퇴 신청 과정에서 오류가 발생했습니다.');  // 오류 알림
             });
     });
 </script>
