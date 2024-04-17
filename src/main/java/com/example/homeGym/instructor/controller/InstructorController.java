@@ -64,6 +64,12 @@ public class InstructorController {
 
     }
 
+    // 강사 후기 페이지
+    @PostMapping("/{instructorId}/review")
+    public String ViewReview() {
+        return null;
+    }
+
     // 강사 프로그램 상세
     @GetMapping("/{instructorId}/{programId}")
     public void InstrutcorProgramList() {

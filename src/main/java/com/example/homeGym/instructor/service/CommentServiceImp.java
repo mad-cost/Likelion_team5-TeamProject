@@ -29,7 +29,7 @@ public class CommentServiceImp implements CommentService {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존제하지 않을 경우
         if (optionalInstructor.isEmpty())
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
 
         Instructor currentInstructor = facade.getCurrentInstructor();
         Comment instructorReview = Comment.builder()
@@ -46,23 +46,23 @@ public class CommentServiceImp implements CommentService {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty()) {
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
         Optional<Comment> optionalInstructorReview = commentRepository.findById(reviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
 
         Comment instructorReview = optionalInstructorReview.get();
         // instructorReview가 instructor의 댓글이 아닌 경우
         if (!instructorReview.getInstructor().getId().equals(instructorId))
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_MISMATCH);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_MISMATCH);
 
         Instructor currentInstructor = facade.getCurrentInstructor();
         // 리뷰 작성한 강사가 현재 접속 유저가 아닌 경우
         if (!instructorReview.getInstructor().equals(currentInstructor))
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_FORBIDDEN);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_FORBIDDEN);
 
         instructorReview.setContent(commentDto.getContent());
         return CommentDto.fromEntity(commentRepository.save(instructorReview));
@@ -74,22 +74,22 @@ public class CommentServiceImp implements CommentService {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty()) {
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
         Optional<Comment> optionalInstructorReview = commentRepository.findById(reviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
 
         Comment instructorReview = optionalInstructorReview.get();
         // instructorReview가 instructor의 댓글이 아닌 경우
         if (!instructorReview.getInstructor().getId().equals(instructorId))
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_MISMATCH);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_MISMATCH);
 
         Instructor currentInstructor = facade.getCurrentInstructor();
         if (!instructorReview.getInstructor().equals(currentInstructor))
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_FORBIDDEN);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_FORBIDDEN);
         commentRepository.deleteById(reviewId);
     }
 }
