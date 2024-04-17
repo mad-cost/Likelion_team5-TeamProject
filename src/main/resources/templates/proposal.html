@@ -19,8 +19,12 @@
                         <h1 class="text-center mb-5">강사 회원 등록 신청</h1>
                         <form action="/instructor/proposal" th:method="post" th:object="${InstructorCreateDto}">
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your identifier...">
-                                <label for="username">ID</label>
+                                <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name...">
+                                <label for="name">이름</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="loginId" name="loginId" type="text" placeholder="Enter your identifier...">
+                                <label for="loginId">아이디</label>
                             </div>
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="password" name="password" type="password" placeholder="Enter your password...">

@@ -1,6 +1,8 @@
 package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
+import com.example.homeGym.instructor.service.InstructorService;
+
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import lombok.Getter;

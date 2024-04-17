@@ -10,14 +10,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class InstructorReviewDto {
+public class CommentDto {
     private Long id;
 
     @Setter
     private String content;
 
-    public static InstructorReviewDto fromEntity(Comment entity) {
-        InstructorReviewDto dto = new InstructorReviewDto();
+    public static CommentDto fromEntity(Comment entity) {
+        CommentDto dto = new CommentDto();
         dto.id = entity.getId();
         return dto;
     }

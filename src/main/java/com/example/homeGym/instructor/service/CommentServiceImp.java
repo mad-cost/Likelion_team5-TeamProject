@@ -3,11 +3,11 @@ package com.example.homeGym.instructor.service;
 import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
-import com.example.homeGym.instructor.dto.InstructorReviewDto;
+import com.example.homeGym.instructor.dto.CommentDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.entity.Comment;
-import com.example.homeGym.instructor.repository.InstructorReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,15 +17,15 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InstructorReviewServiceImp implements InstructorReviewService{
+public class CommentServiceImp implements CommentService {
 
     private final InstructorRepository instructorRepository;
-    private final InstructorReviewRepository instructorReviewRepository;
+    private final CommentRepository commentRepository;
     private final AuthenticationFacade facade;
 
     // 댓글 작성
     @Override
-    public InstructorReviewDto createReview(Long instructorId, InstructorReviewDto instructorReviewDto) {
+    public CommentDto createReview(Long instructorId, CommentDto commentDto) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존제하지 않을 경우
         if (optionalInstructor.isEmpty())
@@ -33,23 +33,23 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
 
         Instructor currentInstructor = facade.getCurrentInstructor();
         Comment instructorReview = Comment.builder()
-                .content(instructorReviewDto.getContent())
+                .content(commentDto.getContent())
                 .instructor(currentInstructor)
                 .instructor(optionalInstructor.get())
                 .build();
-        return InstructorReviewDto.fromEntity(instructorReviewRepository.save(instructorReview));
+        return CommentDto.fromEntity(commentRepository.save(instructorReview));
     }
 
     // 댓글 수정
     @Override
-    public InstructorReviewDto updateReview(Long instructorId, Long instructorReviewId, InstructorReviewDto instructorReviewDto) {
+    public CommentDto updateReview(Long instructorId, Long reviewId, CommentDto commentDto) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty()) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
-        Optional<Comment> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
+        Optional<Comment> optionalInstructorReview = commentRepository.findById(reviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
@@ -64,20 +64,20 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
         if (!instructorReview.getInstructor().equals(currentInstructor))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_FORBIDDEN);
 
-        instructorReview.setContent(instructorReviewDto.getContent());
-        return InstructorReviewDto.fromEntity(instructorReviewRepository.save(instructorReview));
+        instructorReview.setContent(commentDto.getContent());
+        return CommentDto.fromEntity(commentRepository.save(instructorReview));
     }
 
     // 댓글 삭제
     @Override
-    public void deleteReview(Long instructorId, Long instructorReviewId) {
+    public void deleteReview(Long instructorId, Long reviewId) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty()) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_NOT_EXISTS);
         }
         Instructor instructor = optionalInstructor.get();
-        Optional<Comment> optionalInstructorReview = instructorReviewRepository.findById(instructorReviewId);
+        Optional<Comment> optionalInstructorReview = commentRepository.findById(reviewId);
         // review가 존재하지 않을 경우
         if (optionalInstructorReview.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_NOT_EXISTS);
@@ -90,6 +90,6 @@ public class InstructorReviewServiceImp implements InstructorReviewService{
         Instructor currentInstructor = facade.getCurrentInstructor();
         if (!instructorReview.getInstructor().equals(currentInstructor))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.INSTRUCTOR_REVIEW_FORBIDDEN);
-        instructorReviewRepository.deleteById(instructorReviewId);
+        commentRepository.deleteById(reviewId);
     }
 }
