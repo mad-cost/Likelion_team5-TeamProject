@@ -1,28 +1,29 @@
-package com.example.homeGym.user.entity;
+package com.example.homeGym.instructor.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
-@Setter
+@Entity
+@SuperBuilder
 @NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Setter
     private Long reviewId;
-    private String memo;
+    @Setter
+    private String content;
     @CreationTimestamp
     private LocalDateTime createAt;
-
+    @Setter
+    @ManyToOne
+    private Instructor instructor;
 }
+
