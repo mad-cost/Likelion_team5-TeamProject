@@ -46,7 +46,7 @@ public class Instructor {
     @Setter
     private String bankName;
     @Setter
-    private Integer account;
+    private String account;
     @CreationTimestamp
     private LocalDateTime createdAt;
 
