@@ -1,9 +1,24 @@
 package com.example.homeGym.toss.service;
 
+import com.example.homeGym.toss.dto.PaymentResponseDto;
+import com.example.homeGym.toss.entity.Payment;
+import com.example.homeGym.toss.repo.PaymentRepository;
+import com.example.homeGym.user.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class TossPaymentService {
+    private final PaymentRepository paymentRepository;
+
+    public Payment requestTossPayment(Payment payment, Long userId) {
+        payment.setUserId(userId);
+
+        return paymentRepository.save(payment);
+    }
+
+
+
 }
