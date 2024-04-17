@@ -4,6 +4,7 @@ import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.dto.UserDto;
+import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserController {
     private final UserService userService;
     private final UserProgramService userProgramService;
     private final ReviewService reviewService;
+    private final ProgramServiceForUser programServiceForUser;
 
     @GetMapping("/{userId}/mypage")
     public String myPage(
@@ -37,13 +39,19 @@ public class UserController {
 
         //유저가 진행중인 수업
         List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(userId);
-        //후에 dto에 progrm정보 저장
-//        for (int i = 0; i < inProgressList.size(); i++) {
-//            inProgressList.get(i).setProgram();
-//        }
+        //dto에 program정보 저장
+        for (UserProgramDto programDto : inProgressList) {
+            long programId = programDto.getProgramId();
+            programDto.setProgram(programServiceForUser.findById(programId));
+        }
 
         //유저의 종료된 수업
         List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(userId);
+        //dto에 program정보 저장
+        for (UserProgramDto userProgramDto : finishList) {
+            long programId = userProgramDto.getProgramId();
+            userProgramDto.setProgram(programServiceForUser.findById(programId));
+        }
 
         model.addAttribute("userInfo", userDto);
         model.addAttribute("inProgress", inProgressList);

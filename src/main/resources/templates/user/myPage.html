@@ -41,7 +41,7 @@
                         <div class="card inner-card">
                             <a th:href="@{'/user/' + ${userInfo.id} + '/program/' + ${finish.id}}">
                                 <div class="card-body">
-                                    <p th:text="${finish.programId}"></p>
+                                    <p th:text="${finish.program.title}"></p>
                                     <p th:text="${finish.count}"></p>
                                     <p th:text="${finish.maxCount}"></p>
                                 </div>
@@ -59,7 +59,7 @@
                         <div class="card inner-card">
                             <a th:href="@{'/user/' + ${userInfo.id} + '/program/' + ${progress.id}}">
                                 <div class="card-body">
-                                    <p th:text="${progress.programId}"></p>
+                                    <p th:text="${progress.program.title}"></p>
                                     <p th:text="${progress.count}"></p>
                                     <p th:text="${progress.maxCount}"></p>
                                 </div>
