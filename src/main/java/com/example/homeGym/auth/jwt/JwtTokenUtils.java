@@ -55,7 +55,6 @@ public class JwtTokenUtils {
 
     public boolean validate(String token) {
         try {
-
             jwtParser.parseClaimsJws(token);
             return true;
         } catch (Exception e){

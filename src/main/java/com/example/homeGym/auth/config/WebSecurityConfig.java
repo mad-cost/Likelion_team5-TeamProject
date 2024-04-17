@@ -3,11 +3,12 @@ package com.example.homeGym.auth.config;
 
 import com.example.homeGym.auth.jwt.JwtTokenFilter;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
+import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;
+import com.example.homeGym.auth.kakao.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -16,11 +17,12 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
 public class WebSecurityConfig {
 
     private final JwtTokenUtils jwtTokenUtils;
     private final UserDetailsManager manager;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2UserServiceImpl oAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -45,7 +47,12 @@ public class WebSecurityConfig {
                         .permitAll()
                 )
 
-
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("/user/loginpage")
+                        .successHandler(oAuth2SuccessHandler)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oAuth2UserService))
+                )
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
