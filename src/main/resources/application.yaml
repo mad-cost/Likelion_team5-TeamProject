@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database1.cvqi4qeimxir.us-east-1.rds.amazonaws.com:3306/homeGym
+    username: admin
+    password: lolpop12
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+logging:
+  level:
+    org:
+      springframework:
+        security: Debug
+    root: info
+
+jwt:
+  secret:
+
+payment:
+  toss:
+    test_client_api_key: test_ck_jExPeJWYVQRJaBZ76ggor49R5gvN
+    test_secrete_api_key: test_sk_DLJOpm5QrlWwQK71RMaoVPNdxbWn
+    success_url: "http://localhost"
+    fail_url: "http://localhost"
