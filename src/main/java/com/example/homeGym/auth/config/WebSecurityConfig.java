@@ -1,5 +1,9 @@
 package com.example.homeGym.auth.config;
 
+import com.example.homeGym.auth.jwt.JwtTokenFilter;
+import com.example.homeGym.auth.jwt.JwtTokenUtils;
+import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;
+import com.example.homeGym.auth.kakao.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
