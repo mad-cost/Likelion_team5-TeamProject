@@ -57,14 +57,12 @@ public class JpaUserDetailsManager implements UserDetailsManager {
                 .birthday(userEntity.getBirthday())
                 .roles(userEntity.getRoles())
                 .state(String.valueOf(userEntity.getState()))
-                .createdAt(userEntity.getCreatedAt())
                 .build();
     }
 
 
     @Override
     public void createUser(UserDetails user) {
-
         try {
             CustomUserDetails userDetails = (CustomUserDetails) user;
 
@@ -78,7 +76,6 @@ public class JpaUserDetailsManager implements UserDetailsManager {
                     .birthday(userDetails.getBirthday())
                     .roles(userDetails.getRoles())
                     .state(User.UserState.valueOf(userDetails.getState()))
-                    .createdAt(((CustomUserDetails) user).getCreatedAt())
                     .build();
 
             userRepository.save(newUser);
