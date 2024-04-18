@@ -25,6 +25,11 @@ public class UserController {
     private final UserProgramService userProgramService;
     private final ReviewService reviewService;
 
+    @GetMapping("/main")
+    public String mainPage(){
+        return "main";
+    }
+
     @GetMapping("/loginpage")
     public String loginPage(){
         return "user/loginPage";

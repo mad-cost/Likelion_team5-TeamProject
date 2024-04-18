@@ -63,7 +63,6 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 
     @Override
     public void createUser(UserDetails user) {
-
         try {
             CustomUserDetails userDetails = (CustomUserDetails) user;
 
