@@ -41,6 +41,11 @@ spring:
       hibernate:
         format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+  mvc:
+    static-path-pattern: /static/**
+  web:
+    resources:
+      static-locations: file:media/,classpath:/static
 
 logging:
   level:
