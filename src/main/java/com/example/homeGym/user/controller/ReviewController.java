@@ -51,4 +51,16 @@ public class ReviewController {
         }
     }
 
+    @DeleteMapping("review")
+    @ResponseBody
+    public String deleteReview(){
+        return "delete";
+    }
+
+    @PutMapping("review")
+    @ResponseBody
+    public String updateReview(){
+        return "update";
+    }
+
 }

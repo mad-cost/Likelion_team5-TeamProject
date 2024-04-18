@@ -69,6 +69,17 @@
               <p th:text="${program.program.title}"></p>
               <div th:unless="${reviews.memo} == null">
                 <p>리뷰 있음</p>
+                <p th:text="${reviews.memo}"></p>
+                <p th:text="${reviews.stars}"></p>
+                <img th:src="@{${reviews.imageUrl}}" alt="img"/>
+                <form action="/user/review" method="post">
+                  <input type="hidden" name="_method" value="put">
+                  <input type="submit" value="수정">
+                </form>
+                <form action="/user/review" method="post">
+                  <input type="hidden" name="_method" value="delete">
+                  <input type="submit" value="삭제">
+                </form>
               </div>
               <div th:if="${reviews.memo} == null">
                 <p>리뷰 없음</p>
