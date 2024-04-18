@@ -12,20 +12,12 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentServiceImp commentServiceImp;
 
-    // 강사 후기 페이지
-
-    @PostMapping
-    public void ViewReview() {
-
-    }
 
     // 강사 답글
-    @PostMapping("{reviewId}")
+    @PostMapping("{reviewId}/comment")
     public CommentDto createReview(
             @PathVariable("instructorId")
             Long instructorId,
-            @PathVariable("reviewId")
-            Long reviewId,
             @RequestBody
             CommentDto commentDto
     ) {
@@ -33,7 +25,7 @@ public class CommentController {
     }
 
     // 답글 수정
-    @PutMapping("{reviewId}")
+    @PutMapping("{reviewId}/comment/{commentId}")
     public CommentDto updateReview(
             @PathVariable("instructorId")
             Long instructorId,
@@ -47,7 +39,7 @@ public class CommentController {
     }
 
     // 답글 삭제
-    @DeleteMapping("{reviewId}")
+    @DeleteMapping("{reviewId}/comment/{commentId}")
     public void deleteReview(
             @PathVariable("instructorId")
             Long instructorId,

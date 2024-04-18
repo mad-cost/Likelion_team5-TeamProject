@@ -1,5 +1,6 @@
 package com.example.homeGym.instructor.dto;
 
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.user.dto.UserDto;
@@ -25,6 +26,8 @@ public class UserProgramDto {
     private Long userId;
     @Setter
     private Program program;
+    @Setter
+    private Instructor instructor;
 
     public static UserProgramDto fromEntity(UserProgram entity){
         UserProgramDto.UserProgramDtoBuilder builder = UserProgramDto.builder()

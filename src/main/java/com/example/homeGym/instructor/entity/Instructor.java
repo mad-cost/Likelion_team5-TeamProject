@@ -23,6 +23,9 @@ public class Instructor {
     private Gender gender;
     private String birthyear;
     private String birthday;
+    //회원가입 승인 전 x, 승인 후 ROLE_INSTRUCTOR
+    @Setter
+    private String roles;
     @Setter
     @Enumerated(EnumType.STRING)
     private InstructorState state;
@@ -43,7 +46,7 @@ public class Instructor {
     @Setter
     private String bankName;
     @Setter
-    private Integer account;
+    private String account;
     @CreationTimestamp
     private LocalDateTime createdAt;
 

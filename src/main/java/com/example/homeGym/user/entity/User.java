@@ -20,6 +20,9 @@ public class User {
     private String name;
 
     @Setter
+    private String password;
+
+    @Setter
     private String profileImageUrl;
 
     @Setter
@@ -37,7 +40,6 @@ public class User {
     @Builder.Default
     private String roles = "ROLE_USER";
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private UserState state;
 
