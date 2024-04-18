@@ -19,8 +19,8 @@ public class UserDto {
     private String profileImageUrl;
     private String gender;
     private String email;
-    private String birthday;
     private String birthyear;
+    private String birthday;
     private String roles = "ROLE_USER";
     private User.UserState state;
     private LocalDateTime createdAt;

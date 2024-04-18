@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-  
+
     public List<UserDto> findAllByOrderByName(){
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : userRepository.findAllByOrderByName()){
@@ -29,4 +30,7 @@ public class UserService {
     public UserDto findById(Long userId){
         return UserDto.fromEntity(userRepository.findById(userId).orElseThrow());
     }
+
+
+
 }
