@@ -42,6 +42,7 @@ public class ScheduleService {
         Schedule schedule= Schedule.builder()
                 .week(week)
                 .time(time)
+//                .instructor(currentInstructor)
                 .build();
 
 
@@ -69,8 +70,8 @@ public class ScheduleService {
     }
 
     // 스케줄 삭제
-    public void deleteSchedule(Long instructorId) {
-        Optional<Schedule> optionalSchedule = scheduleRepository.findById(instructorId);
+    public void deleteSchedule(Long scheduleId) {
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
         // schedule이 존재하지 않는 경우
         if (optionalSchedule.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.SCHEDULE_NOT_EXISTS);
