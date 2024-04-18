@@ -8,4 +8,10 @@ import java.util.List;
 
 public interface UserProgramRepository extends JpaRepository<UserProgram, Long> {
     List<UserProgram> findByUserIdAndState(Long userId, UserProgram.UserProgramState state);
+    List<UserProgram> findAllByUserId(Long userId);
+
+
+
+
+
 }
