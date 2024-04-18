@@ -2,23 +2,22 @@ package com.example.homeGym.instructor.dto;
 
 
 import com.example.homeGym.instructor.entity.Comment;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
-@ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class CommentDto {
     private Long id;
-
     @Setter
     private String content;
 
+
     public static CommentDto fromEntity(Comment entity) {
-        CommentDto dto = new CommentDto();
-        dto.id = entity.getId();
-        return dto;
+        return CommentDto.builder()
+                .id(entity.getId())
+                .content(entity.getContent())
+                .build();
     }
 }

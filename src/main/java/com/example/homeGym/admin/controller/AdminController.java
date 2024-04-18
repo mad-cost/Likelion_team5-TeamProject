@@ -1,4 +1,4 @@
-package com.example.homeGym.admin.entity.controller;
+package com.example.homeGym.admin.controller;
 
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AdminController {
           Model model
   ){
     model.addAttribute("users", userService.findAllByOrderByName());
-    return "admin";
+    return "admin/admin";
   }
 
 
