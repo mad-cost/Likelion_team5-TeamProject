@@ -1,24 +1,31 @@
 package com.example.homeGym.instructor.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Setter
+    private String name;
     private String loginId;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    private String birthyear;
+    private String birthday;
+    //회원가입 승인 전 x, 승인 후 ROLE_INSTRUCTOR
+    @Setter
+    private String roles;
     @Setter
     @Enumerated(EnumType.STRING)
     private InstructorState state;
@@ -26,8 +33,11 @@ public class Instructor {
     private String career;
     @Setter
     private String profileImageUrl;
+    @Setter
     private String certificate;
+    @Setter
     private String medal;
+    @Setter
     private String email;
     @Setter
     private String phone;
@@ -35,7 +45,8 @@ public class Instructor {
     private String bank;
     @Setter
     private String bankName;
-    private Integer account;
+    @Setter
+    private String account;
     @CreationTimestamp
     private LocalDateTime createdAt;
 

@@ -1,16 +1,14 @@
 package com.example.homeGym.instructor.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Schedule {
@@ -22,7 +20,7 @@ public class Schedule {
     @Setter
     private String time;
 
-//    @OneToMany
+//    @ManyToOne
 //    private Instructor instructor;
     @Setter
     private Long instructorId;

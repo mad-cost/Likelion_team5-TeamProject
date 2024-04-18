@@ -32,7 +32,8 @@ public class JpaUserDetailsManager implements UserDetailsManager {
                     .email("admin@gmail.com")
                     .birthyear("2000")
                     .birthday("1113")
-                    .state("ADMIN")
+                    .roles("ROLE_ADMIN")
+                    .state("USER")
                     .build());
         }
     }

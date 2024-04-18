@@ -1,6 +1,5 @@
 package com.example.homeGym.auth.config;
 
-
 import com.example.homeGym.auth.jwt.JwtTokenFilter;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;

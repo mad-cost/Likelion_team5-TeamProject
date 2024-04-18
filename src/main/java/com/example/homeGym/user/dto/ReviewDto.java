@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Getter
 @ToString
@@ -34,6 +35,23 @@ public class ReviewDto {
                 .memo(entity.getMemo())
                 .createdAt(entity.getCreatedAt());
         return builder.build();
+    }
+
+    public static ReviewDto fromEntity(Optional<Review> entity){
+        if (entity.isPresent()) {
+            Review review = entity.get();
+            return ReviewDto.builder()
+                    .id(review.getId())
+                    .userProgramId(review.getUserProgramId())
+                    .userId(review.getUserId())
+                    .stars(review.getStars())
+                    .imageUrl(review.getImageUrl())
+                    .memo(review.getMemo())
+                    .createdAt(review.getCreatedAt())
+                    .build();
+        }else {
+            return ReviewDto.builder().build();
+        }
     }
 
 }
