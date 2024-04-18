@@ -32,7 +32,9 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user/main"
+                                "/user/main",
+                                "/token/issue",
+                                "/token/validate"
                         )
                         .permitAll()
 
