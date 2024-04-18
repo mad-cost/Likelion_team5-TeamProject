@@ -14,6 +14,8 @@ public enum CustomGlobalErrorCode {
     COMMENT_FORBIDDEN(403, "4005", "댓글의 소유 권한이 없습니다."),
     AUTHENTICATION_FAILED(403, "8001", "인증 확인에 실패했습니다.");;
 
+    // 스켸줄 관련 에러
+
     private int status;
     private String code;
     private String message;
