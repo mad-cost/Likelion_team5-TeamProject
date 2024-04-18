@@ -20,6 +20,18 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
+    // 스케줄 보기
+    public ScheduleDto readSchedule(Long scheduleId) {
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
+        // schedule 존재 여부
+        if (optionalSchedule.isEmpty())
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.SCHEDULE_NOT_EXISTS);
+
+        Schedule schedule = optionalSchedule.get();
+        return ScheduleDto.fromEntity(schedule);
+    }
+
+
     // 스케줄 생성
     public ScheduleDto createSchedule(
             String week,
@@ -57,7 +69,14 @@ public class ScheduleService {
     }
 
     // 스케줄 삭제
-    public void deleteSchedule() {
+    public void deleteSchedule(Long instructorId) {
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(instructorId);
+        // schedule이 존재하지 않는 경우
+        if (optionalSchedule.isEmpty())
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.SCHEDULE_NOT_EXISTS);
 
+        Schedule schedule = optionalSchedule.get();
+
+        scheduleRepository.delete(schedule);
     }
 }

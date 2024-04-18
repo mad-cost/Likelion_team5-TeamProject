@@ -20,8 +20,8 @@ public class Schedule {
     @Setter
     private String time;
 
-//    @OneToMany
-//    private Instructor instructor;
+    @ManyToOne
+    private Instructor instructor;
     @Setter
     private Long instructorId;
     @CreationTimestamp
