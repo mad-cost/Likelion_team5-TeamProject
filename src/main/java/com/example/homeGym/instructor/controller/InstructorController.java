@@ -7,6 +7,7 @@ import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @Controller
+@Slf4j
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
@@ -49,8 +51,10 @@ public class InstructorController {
         return "/instructor/proposal";
     }
     @PostMapping("/proposal")
-    public void proposal(InstructorCreateDto instructorCreateDto) {
+    public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
+        log.info("Creating instructor with name: {}", instructorCreateDto.getName());
         instructorService.createInstructor(instructorCreateDto);
+        return "redirect:/instructor/success";
     }
 
     //로그인 아이디 중복확인

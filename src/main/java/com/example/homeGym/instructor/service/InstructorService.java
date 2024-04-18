@@ -5,11 +5,13 @@ import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
@@ -17,6 +19,7 @@ public class InstructorService {
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
     public void createInstructor(InstructorCreateDto dto){
+        log.info("Creating instructor with name: {}", dto.getName());
         instructorRepository.save(dto.toEntity());
     }
     //로그인 아이디 존재 확인
