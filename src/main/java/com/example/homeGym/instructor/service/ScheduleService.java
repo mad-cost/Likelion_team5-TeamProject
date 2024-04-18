@@ -45,7 +45,7 @@ public class ScheduleService {
         Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
 //         존재하지 않는 Schedule일 경우
         if (optionalSchedule.isEmpty())
-            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_FORBIDDEN);
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.SCHEDULE_NOT_EXISTS);
 
         Schedule schedule = optionalSchedule.get();
 
