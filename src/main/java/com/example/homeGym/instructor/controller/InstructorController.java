@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @Controller
 @RequestMapping("instructor")
 @RequiredArgsConstructor
@@ -55,15 +57,13 @@ public class InstructorController {
 
 
     @PostMapping("/withdraw")
-    public String withdraw(Model model) {
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomInstructorDetails userDetails = (CustomInstructorDetails) authentication.getPrincipal();
-        Long instructorId = userDetails.getInstructor().getId();*/
+    @ResponseBody  // Ajax 요청에 적합하게 JSON 응답을 반환하도록 수정
+    public ResponseEntity<?> withdraw() {
+        // 임시로 ID를 설정. 인증된 사용자의 ID를 사용하려면 주석 처리된 코드를 활성화
+        Long instructorId = 1L; // 테스트용 1번 ID
 
-        Long instructorId = 1L;// 테스트용 1번 ID
         String resultMessage = instructorService.withdrawalProposal(instructorId);
-        model.addAttribute("message", resultMessage);
-        return "/instructor/withdrawResult"; // 탈퇴 결과를 보여주는 뷰 페이지
+        return ResponseEntity.ok(Collections.singletonMap("message", resultMessage));
     }
 
     // 강사 페이지
