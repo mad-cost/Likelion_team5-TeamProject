@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @Entity
 @Builder
@@ -15,6 +16,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Setter
+    @Column(unique = true)
+    private String email;
 
     @Setter
     private String name;
@@ -27,9 +32,6 @@ public class User {
 
     @Setter
     private String gender;
-
-    @Setter
-    private String email;
 
     @Setter
     private String birthday;

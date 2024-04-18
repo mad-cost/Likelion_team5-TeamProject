@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CustomUserDetails implements UserDetails {
 
     private Long id;
@@ -38,8 +39,6 @@ public class CustomUserDetails implements UserDetails {
     private String roles;
     @Setter
     private String state;
-    @Setter
-    private LocalDateTime createdAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -63,7 +62,6 @@ public class CustomUserDetails implements UserDetails {
         userDetails.setBirthday(entity.getBirthday());
         userDetails.setRoles(entity.getRoles());
         userDetails.setState(String.valueOf(entity.getState()));
-        userDetails.setCreatedAt(entity.getCreatedAt());
         return userDetails;
     }
 

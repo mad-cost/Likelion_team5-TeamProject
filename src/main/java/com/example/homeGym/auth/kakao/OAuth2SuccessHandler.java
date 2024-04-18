@@ -2,6 +2,9 @@ package com.example.homeGym.auth.kakao;
 
 import com.example.homeGym.auth.dto.CustomUserDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
+import com.example.homeGym.auth.service.JpaUserDetailsManager;
+import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +18,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -22,7 +26,8 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenUtils tokenUtils;
-    private final UserDetailsManager userDetailsManager;
+    private final UserRepository userRepository;
+    private final JpaUserDetailsManager userDetailsManager;
 
     @Override
     public void onAuthenticationSuccess(
@@ -31,23 +36,23 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Authentication authentication
     ) throws IOException, ServletException {
         // OAuth2UserServiceImpl의 반환값이 할당된다.
-        OAuth2User oAuth2User
-                = (OAuth2User) authentication.getPrincipal();
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
 
         // 넘겨받은 정보를 바탕으로 사용자 정보를 준비
         String birthyear = oAuth2User.getAttribute("birthyear");
         String birthday = oAuth2User.getAttribute("birthday");
         String gender = oAuth2User.getAttribute("gender");
-        String profileImageUrl = oAuth2User.getAttribute("profileImageUrl");
+        String profileImageUrl = oAuth2User.getAttribute("profile_image_url");
         String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
         String provider = oAuth2User.getAttribute("provider");
-        String username
-                = String.format("{%s}%s", provider, email);
         // 처음으로 이 소셜 로그인으로 로그인을 시도했다.
-        if (!userDetailsManager.userExists(username)) {
+        if (!userRepository.existsByEmail(email)){
             // 새 계정을 만들어야 한다.
             userDetailsManager.createUser(CustomUserDetails.builder()
-                    .name(username)
+                    .name(name)
+                    .password("")
                     .profileImageUrl(profileImageUrl)
                     .gender(gender)
                     .email(email)
@@ -58,9 +63,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .build());
         }
 
-        // 데이터베이스에서 사용자 계정 회수
-        UserDetails details
-                = userDetailsManager.loadUserByUsername(email);
+
+        CustomUserDetails details = (CustomUserDetails) userDetailsManager.loadUserByUsername(email);
         // JWT 생성
         String jwt = tokenUtils.generateToken(details);
         // 어디로 리다이렉트 할지 지정
