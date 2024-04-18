@@ -19,6 +19,10 @@ public class InstructorService {
     public void createInstructor(InstructorCreateDto dto){
         instructorRepository.save(dto.toEntity());
     }
+    //로그인 아이디 존재 확인
+    public boolean isLoginIdAvailable(String loginId) {
+        return !instructorRepository.existsByLoginId(loginId);
+    }
 
     //회원탈퇴 신청
     public String withdrawalProposal(Long instructorId) {

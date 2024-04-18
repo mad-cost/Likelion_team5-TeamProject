@@ -3,6 +3,7 @@ package com.example.homeGym.instructor.controller;
 import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Map;
 
 @Controller
 @RequestMapping("instructor")
@@ -21,6 +23,7 @@ import java.util.Collections;
 public class InstructorController {
 
     private final InstructorService instructorService;
+    private final InstructorRepository instructorRepository;
 
     //인증쪽에서 작성
    /* // 강사 로그인
@@ -49,6 +52,16 @@ public class InstructorController {
     public void proposal(InstructorCreateDto instructorCreateDto) {
         instructorService.createInstructor(instructorCreateDto);
     }
+
+    //로그인 아이디 중복확인
+    @PostMapping("/check-loginId")
+    @ResponseBody
+    public ResponseEntity<?> checkLoginId(@RequestBody Map<String, String> request) {
+        String loginId = request.get("loginId");
+        boolean isAvailable = instructorService.isLoginIdAvailable(loginId);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+
 
     @GetMapping("/withdraw")
     public String withdrawPage(){
