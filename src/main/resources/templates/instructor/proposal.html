@@ -157,10 +157,27 @@
 </main>
 
 <script>
+    let isLoginIdAvailable = false; // 중복 상태를 추적합니다.
+    let isLoginIdChecked = false; // 중복 검사가 수행되었는지 여부를 추적합니다.
+
+    document.getElementById('loginId').addEventListener('input', function() {
+        // 사용자가 아이디 필드를 변경할 때마다 중복 검사 상태를 초기화합니다.
+        isLoginIdChecked = false;
+        isLoginIdAvailable = false; // 선택적: 중복 가능 상태도 리셋
+    });
 
     document.getElementById('registrationForm').addEventListener('submit', function(event) {
         event.preventDefault(); // 폼의 기본 제출을 방지
+        if (!isLoginIdChecked) {
+            alert('아이디 중복 확인을 해주세요.');
+            return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
+        }
 
+        // 아이디 중복 상태 검사
+        if (!isLoginIdAvailable) {
+            alert('사용할 수 없는 아이디입니다. 다른 아이디를 입력해주세요.');
+            return; // 중복된 아이디가 있으면 폼 제출을 중단
+        }
         // 이메일 조합
         var emailUser = document.getElementById('emailUser').value;
         var emailDomain = document.getElementById('emailDomain').value;
@@ -243,7 +260,9 @@
         })
             .then(response => response.json())
             .then(data => {
-                if (data.isAvailable) {
+                isLoginIdAvailable = data.isAvailable;
+                isLoginIdChecked = true; // 중복 검사를 수행했음을 표시
+                if (isLoginIdAvailable) {
                     alert('아이디가 사용 가능합니다.');
                 } else {
                     alert('이미 사용 중인 아이디입니다.');
@@ -254,6 +273,7 @@
                 alert('중복 확인 중 오류가 발생했습니다.');
             });
     }
+
 
 
 </script>
