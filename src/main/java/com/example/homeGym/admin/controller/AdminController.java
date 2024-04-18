@@ -1,10 +1,8 @@
 package com.example.homeGym.admin.controller;
 
-import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
-import com.example.homeGym.instructor.entity.UserProgram;
-import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -23,8 +22,7 @@ import java.util.List;
 public class AdminController {
   private final UserService userService;
   private final UserProgramService userProgramService;
-  private final ProgramService programService;
-
+  private final ProgramServiceForUser programServiceForUser;
 
   @GetMapping
   public String admin(
@@ -34,34 +32,46 @@ public class AdminController {
     return "admin/admin";
   }
 
+//   유저 상세 페이지
   @GetMapping("/user/{userId}")
   public String userId(
           @PathVariable("userId")
           Long userId,
           Model model
   ){
+//    user객체에서 Id가져오기
     model.addAttribute("user", userService.findById(userId));
-    List<UserProgramDto> userPrograms = userProgramService.findAllByUserIdDto(userId);
-    log.info("@@Size : {}", userPrograms.size());
-    log.info("userPogramsId:{}, userPogramsId:{}", userPrograms.get(0).getId(),userPrograms.get(1).getId());
+
+//    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
+    List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
+//    user_program객체의 Id값을 형변환 Long -> UserProgramDto
+    List<UserProgramDto> userPrograms = userProgramService.findByIds(userProgramsId);
+    log.info("userProgramsInfo : {}",userPrograms);
+    for (UserProgramDto dto : userPrograms){
+      Long programId = dto.getProgramId();
+      dto.setProgram(programServiceForUser.findById(programId));
+    }
     model.addAttribute("userPrograms", userPrograms);
 
+////    user_program객체에서 userId의 programId의 타입을 Long으로 바꿔주기
+//    List<Long> userProgramProgramId = userProgramService.findAllByUserIdConvertProgramId(userId);
+//    List<ProgramDto> programs = programService.findByProgramId(userProgramProgramId);
+//    model.addAttribute("programs", programs);
 
-//    userProgram에서 userId가 {userId}인 programId가져오기
-    List<Long> userProgramProgramId = userProgramService.findAllByUserId(userId);
-    log.info("@@Size:{}", userProgramProgramId.size());
-    log.info("userProgramId : {}, userProgramId : {}",userProgramProgramId.get(0), userProgramProgramId.get(1));
-    List<ProgramDto> programs = programService.findByProgramId(userProgramProgramId);
-    log.info("@@ProgramsSize : {}",programs.size());
-    log.info("ProgramId : {}, ProgramId : {}", programs.get(0).getTitle(), programs.get(1).getTitle());
-
-/* 추가사항
-    userProgramService.findAllByUserId
-    userProgramRepository.findAllByUserId
-    ProgramService, repo, dto
- */
     return "admin/user";
   }
 
+  @PostMapping("/user/{userId}/program/{programId}")
+  public String userProgramDelete(
+          @PathVariable("userId")
+          Long userId,
+          @PathVariable("programId")
+          Long programId
+  ){
+    //    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
+    List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
+    userProgramService.deleteByProgram(userProgramsId, programId);
+    return "redirect:/admin/user/{userId}";
+  }
 
 }

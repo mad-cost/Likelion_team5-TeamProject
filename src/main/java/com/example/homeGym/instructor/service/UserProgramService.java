@@ -40,7 +40,7 @@ public class UserProgramService {
         return UserProgramDto.fromEntity(userProgramRepository.findById(userProgramId).orElseThrow());
     }
 
-    public List<Long> findAllByUserId(Long userId){
+    public List<Long> findAllByUserIdConvertProgramId(Long userId){
         List<Long> result = new ArrayList<>();
 //        userProgram에서 userId 가져오기
         for (UserProgram userProgram : userProgramRepository.findAllByUserId(userId)){
@@ -53,15 +53,34 @@ public class UserProgramService {
         return result;
     }
 
-    public List<UserProgramDto> findAllByUserIdDto(Long userId){
-        List<UserProgramDto> userProgramDtos = new ArrayList<>();
-
+    public List<Long> findAllByUserIdConvertId(Long userId){
+        List<Long> result = new ArrayList<>();
+//        userProgram에서 userId가져오기
         for (UserProgram userProgram : userProgramRepository.findAllByUserId(userId)){
             if (userProgram.getState().equals(UserProgram.UserProgramState.IN_PROGRESS)){
-                userProgramDtos.add(UserProgramDto.fromEntity(userProgram));
+//                가져온 userId의 userProgram의 Id값 result에 담아주기
+                result.add(userProgram.getId());
             }else continue;
         }
+        return result;
+    }
+
+    public List<UserProgramDto> findByIds(List<Long> id){
+        List<UserProgramDto> userProgramDtos = new ArrayList<>();
+        for (UserProgram userProgram : userProgramRepository.findAllById(id)){
+                userProgramDtos.add(UserProgramDto.fromEntity(userProgram));
+        }
         return userProgramDtos;
+    }
+
+    public void deleteByProgram(List<Long> userPrograms, Long programId){ //(1, 3) / (2)
+        List<UserProgram> userIds = userProgramRepository.findAllById(userPrograms);
+        for (UserProgram userId : userIds){
+            if (userId.getProgramId().equals(programId)){
+                userProgramRepository.delete(userId);
+                break;
+            }
+        }
     }
 
 
