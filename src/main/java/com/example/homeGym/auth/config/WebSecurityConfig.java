@@ -41,7 +41,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/user/signup",
                                 "/user/signin",
-                                "/instructor/signup"
+                                "/instructor/signup",
+                                "/instructor/**"
                         )
                         .anonymous()
                         .anyRequest()
