@@ -20,7 +20,7 @@ public class Schedule {
     @Setter
     private String time;
 
-//    @OneToMany
+//    @ManyToOne
 //    private Instructor instructor;
     @Setter
     private Long instructorId;
