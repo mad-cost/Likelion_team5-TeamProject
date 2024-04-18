@@ -28,7 +28,7 @@ public class InstructorCreateDto {
     private String phone;
     private String bank;
     private String bankName;
-    private Integer account;
+    private String account;
 
     public static InstructorCreateDto fromEntity(Instructor entity) {
 

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public ReviewDto findByIdAndUserId(Long userProgramId, Long userId){
-        return ReviewDto.fromEntity(reviewRepository.findByIdAndUserId(userProgramId, userId));
+    public ReviewDto findByUserProgramIdAndUserId(Long userProgramId, Long userId){
+        if (reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId).isPresent()){
+            return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
+        }
+        return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
     }
 }
