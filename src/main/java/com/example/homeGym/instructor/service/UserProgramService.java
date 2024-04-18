@@ -39,4 +39,30 @@ public class UserProgramService {
     public UserProgramDto findById(Long userProgramId){
         return UserProgramDto.fromEntity(userProgramRepository.findById(userProgramId).orElseThrow());
     }
+
+    public List<Long> findAllByUserId(Long userId){
+        List<Long> result = new ArrayList<>();
+//        userProgram에서 userId 가져오기
+        for (UserProgram userProgram : userProgramRepository.findAllByUserId(userId)){
+//            userProgram의 state가 IN_PROGRESS인 속성만 필요
+            if (userProgram.getState().equals(UserProgram.UserProgramState.IN_PROGRESS)){
+//                가져온 userId의 programId를 result에 담아주기
+            result.add(userProgram.getProgramId());
+            } else continue;
+        }
+        return result;
+    }
+
+    public List<UserProgramDto> findAllByUserIdDto(Long userId){
+        List<UserProgramDto> userProgramDtos = new ArrayList<>();
+
+        for (UserProgram userProgram : userProgramRepository.findAllByUserId(userId)){
+            if (userProgram.getState().equals(UserProgram.UserProgramState.IN_PROGRESS)){
+                userProgramDtos.add(UserProgramDto.fromEntity(userProgram));
+            }else continue;
+        }
+        return userProgramDtos;
+    }
+
+
 }
