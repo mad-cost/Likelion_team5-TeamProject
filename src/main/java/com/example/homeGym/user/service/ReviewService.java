@@ -44,4 +44,28 @@ public class ReviewService {
         review.setImageUrl(imagePath);
         return ReviewDto.fromEntity(reviewRepository.save(review));
     }
+
+    public void deleteReview(Long reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        //리뷰에 연관된 이미지 파일 경로를 가져오기.
+        String imagePath = review.getImageUrl();
+        System.out.println("imagePath = " + imagePath);
+
+        //리뷰 삭제
+        reviewRepository.delete(review);
+
+        //이미지 파일이 존재하면 삭제
+        if (imagePath != null){
+            String mediaPath = "media/";
+            String fullPath = mediaPath + imagePath.replace("/static/", "");
+            try {
+                Files.deleteIfExists(Path.of(fullPath));
+            }catch (IOException e){
+                log.error(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
 }

@@ -74,10 +74,12 @@
                 <img th:src="@{${reviews.imageUrl}}" alt="img"/>
                 <form action="/user/review" method="post">
                   <input type="hidden" name="_method" value="put">
+                  <input type="hidden" name="reviewId" th:value="${reviews.id}">
                   <input type="submit" value="수정">
                 </form>
                 <form action="/user/review" method="post">
                   <input type="hidden" name="_method" value="delete">
+                  <input type="hidden" name="reviewId" th:value="${reviews.id}">
                   <input type="submit" value="삭제">
                 </form>
               </div>

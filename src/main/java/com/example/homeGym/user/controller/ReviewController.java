@@ -53,13 +53,22 @@ public class ReviewController {
 
     @DeleteMapping("review")
     @ResponseBody
-    public String deleteReview(){
+    public String deleteReview(
+            @RequestParam("reviewId")
+            Long reviewId
+    ){
+//        reviewService.updateReview();
+        reviewService.deleteReview(reviewId);
         return "delete";
     }
 
     @PutMapping("review")
     @ResponseBody
-    public String updateReview(){
+    public String updateReview(
+            @RequestParam("reviewId")
+            Long reviewId
+    ){
+
         return "update";
     }
 
