@@ -4,6 +4,7 @@ import com.example.homeGym.instructor.dto.CommentDto;
 import com.example.homeGym.instructor.service.CommentServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -19,7 +20,8 @@ public class CommentController {
             @PathVariable("instructorId")
             Long instructorId,
             @RequestBody
-            CommentDto commentDto
+            CommentDto commentDto,
+            Model model
     ) {
         return commentServiceImp.createReview(instructorId, commentDto);
     }
@@ -34,7 +36,8 @@ public class CommentController {
             @PathVariable("commentId")
             Long commentId,
             @RequestBody
-            CommentDto commentDto
+            CommentDto commentDto,
+            Model model
     ) {
 
         return commentServiceImp.updateReview(instructorId, reviewId, commentDto);
@@ -48,7 +51,8 @@ public class CommentController {
             @PathVariable("reviewId")
             Long reviewId,
             @PathVariable("commentId")
-            Long commentId
+            Long commentId,
+            Model model
 
     ) {
         commentServiceImp.deleteReview(instructorId, reviewId);
