@@ -2,12 +2,10 @@ package com.example.homeGym.instructor.dto;
 
 import com.example.homeGym.instructor.entity.Gender;
 import com.example.homeGym.instructor.entity.Instructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

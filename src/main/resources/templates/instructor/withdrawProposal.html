@@ -9,19 +9,21 @@
 <button id="withdrawButton">회원 탈퇴</button>
 
 <script>
-    <!--버튼 클릭시 회원탈퇴 신청과정    -->
     document.getElementById('withdrawButton').addEventListener('click', function() {
         fetch('/instructor/withdraw', {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
-            .then(response => response.text())
+            .then(response => response.json())  // JSON 형식으로 응답을 기대하고 파싱
             .then(data => {
-                alert(data);  // 응답 데이터를 알림 창으로 표시
-                window.location.href = '/';  // 확인을 누르면 홈 화면으로 리디렉션
+                alert(data.message);  // 응답 데이터 중 message를 알림 창으로 표시
+                window.location.href = '/';  // 확인 후 홈 화면으로 리디렉션
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('탈퇴 신청 과정에서 오류가 발생했습니다.');  // 오류 알림
+                alert('탈퇴 신청 과정에서 오류가 발생했습니다.');
             });
     });
 </script>
