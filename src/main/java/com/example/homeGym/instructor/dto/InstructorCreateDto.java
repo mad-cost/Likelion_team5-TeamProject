@@ -4,6 +4,8 @@ import com.example.homeGym.instructor.entity.Gender;
 import com.example.homeGym.instructor.entity.Instructor;
 import lombok.*;
 
+import java.util.Collections;
+
 @Getter
 @Setter
 @Builder
@@ -39,7 +41,7 @@ public class InstructorCreateDto {
                 .birthyear(entity.getBirthyear())
                 .birthday(entity.getBirthday())
                 .career(entity.getCareer())
-                .profileImageUrl(entity.getProfileImageUrl())
+                .profileImageUrl(entity.getProfileImageUrl().toString())
                 .certificate(entity.getCertificate())
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
@@ -59,7 +61,7 @@ public class InstructorCreateDto {
                 .birthday(this.birthday)
                 .state(Instructor.InstructorState.REGISTRATION_PENDING)
                 .career(this.career)
-                .profileImageUrl(this.profileImageUrl)
+                .profileImageUrl(Collections.singletonList(this.profileImageUrl))
                 .certificate(this.certificate)
                 .email(this.email)
                 .phone(this.phone)

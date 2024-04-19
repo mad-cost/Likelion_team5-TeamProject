@@ -26,6 +26,10 @@ public class InstructorService {
     public boolean isLoginIdAvailable(String loginId) {
         return !instructorRepository.existsByLoginId(loginId);
     }
+    //이메일 존재 확인
+    public boolean isEmailAvailable(String email) {
+        return !instructorRepository.existsByEmail(email);
+    }
 
     //회원탈퇴 신청
     public String withdrawalProposal(Long instructorId) {

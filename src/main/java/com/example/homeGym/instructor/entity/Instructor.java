@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -32,7 +33,8 @@ public class Instructor {
     @Setter
     private String career;
     @Setter
-    private String profileImageUrl;
+    @ElementCollection
+    private List<String> profileImageUrl;
     @Setter
     private String certificate;
     @Setter

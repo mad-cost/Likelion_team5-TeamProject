@@ -57,12 +57,20 @@ public class InstructorController {
         return "redirect:/instructor/success";
     }
 
-    //로그인 아이디 중복확인
+    //로그인 아이디 중복 검사
     @PostMapping("/check-loginId")
     @ResponseBody
     public ResponseEntity<?> checkLoginId(@RequestBody Map<String, String> request) {
         String loginId = request.get("loginId");
         boolean isAvailable = instructorService.isLoginIdAvailable(loginId);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+    // 이메일 중복 검사
+    @PostMapping("/check-email")
+    @ResponseBody
+    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean isAvailable = instructorService.isEmailAvailable(email);
         return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
     }
 
