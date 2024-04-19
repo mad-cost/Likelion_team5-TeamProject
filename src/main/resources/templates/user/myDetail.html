@@ -71,7 +71,9 @@
                 <p>리뷰 있음</p>
                 <p th:text="${reviews.memo}"></p>
                 <p th:text="${reviews.stars}"></p>
-                <img th:src="@{${reviews.imageUrl}}" alt="img"/>
+                <div th:unless="${reviews.imageUrl.isEmpty()}" th:each="image : ${reviews.imageUrl}">
+                  <img th:src="@{${image}}" alt="img">
+                </div>
                 <form action="/user/review" method="post">
                   <input type="hidden" name="_method" value="put">
                   <input type="hidden" name="reviewId" th:value="${reviews.id}">

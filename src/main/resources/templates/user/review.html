@@ -6,7 +6,7 @@
 </head>
 <body>
     <form enctype="multipart/form-data" method="post" action="/user/review">
-        <input type="file" name="image">
+        <input type="file" name="images" multiple>
         <input type="hidden" name="userProgramId" th:value="${userProgramId}">
         <input type="submit" value="작성">
     </form>

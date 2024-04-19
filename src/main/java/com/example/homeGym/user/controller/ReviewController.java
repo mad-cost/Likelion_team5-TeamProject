@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -38,13 +39,13 @@ public class ReviewController {
     @PostMapping("review")
     @ResponseBody
     public String reviewWrite(
-            @RequestParam("image")
-            MultipartFile image,
+            @RequestParam("images")
+            List<MultipartFile> images,
             @RequestParam("userProgramId")
             Long userProgramId
     ){
         try {
-            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, image);
+            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
             return "good";
         }catch (IOException e){
             return "error";
