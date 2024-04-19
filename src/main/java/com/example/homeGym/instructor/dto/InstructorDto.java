@@ -41,7 +41,7 @@ public class InstructorDto {
                 .birthday(entity.getBirthday())
                 .state(entity.getState())
                 .career(entity.getCareer())
-                .profileImageUrl(entity.getProfileImageUrl().toString())
+                .profileImageUrl(entity.getProfileImageUrl())
                 .certificate(entity.getCertificate())
                 .medal(entity.getMedal())
                 .email(entity.getEmail())

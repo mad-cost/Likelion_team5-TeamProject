@@ -2,6 +2,8 @@ package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
+import com.example.homeGym.instructor.dto.InstructorProfileDto;
+import com.example.homeGym.instructor.dto.InstructorWithdrawalDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
@@ -80,31 +82,38 @@ public class InstructorController {
 
 
     @GetMapping("/withdraw")
-    public String withdrawPage(){
+    public String showWithdrawForm(Model model) {
+        model.addAttribute("withdrawal", new InstructorWithdrawalDto());
         return "/instructor/withdrawProposal";
     }
 
 
     @PostMapping("/withdraw")
-    @ResponseBody  // Ajax 요청에 적합하게 JSON 응답을 반환하도록 수정
-    public ResponseEntity<?> withdraw() {
-        // 임시로 ID를 설정. 인증된 사용자의 ID를 사용하려면 주석 처리된 코드를 활성화
-        Long instructorId = 1L; // 테스트용 1번 ID
-
-        String resultMessage = instructorService.withdrawalProposal(instructorId);
-        return ResponseEntity.ok(Collections.singletonMap("message", resultMessage));
+    public String submitWithdrawForm(@ModelAttribute("withdrawal") InstructorWithdrawalDto withdrawalDto, Model model) {
+        String message = instructorService.withdrawalProposal(1L, withdrawalDto.getWithdrawalReason());
+        model.addAttribute("message", message);
+        return "instructor/withdrawResult";
     }
 
     // 강사 페이지
-    @GetMapping("/{instructorId}")
-    public void InstructorPage(
-            @PathVariable("instructorId") Long instructorId
-    ) {
+    @GetMapping("/")
+    public String InstructorPage(Model model) {
 
+
+        model.addAttribute("profileDto", new InstructorProfileDto(
+                //임시 데이터 넣기
+                "/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
+        return "instructor/instructor-page";
+    }
+
+    //강사 정보 수정 페이지
+    @GetMapping("/profile")
+    public String profileUpdatePage(){
+        return "instructor/instructor-update";
     }
 
     // 강사 정보 수정
-    @PutMapping("/{instructorId}/profile")
+    @PutMapping("/profile")
     public void profile(
             @PathVariable("instructorId") Long instructorId
     ) {

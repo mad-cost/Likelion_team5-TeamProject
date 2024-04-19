@@ -26,13 +26,14 @@ public class InstructorService {
     public boolean isLoginIdAvailable(String loginId) {
         return !instructorRepository.existsByLoginId(loginId);
     }
+
     //이메일 존재 확인
     public boolean isEmailAvailable(String email) {
         return !instructorRepository.existsByEmail(email);
     }
 
     //회원탈퇴 신청
-    public String withdrawalProposal(Long instructorId) {
+    public String withdrawalProposal(Long instructorId, String withdrawalReason) {
         Optional<Instructor> instructorOpt = instructorRepository.findById(instructorId);
 
         if (!instructorOpt.isPresent()) {
@@ -45,8 +46,13 @@ public class InstructorService {
         }
 
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_PENDING);
+        instructor.setWithdrawalReason(withdrawalReason);
         instructorRepository.save(instructor);
         return "탈퇴 신청이 완료되었습니다.";
     }
+
+    //강사페이지에서 정산금 띄우기
+
+
 
 }

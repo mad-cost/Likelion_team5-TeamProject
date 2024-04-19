@@ -33,8 +33,7 @@ public class Instructor {
     @Setter
     private String career;
     @Setter
-    @ElementCollection
-    private List<String> profileImageUrl;
+    private String profileImageUrl;
     @Setter
     private String certificate;
     @Setter
@@ -49,6 +48,11 @@ public class Instructor {
     private String bankName;
     @Setter
     private String account;
+    @Setter
+    private String withdrawalReason;
+    @Setter
+    private Double rating;   //별점 평점
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

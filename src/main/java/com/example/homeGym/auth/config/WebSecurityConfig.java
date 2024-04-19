@@ -34,15 +34,17 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/user/main",
                                 "/token/issue",
-                                "/token/validate"
+                                "/token/validate",
+                                "/instructor",
+                                "/instructor/**"
                         )
                         .permitAll()
 
                         .requestMatchers(
                                 "/user/signup",
                                 "/user/signin",
-                                "/instructor/signup",
-                                "/instructor/**"
+                                "/instructor/signup"
+
                         )
                         .anonymous()
                         .anyRequest()
