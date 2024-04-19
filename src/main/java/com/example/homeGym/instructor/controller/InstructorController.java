@@ -3,9 +3,11 @@ package com.example.homeGym.instructor.controller;
 import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,12 +15,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Controller
+@Slf4j
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
 
     private final InstructorService instructorService;
+    private final InstructorRepository instructorRepository;
 
     //인증쪽에서 작성
    /* // 강사 로그인
@@ -44,9 +51,21 @@ public class InstructorController {
         return "/instructor/proposal";
     }
     @PostMapping("/proposal")
-    public void proposal(InstructorCreateDto instructorCreateDto) {
+    public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
+        log.info("Creating instructor with name: {}", instructorCreateDto.getName());
         instructorService.createInstructor(instructorCreateDto);
+        return "redirect:/instructor/success";
     }
+
+    //로그인 아이디 중복확인
+    @PostMapping("/check-loginId")
+    @ResponseBody
+    public ResponseEntity<?> checkLoginId(@RequestBody Map<String, String> request) {
+        String loginId = request.get("loginId");
+        boolean isAvailable = instructorService.isLoginIdAvailable(loginId);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+
 
     @GetMapping("/withdraw")
     public String withdrawPage(){
@@ -55,15 +74,13 @@ public class InstructorController {
 
 
     @PostMapping("/withdraw")
-    public String withdraw(Model model) {
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomInstructorDetails userDetails = (CustomInstructorDetails) authentication.getPrincipal();
-        Long instructorId = userDetails.getInstructor().getId();*/
+    @ResponseBody  // Ajax 요청에 적합하게 JSON 응답을 반환하도록 수정
+    public ResponseEntity<?> withdraw() {
+        // 임시로 ID를 설정. 인증된 사용자의 ID를 사용하려면 주석 처리된 코드를 활성화
+        Long instructorId = 1L; // 테스트용 1번 ID
 
-        Long instructorId = 1L;// 테스트용 1번 ID
         String resultMessage = instructorService.withdrawalProposal(instructorId);
-        model.addAttribute("message", resultMessage);
-        return "/instructor/withdrawResult"; // 탈퇴 결과를 보여주는 뷰 페이지
+        return ResponseEntity.ok(Collections.singletonMap("message", resultMessage));
     }
 
     // 강사 페이지

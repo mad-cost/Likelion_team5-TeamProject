@@ -31,6 +31,8 @@ public class CommentController {
             Long instructorId,
             @PathVariable("reviewId")
             Long reviewId,
+            @PathVariable("commentId")
+            Long commentId,
             @RequestBody
             CommentDto commentDto
     ) {
@@ -44,7 +46,9 @@ public class CommentController {
             @PathVariable("instructorId")
             Long instructorId,
             @PathVariable("reviewId")
-            Long reviewId
+            Long reviewId,
+            @PathVariable("commentId")
+            Long commentId
 
     ) {
         commentServiceImp.deleteReview(instructorId, reviewId);

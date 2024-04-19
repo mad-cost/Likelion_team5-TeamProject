@@ -42,20 +42,22 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
         if (registrationId.equals("kakao")) {
             log.info(oAuth2User.getAttributes().toString());
             // Kakao에서 받아온 정보다
-            attributes.put("provider","kakao");
             attributes.put("id",oAuth2User.getAttribute("id"));
             Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
+            attributes.put("provider","kakao");
+            attributes.put("name", kakaoAccount.get("name"));
             attributes.put("email", kakaoAccount.get("email"));
-            Map<String, Object> kakaoProfile
-                    = (Map<String, Object>) kakaoAccount.get("profile");
-            attributes.put("gender",kakaoProfile.get("gender"));
+            attributes.put("gender",kakaoAccount.get("gender"));
             attributes.put("profile_image_url", kakaoProfile.get("profile_image_url"));
-            nameAttribute = "nickname";
+            attributes.put("birthday", kakaoAccount.get("birthday"));
+            attributes.put("birthyear", kakaoAccount.get("birthyear"));
+            nameAttribute = "email";
         }
 
         log.info(attributes.toString());
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_REGISTER")),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes,
                 nameAttribute
         );

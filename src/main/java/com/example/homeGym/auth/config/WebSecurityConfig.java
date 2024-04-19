@@ -32,14 +32,17 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user/home"
+                                "/user/main",
+                                "/token/issue",
+                                "/token/validate"
                         )
                         .permitAll()
 
                         .requestMatchers(
                                 "/user/signup",
                                 "/user/signin",
-                                "/instructor/signup"
+                                "/instructor/signup",
+                                "/instructor/**"
                         )
                         .anonymous()
                         .anyRequest()
