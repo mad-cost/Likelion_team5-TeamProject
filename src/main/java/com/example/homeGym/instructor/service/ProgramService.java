@@ -22,4 +22,11 @@ public class ProgramService {
     }
     return programDtos;
   }
+
+//  public List<ProgramDto> findAllByInstructorIdConvertProgramId(Long instructorId){
+//    List<Program> programs = new ArrayList<>();
+//    for (Program program : programRepository.findAllByInstructorId(instructorId)){
+//      programs.add(ProgramDto.fromEntity(program.getId()));
+//    }
+//  }
 }
