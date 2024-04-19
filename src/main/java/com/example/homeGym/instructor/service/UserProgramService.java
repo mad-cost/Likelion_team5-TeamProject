@@ -73,13 +73,25 @@ public class UserProgramService {
         return userProgramDtos;
     }
 
-    public void deleteByProgram(List<Long> userPrograms, Long programId){ //(1, 3) / (2)
+    public void deleteByProgram(List<Long> userPrograms, Long programId){
         List<UserProgram> userIds = userProgramRepository.findAllById(userPrograms);
         for (UserProgram userId : userIds){
             if (userId.getProgramId().equals(programId)){
                 userProgramRepository.delete(userId);
                 break;
             }
+        }
+    }
+
+    public void userCountUpdate(List<Long> userProgramsId, Long programId, Integer count){ //1, 3 / 3/ 14
+        List<UserProgram> userProgramIds = userProgramRepository.findAllById(userProgramsId);
+        for (UserProgram userProgram : userProgramIds){
+            if (userProgram.getProgramId().equals(programId)){
+                userProgram.setCount(count);
+                UserProgramDto.fromEntity(userProgramRepository.save(userProgram));
+                break;
+            }
+            else continue;
         }
     }
 
