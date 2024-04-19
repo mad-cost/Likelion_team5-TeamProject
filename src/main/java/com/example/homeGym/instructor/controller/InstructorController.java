@@ -54,7 +54,11 @@ public class InstructorController {
     public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
         log.info("Creating instructor with name: {}", instructorCreateDto.getName());
         instructorService.createInstructor(instructorCreateDto);
-        return "redirect:/instructor/success";
+        return "redirect:/instructor/proposal/success";
+    }
+    @GetMapping("/proposal/success")
+    public String proposalSuccessPage(){
+        return "/instructor/proposal-success";
     }
 
     //로그인 아이디 중복 검사
