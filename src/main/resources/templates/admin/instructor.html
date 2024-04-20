@@ -75,6 +75,8 @@
       </div>
     </nav>
   </div>
+
+  <!--  @@@@@@ 본문 @@@@@@-->
   <div id="layoutSidenav_content">
     <main>
       <div class="container-fluid px-4">
@@ -83,17 +85,34 @@
           <li class="breadcrumb-item active">[[${instructor.email}]]</li>
           <li class="breadcrumb-item active">[[${instructor.state}]]</li>
         </ol>
+  <!--메달 수여하기-->
         <div class="card mb-4">
           <div class="card-body">
             <p class="mb-0">
               This page is an example of using static navigation. By removing the
-              <code>.sb-nav-fixed</code>
-              class from the
-              <code>body</code>
-              , the top navigation and side navigation will become static on scroll. Scroll down this page to see an example.
             </p>
           </div>
         </div>
+
+        <tr th:each="program: ${programs}">
+          <div class="card mb-4">
+            <div class="card-body">
+                <td><h3 th:text="${program.title}"></h3></td>
+              <hr>
+              <td><h5 th:text="${program.description}"></h5></td>
+              <td><h5 th:text="${program.curriculum}"></h5></td>
+              <div class="card mb-3">
+                <div class="card-body">
+<!--                  <form class="d-flex align-items-center justify-content-between" th:action="@{'/admin/user/'+${user.id}+'/update/program/'+${userProgram.program.id}}" method="post">-->
+                    <a>이번달 금액 : [[${program.getMonthAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
+<!--                  </form>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </tr>
+
+
         <div style="height: 100vh"></div>
         <div class="card mb-4"><div class="card-body">When scrolling, the navigation stays at the top of the page. This is the end of the static navigation demo.</div></div>
       </div>
