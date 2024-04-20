@@ -98,7 +98,7 @@ public class UserProgramService {
         }
     }
 
-    public List<Integer> totalAmount(List<Long> programLongId){ //1,4
+    public List<Integer> totalAmount(List<Long> programLongId){
         List<Integer> result = new ArrayList<>();
 //        user_program에서 programId에 해당하는 Id값 하나씩 가져오기
         for (Long programId : programLongId){

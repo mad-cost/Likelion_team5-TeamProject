@@ -80,7 +80,22 @@
   <div id="layoutSidenav_content">
     <main>
       <div class="container-fluid px-4">
-        <h1 class="mt-4">[[${instructor.name}]]</h1>
+
+        <div class="d-flex align-items-center justify-content-between ">
+          <div class="mb-0 d-flex align-items-center justify-content-between">
+            <h1 class="mt-4">[[${instructor.name}]]</h1><a class="me-3"></a>
+            <div th:if="${instructor.medal == 'Gold'}">
+              <img class="mt-4" src="/assets/img/goldMedal.png" alt="goldMedal" style="width: 46px; height: 57px;">
+            </div>
+            <div th:if="${instructor.medal == 'Silver'}">
+              <img class="mt-4" src="/assets/img/sliverMedal.png" alt="goldMedal" style="width: 45px; height: 57px;">
+            </div>
+            <div th:if="${instructor.medal == 'Bronze'}">
+              <img class="mt-4" src="/assets/img/bronzeMedal.png" alt="goldMedal" style="width: 44px; height: 52px;">
+            </div>
+          </div>
+        </div>
+
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item active">[[${instructor.email}]]</li>
           <li class="breadcrumb-item active">[[${instructor.state}]]</li>
@@ -88,11 +103,19 @@
   <!--메달 수여하기-->
         <div class="card mb-4">
           <div class="card-body">
-            <p class="mb-0">
-              This page is an example of using static navigation. By removing the
-            </p>
+            <form class="d-flex align-items-center justify-content-between" th:action="@{'/admin/instructor/'+${instructor.id}+'/medal'} " method="post">
+              <p class="mb-0 d-flex align-items-center justify-content-between">
+                <code>메달 수여하기</code><a class="me-2"></a>
+                <input type="submit" class="btn btn-warning" value="Gold" name="Gold"><a class="me-1"></a>
+                <input type="submit" class="btn btn-secondary" value="Silver" name="Silver"><a class="me-1"></a>
+                <input type="submit" class="btn btn-brown" value="Bronze" name="Bronze"><a class="me-1"></a>
+                <input type="submit" class="btn btn-primary" value="Unranked" name="Unranked"><a class="me-1"></a>
+              </p>
+            </form>
           </div>
         </div>
+
+
 
         <tr th:each="program: ${programs}">
           <div class="card mb-4">
@@ -103,9 +126,7 @@
               <td><h5 th:text="${program.curriculum}"></h5></td>
               <div class="card mb-3">
                 <div class="card-body">
-<!--                  <form class="d-flex align-items-center justify-content-between" th:action="@{'/admin/user/'+${user.id}+'/update/program/'+${userProgram.program.id}}" method="post">-->
                     <a>이번달 금액 : [[${program.getMonthAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
-<!--                  </form>-->
                 </div>
               </div>
             </div>
