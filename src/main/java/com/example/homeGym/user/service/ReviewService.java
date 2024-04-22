@@ -42,7 +42,7 @@ public class ReviewService {
 
     }
 
-    public ReviewDto createReview(Long userId, Long userProgramId, List<MultipartFile> images) throws IOException{
+    public ReviewDto createReview(Long userId, Long userProgramId, List<MultipartFile> images, Integer rating, String memo) throws IOException{
         List<String> imagePaths = new ArrayList<>();
         int count = 0;
         for (MultipartFile image :
@@ -56,8 +56,8 @@ public class ReviewService {
         }
 
         Review review = new Review();
-        review.setMemo("test중입니다");
-        review.setStars(4);
+        review.setMemo(memo);
+        review.setStars(rating);
         review.setUserId(userId);
         review.setUserProgramId(userProgramId);
         review.setImageUrl(imagePaths);
@@ -89,5 +89,62 @@ public class ReviewService {
                 }
             }
         }
+    }
+
+
+    public ReviewDto updateReview(Long reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return ReviewDto.fromEntity(review);
+
+    }
+
+    @Transactional
+    public void updateReview(Long userId, Long reviewId, List<MultipartFile> images, Integer rating, String memo){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        //저장된 사진 삭제
+        //리뷰에 연관된 이미지 파일 경로를 가져오기.
+        List<String> imagePaths = review.getImageUrl();
+
+        //이미지 파일이 존재하면 삭제
+        if (!imagePaths.isEmpty()){
+            for (String imagePath :
+                    imagePaths) {
+                String mediaPath = "media/";
+                String fullPath = mediaPath + imagePath.replace("/static/", "");
+                try{
+                    Files.deleteIfExists(Path.of(fullPath));
+                }catch (IOException e){
+                    log.error(e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        List<String> newImagePaths = new ArrayList<>();
+        Long userProgramId = review.getUserProgramId();
+        int count = 0;
+        if (images != null) {
+            for (MultipartFile image :
+                    images) {
+                if (image.getSize() != 0){
+                    String imgPath = fileHandlerUtils.saveFile("review",
+                            String.format("review_image_user_%d_program_%d_%d", userId, userProgramId, count), image);
+                    newImagePaths.add(imgPath);
+                    count ++;
+                }
+            }
+        }
+
+        review.setMemo(memo);
+        review.setStars(rating);
+        review.setUserId(userId);
+        review.setUserProgramId(userProgramId);
+        review.setImageUrl(newImagePaths);
+        ReviewDto.fromEntity(reviewRepository.save(review));
+
     }
 }

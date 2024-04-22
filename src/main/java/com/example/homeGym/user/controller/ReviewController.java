@@ -54,7 +54,7 @@ public class ReviewController {
         System.out.println("rating = " + rating);
         System.out.println("userProgramId = " + userProgramId);
         try {
-            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
+            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images, rating, memo);
             return "good";
         }catch (IOException e){
             return "error";
@@ -73,13 +73,39 @@ public class ReviewController {
     }
 
     @PutMapping("review")
-    @ResponseBody
-    public String updateReview(
+    public String updateReviewPage(
             @RequestParam("reviewId")
-            Long reviewId
+            Long reviewId,
+            Model model
     ){
 
-        return "update";
+        model.addAttribute("review", reviewService.updateReview(reviewId));
+        return "user/updatereview";
     }
 
+    @PostMapping("review/update")
+    @ResponseBody
+    public String updateReview(
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images,
+            @RequestParam("memo")
+            String memo,
+            @RequestParam("rating")
+            Integer rating,
+            @RequestParam("reviewId")
+            Long reviewId
+
+    ){
+        System.out.println("images = " + images);
+        if (images != null){
+            for (MultipartFile image :
+                    images) {
+                System.out.println(image.getOriginalFilename());
+                System.out.println(image.getSize());
+            }
+        }
+        reviewService.updateReview(1L, reviewId, images, rating, memo);
+
+        return "test";
+    }
 }
