@@ -27,7 +27,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public CommentDto createReview(Long instructorId, CommentDto commentDto) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
-        // instructor가 존제하지 않을 경우
+        // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
 
