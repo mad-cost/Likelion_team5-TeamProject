@@ -1,23 +1,20 @@
 package com.example.homeGym.instructor.controller;
 
-import com.example.homeGym.CustomInstructorDetails;
+import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorProfileDto;
+import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.dto.InstructorWithdrawalDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Controller
@@ -28,6 +25,7 @@ public class InstructorController {
 
     private final InstructorService instructorService;
     private final InstructorRepository instructorRepository;
+    private final AuthenticationFacade facade;
 
     //인증쪽에서 작성
    /* // 강사 로그인
@@ -98,25 +96,29 @@ public class InstructorController {
     // 강사 페이지
     @GetMapping("/")
     public String InstructorPage(Model model) {
+        //인증에서 강사 정보 가져오기
+//        Instructor instructor = facade.getCurrentInstructor();
+//        model.addAttribute("instructor", instructor);
 
-
+        //임시 데이터 넣기
         model.addAttribute("profileDto", new InstructorProfileDto(
-                //임시 데이터 넣기
                 "/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
         return "instructor/instructor-page";
     }
 
     //강사 정보 수정 페이지
     @GetMapping("/profile")
-    public String profileUpdatePage(){
+    public String profileUpdatePage(Model model){
+        Instructor instructor = facade.getCurrentInstructor();
+        model.addAttribute("instructor", instructor);
+        InstructorUpdateDto updateDto = new InstructorUpdateDto();
+        model.addAttribute("updateDto", updateDto);
         return "instructor/instructor-update";
     }
 
     // 강사 정보 수정
     @PutMapping("/profile")
-    public void profile(
-            @PathVariable("instructorId") Long instructorId
-    ) {
+    public void profile() {
 
     }
 
