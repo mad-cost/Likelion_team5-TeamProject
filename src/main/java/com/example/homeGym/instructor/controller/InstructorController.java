@@ -1,24 +1,31 @@
 package com.example.homeGym.instructor.controller;
 
-import com.example.homeGym.CustomInstructorDetails;
+import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
+import com.example.homeGym.instructor.dto.InstructorProfileDto;
+import com.example.homeGym.instructor.dto.InstructorUpdateDto;
+import com.example.homeGym.instructor.dto.InstructorWithdrawalDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Controller
+@Slf4j
 @RequestMapping("instructor")
 @RequiredArgsConstructor
 public class InstructorController {
 
     private final InstructorService instructorService;
+    private final InstructorRepository instructorRepository;
+    private final AuthenticationFacade facade;
 
     //인증쪽에서 작성
    /* // 강사 로그인
@@ -44,41 +51,74 @@ public class InstructorController {
         return "/instructor/proposal";
     }
     @PostMapping("/proposal")
-    public void proposal(InstructorCreateDto instructorCreateDto) {
+    public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
+        log.info("Creating instructor with name: {}", instructorCreateDto.getName());
         instructorService.createInstructor(instructorCreateDto);
+        return "redirect:/instructor/proposal/success";
+    }
+    @GetMapping("/proposal/success")
+    public String proposalSuccessPage(){
+        return "/instructor/proposal-success";
     }
 
+    //로그인 아이디 중복 검사
+    @PostMapping("/check-loginId")
+    @ResponseBody
+    public ResponseEntity<?> checkLoginId(@RequestBody Map<String, String> request) {
+        String loginId = request.get("loginId");
+        boolean isAvailable = instructorService.isLoginIdAvailable(loginId);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+    // 이메일 중복 검사
+    @PostMapping("/check-email")
+    @ResponseBody
+    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean isAvailable = instructorService.isEmailAvailable(email);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+
+
     @GetMapping("/withdraw")
-    public String withdrawPage(){
+    public String showWithdrawForm(Model model) {
+        model.addAttribute("withdrawal", new InstructorWithdrawalDto());
         return "/instructor/withdrawProposal";
     }
 
 
     @PostMapping("/withdraw")
-    public String withdraw(Model model) {
-        /* Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomInstructorDetails userDetails = (CustomInstructorDetails) authentication.getPrincipal();
-        Long instructorId = userDetails.getInstructor().getId();*/
-
-        Long instructorId = 1L;// 테스트용 1번 ID
-        String resultMessage = instructorService.withdrawalProposal(instructorId);
-        model.addAttribute("message", resultMessage);
-        return "/instructor/withdrawResult"; // 탈퇴 결과를 보여주는 뷰 페이지
+    public String submitWithdrawForm(@ModelAttribute("withdrawal") InstructorWithdrawalDto withdrawalDto, Model model) {
+        String message = instructorService.withdrawalProposal(1L, withdrawalDto.getWithdrawalReason());
+        model.addAttribute("message", message);
+        return "instructor/withdrawResult";
     }
 
     // 강사 페이지
-    @GetMapping("/{instructorId}")
-    public void InstructorPage(
-            @PathVariable("instructorId") Long instructorId
-    ) {
+    @GetMapping("/")
+    public String InstructorPage(Model model) {
+        //인증에서 강사 정보 가져오기
+//        Instructor instructor = facade.getCurrentInstructor();
+//        model.addAttribute("instructor", instructor);
 
+        //임시 데이터 넣기
+        model.addAttribute("profileDto", new InstructorProfileDto(
+                "/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
+        return "instructor/instructor-page";
+    }
+
+    //강사 정보 수정 페이지
+    @GetMapping("/profile")
+    public String profileUpdatePage(Model model){
+        Instructor instructor = facade.getCurrentInstructor();
+        model.addAttribute("instructor", instructor);
+        InstructorUpdateDto updateDto = new InstructorUpdateDto();
+        model.addAttribute("updateDto", updateDto);
+        return "instructor/instructor-update";
     }
 
     // 강사 정보 수정
-    @PutMapping("/{instructorId}/profile")
-    public void profile(
-            @PathVariable("instructorId") Long instructorId
-    ) {
+    @PutMapping("/profile")
+    public void profile() {
 
     }
 

@@ -16,14 +16,15 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+// 강사의 남은 정산금
 public class SettlementFee {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
-    private Integer currentFee;
+    private Integer currentFee; // 정산 가능한 금액 즉, currentFee(300) - amount(100) = currentFee(200)
     @Setter
-    private Integer totalFee;
+    private Integer totalFee; // 강사가 벌은 총 금액
     @Setter
     private Long instructorId;
     @CreationTimestamp

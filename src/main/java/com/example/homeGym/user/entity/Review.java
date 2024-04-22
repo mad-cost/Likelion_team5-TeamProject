@@ -1,9 +1,6 @@
 package com.example.homeGym.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -31,7 +29,8 @@ public class Review {
     private Integer stars;
 
     @Setter
-    private String imageUrl;
+    @ElementCollection
+    private List<String> imageUrl;
 
     @Setter
     private String memo;
