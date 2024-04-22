@@ -18,7 +18,13 @@ public enum CustomGlobalErrorCode {
     SCHEDULE_NOT_EXISTS(404,"4003", "존재하지 않는 스케쥴입니다."),
 
     // 프로그램 괸련 에러
-    PROGRAM_NOT_EXISTS(404,"4003", "존재하지 않는 프로그램입니다.");
+    PROGRAM_NOT_EXISTS(404,"4003", "존재하지 않는 프로그램입니다."),
+
+    // 정산 관련 에러
+    SETTLEMENT_EXCEEDS_AVAILABLE(400, "9001", "정산 신청 금액이 가능 금액을 초과합니다."),
+    SETTLEMENT_NOT_FOUND(404, "9002", "정산 정보를 찾을 수 없습니다."),
+    SETTLEMENT_NOT_ELIGIBLE(403, "9003", "정산 자격이 충족되지 않았습니다."),
+    SETTLEMENT_INVALID(404, "9002","정산금액이 유효하지 않습니다.");
 
     private int status;
     private String code;
