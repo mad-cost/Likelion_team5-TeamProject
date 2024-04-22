@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Long> {
 
-//    Program save(Program program, Instructor instructor);
+  List<Program> findAllByInstructorId(Long id);
+
 }

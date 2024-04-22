@@ -33,6 +33,14 @@ public class ProgramService {
     return programDtos;
   }
 
+
+//  public List<ProgramDto> findAllByInstructorIdConvertProgramId(Long instructorId){
+//    List<Program> programs = new ArrayList<>();
+//    for (Program program : programRepository.findAllByInstructorId(instructorId)){
+//      programs.add(ProgramDto.fromEntity(program.getId()));
+//    }
+//  }
+
   // 프로그램 생성
   @Transactional
   public ProgramDto createProgram(ProgramDto programDto) {
@@ -67,5 +75,6 @@ public class ProgramService {
     // 프로그램 강사가 현재 접속 강사와 다르면
 //    if (!program.get)
   }
+
 
 }

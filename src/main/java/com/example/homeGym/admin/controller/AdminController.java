@@ -1,7 +1,7 @@
 package com.example.homeGym.admin.controller;
 
-import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.instructor.dto.UserProgramDto;
+import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.UserService;
@@ -21,12 +21,14 @@ public class AdminController {
   private final UserService userService;
   private final UserProgramService userProgramService;
   private final ProgramServiceForUser programServiceForUser;
+  private final InstructorService instructorService;
 
   @GetMapping
   public String admin(
           Model model
   ) {
     model.addAttribute("users", userService.findAllByOrderByName());
+    model.addAttribute("instructors", instructorService.findAllByOrderByName());
     return "admin/admin";
   }
 
