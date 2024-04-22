@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -21,7 +22,7 @@ public class ReviewDto {
     private Long userProgramId;
     private Long userId;
     private Integer stars;
-    private String imageUrl;
+    private List<String> imageUrl;
     private String memo;
     private LocalDateTime createdAt;
 
