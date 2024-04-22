@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성 페이지</title>
+    <!-- 부트스트랩 CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .image-container {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-container .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: red;
+            cursor: pointer;
+        }
+        .image-container .file-name {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #333;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .image-container .add-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: green;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .add-image-btn {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>게시글 작성 페이지</h1>
+    <form>
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea class="form-control" id="content" rows="5" placeholder="내용을 입력하세요"></textarea>
+        </div>
+        <div class="image-container-wrapper">
+            <div class="image-container" data-index="1">
+                <input type="file" class="d-none" accept="image/*">
+                <span class="file-name"></span>
+                <span class="delete-button">&times;</span>
+                <span class="add-image">+</span>
+            </div>
+            <div class="image-container" data-index="2">
+                <input type="file" class="d-none" accept="image/*">
+                <span class="file-name"></span>
+                <span class="delete-button">&times;</span>
+                <span class="add-image">+</span>
+            </div>
+            <div class="image-container" data-index="3">
+                <input type="file" class="d-none" accept="image/*">
+                <span class="file-name"></span>
+                <span class="delete-button">&times;</span>
+                <span class="add-image">+</span>
+            </div>
+        </div>
+        <div class="add-image-btn">
+            <button type="button" class="btn btn-success" id="add-image">+</button>
+        </div>
+        <button type="submit" class="btn btn-primary">게시</button>
+    </form>
+</div>
+
+<!-- 부트스트랩 JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#add-image').on('click', function() {
+            var imageIndex = $('.image-container-wrapper').children().length + 1;
+            if (imageIndex <= 5) {
+                var newImageContainer = $('<div class="image-container" data-index="' + imageIndex + '">');
+                var newInput = $('<input type="file" class="d-none" accept="image/*">');
+                var newFileName = $('<span class="file-name"></span>');
+                var deleteButton = $('<span class="delete-button">&times;</span>');
+                var addButton = $('<span class="add-image">+</span>');
+
+                newImageContainer.append(newInput);
+                newImageContainer.append(newFileName);
+                newImageContainer.append(deleteButton);
+                newImageContainer.append(addButton);
+
+                $('.image-container-wrapper').append(newImageContainer);
+            } else {
+                alert('이미지는 최대 5개까지 업로드 가능합니다.');
+            }
+        });
+
+        // + 버튼 클릭 시 해당 이미지 컨테이너의 파일 업로드 창을 엽니다.
+        $(document).on('click', '.add-image', function() {
+            $(this).siblings('input[type=file]').trigger('click');
+        });
+
+        // 파일이 선택되면 파일 이름을 해당 이미지 컨테이너에 표시합니다.
+        $(document).on('change', 'input[type=file]', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $(this).siblings('.file-name').text(fileName);
+        });
+
+        // 삭제 버튼 클릭 시 해당 이미지 컨테이너를 삭제합니다.
+        $(document).on('click', '.delete-button', function() {
+            $(this).parent('.image-container').remove();
+            // 남아 있는 이미지 컨테이너의 data-index를 다시 설정합니다.
+            $('.image-container').each(function(index) {
+                $(this).attr('data-index', index + 1);
+            });
+        });
+    });
+</script>
+</body>
+</html>

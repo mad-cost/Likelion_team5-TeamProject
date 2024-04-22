@@ -96,7 +96,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/program/{userProgramId}")
-    @ResponseBody
     public String userProgramDetail(
             @PathVariable("userId")
             Long userId,
@@ -127,6 +126,6 @@ public class UserController {
         System.out.println("reviewDto = " + reviewDto);
         model.addAttribute("program", userProgramDto);
 
-        return "test";
+        return "user/myDetail";
     }
 }
