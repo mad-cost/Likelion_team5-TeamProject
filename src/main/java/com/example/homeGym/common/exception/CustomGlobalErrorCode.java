@@ -15,7 +15,10 @@ public enum CustomGlobalErrorCode {
     AUTHENTICATION_FAILED(403, "8001", "인증 확인에 실패했습니다."),
 
     // 스켸줄 관련 에러
-    SCHEDULE_NOT_EXISTS(404,"4003", "존재하지 않는 스케쥴입니다.");
+    SCHEDULE_NOT_EXISTS(404,"4003", "존재하지 않는 스케쥴입니다."),
+
+    // 프로그램 괸련 에러
+    PROGRAM_NOT_EXISTS(404,"4003", "존재하지 않는 프로그램입니다.");
 
     private int status;
     private String code;

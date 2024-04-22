@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Create Review</title>
+  <script>
+      function submitReview() {
+          const contentValue = document.getElementById('contentValue').value;
+          const instructorId = document.getElementById('instructorId').value;
+          const reviewId = document.getElementById('reviewId').value;
+
+          fetch(`/instructor/${instructorId}/review/${reviewId}/comment`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ content: contentValue }),
+          })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      window.location.href = `/instructor/${instructorId}/review/${reviewId}/comment`;
+                  } else {
+                      alert(data.message);
+                  }
+              });
+      }
+  </script>
+</head>
+<body>
+
+<h1>Create Review</h1>
+
+<input type="hidden" id="instructorId" th:value="${instructorId}">
+<input type="hidden" id="reviewId" th:value="${reviewId}">
+
+<div>
+  <label for="contentValue">Content:</label>
+  <textarea id="contentValue" name="content" required></textarea>
+</div>
+<div>
+  <button type="button" onclick="submitReview()">Submit</button>
+</div>
+
+</body>
+</html>
