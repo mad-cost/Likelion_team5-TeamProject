@@ -181,6 +181,7 @@ private List<String> images
 
 ---
 
-Github Repository URL: 
+Github Repository URL: https://github.com/NarooSister/homeGym_likelion
 
+![스크린샷 2024-04-15 110207](https://github.com/NarooSister/homeGym_likelion/assets/150361471/242cd7fa-c12a-46e6-9299-25333358e9be)
 - 필수) 팀원들과 함께 찍은 인증샷(온라인 만남시 스크린 캡쳐)도 함께 업로드 해주세요 🙂
