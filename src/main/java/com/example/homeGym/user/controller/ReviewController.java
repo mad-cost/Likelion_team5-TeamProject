@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +40,23 @@ public class ReviewController {
     @PostMapping("review")
     @ResponseBody
     public String reviewWrite(
-            @RequestParam("images")
+            @RequestParam(value = "images", required = false)
             List<MultipartFile> images,
+            @RequestParam("memo")
+            String memo,
+            @RequestParam("rating")
+            Integer rating,
             @RequestParam("userProgramId")
             Long userProgramId
     ){
+        System.out.println("images = " + images);
+        System.out.println("memo = " + memo);
+        System.out.println("rating = " + rating);
+        System.out.println("userProgramId = " + userProgramId);
         try {
-            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
+            if (images!= null && !images.isEmpty()){
+                ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
+            }
             return "good";
         }catch (IOException e){
             return "error";
