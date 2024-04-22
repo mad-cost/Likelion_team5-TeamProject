@@ -2,12 +2,7 @@ package com.example.homeGym.admin.controller;
 
 
 import com.example.homeGym.admin.service.NumberUtils;
-import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
-import com.example.homeGym.instructor.dto.UserProgramDto;
-import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.UserProgram;
-import com.example.homeGym.instructor.repository.UserProgramRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
@@ -23,7 +18,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/instructor")
-public class AdminInstController {
+public class AdInstructorController {
   private final InstructorService instructorService;
   private final ProgramService programService;
   private final UserProgramService userProgramService;
