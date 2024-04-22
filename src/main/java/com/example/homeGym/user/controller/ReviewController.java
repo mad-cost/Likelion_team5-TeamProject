@@ -54,9 +54,7 @@ public class ReviewController {
         System.out.println("rating = " + rating);
         System.out.println("userProgramId = " + userProgramId);
         try {
-            if (images!= null && !images.isEmpty()){
-                ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
-            }
+            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
             return "good";
         }catch (IOException e){
             return "error";

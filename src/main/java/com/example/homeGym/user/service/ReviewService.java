@@ -1,7 +1,9 @@
 package com.example.homeGym.user.service;
 
 import com.example.homeGym.user.dto.ReviewDto;
+import com.example.homeGym.user.dto.UserDto;
 import com.example.homeGym.user.entity.Review;
+import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
 import com.example.homeGym.user.utils.FileHandlerUtils;
 import jakarta.transaction.Transactional;
@@ -26,11 +28,18 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final FileHandlerUtils fileHandlerUtils;
 
-    public ReviewDto findByUserProgramIdAndUserId(Long userProgramId, Long userId){
-        if (reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId).isPresent()){
-            return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
+    public List<ReviewDto> findByUserProgramIdAndUserId(Long userProgramId, Long userId){
+//        if (reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId).isPresent()){
+//
+//            return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
+//        }
+//        return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        for (Review review : reviewRepository.findAllByUserProgramIdAndUserId(userProgramId, userId)){
+            reviewDtos.add(ReviewDto.fromEntity(review));
         }
-        return ReviewDto.fromEntity(reviewRepository.findByUserProgramIdAndUserId(userProgramId, userId));
+        return reviewDtos;
+
     }
 
     public ReviewDto createReview(Long userId, Long userProgramId, List<MultipartFile> images) throws IOException{
@@ -38,10 +47,12 @@ public class ReviewService {
         int count = 0;
         for (MultipartFile image :
                 images) {
-            String imgPath = fileHandlerUtils.saveFile("review",
-                    String.format("review_image_user_%d_program_%d_%d", userId, userProgramId, count), image);
-            imagePaths.add(imgPath);
-            count ++;
+            if (image.getSize() != 0){
+                String imgPath = fileHandlerUtils.saveFile("review",
+                        String.format("review_image_user_%d_program_%d_%d", userId, userProgramId, count), image);
+                imagePaths.add(imgPath);
+                count ++;
+            }
         }
 
         Review review = new Review();

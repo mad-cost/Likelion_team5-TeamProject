@@ -67,25 +67,25 @@
           <h2 class="card-title">내 수업</h2>
             <div class="card inner-card">
               <p th:text="${program.program.title}"></p>
-              <div th:unless="${reviews.memo} == null">
+              <div th:unless="${reviews.isEmpty()}" th:each="review : ${reviews}">
                 <p>리뷰 있음</p>
-                <p th:text="${reviews.memo}"></p>
-                <p th:text="${reviews.stars}"></p>
-                <div th:unless="${reviews.imageUrl.isEmpty()}" th:each="image : ${reviews.imageUrl}">
+                <p th:text="${review.memo}"></p>
+                <p th:text="${review.stars}"></p>
+                <div th:unless="${review.imageUrl.isEmpty()}" th:each="image : ${review.imageUrl}">
                   <img th:src="@{${image}}" alt="img">
                 </div>
                 <form action="/user/review" method="post">
                   <input type="hidden" name="_method" value="put">
-                  <input type="hidden" name="reviewId" th:value="${reviews.id}">
+                  <input type="hidden" name="reviewId" th:value="${review.id}">
                   <input type="submit" value="수정">
                 </form>
                 <form action="/user/review" method="post">
                   <input type="hidden" name="_method" value="delete">
-                  <input type="hidden" name="reviewId" th:value="${reviews.id}">
+                  <input type="hidden" name="reviewId" th:value="${review.id}">
                   <input type="submit" value="삭제">
                 </form>
               </div>
-              <div th:if="${reviews.memo} == null">
+              <div th:if="${reviews.isEmpty()}">
                 <p>리뷰 없음</p>
                 <form action="/user/review" method="get">
                   <input type="hidden" th:value="${program.id}" name="userProgramId">

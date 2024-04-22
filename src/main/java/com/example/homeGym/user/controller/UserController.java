@@ -116,13 +116,14 @@ public class UserController {
         ReviewDto reviewDto = new ReviewDto();
 
         //TODO 후기 뭔가 이상해서 나중에 수정 예정
-        if (reviewService.findByUserProgramIdAndUserId(userProgramId, 1L) == null){
-            model.addAttribute("reviews", reviewDto);
-        }else {
-            reviewDto = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
-        }
+//        if (reviewService.findByUserProgramIdAndUserId(userProgramId, 1L) == null){
+//            model.addAttribute("reviews", reviewDto);
+//        }else {
+//            reviewDto = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
+//        }
+        List<ReviewDto> reviewDtos = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
 
-        model.addAttribute("reviews", reviewDto);
+        model.addAttribute("reviews", reviewDtos);
         System.out.println("reviewDto = " + reviewDto);
         model.addAttribute("program", userProgramDto);
 

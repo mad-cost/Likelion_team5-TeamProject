@@ -169,17 +169,25 @@
 
         // 파일이 선택되면 파일 이름을 해당 이미지 컨테이너에 표시합니다.
         $(document).on('change', 'input[type=file]', function() {
-            var file = this.files[0];
-            var reader = new FileReader();
-            var $imageContainer = $(this).parent('.image-container');
+            // 파일이 선택되었을 때만 실행
+            if (this.files.length > 0) {
+                var file = this.files[0];
+                var reader = new FileReader();
+                var $imageContainer = $(this).parent('.image-container');
 
-            reader.onload = function(e) {
+                reader.onload = function(e) {
+                    $imageContainer.find('img').remove(); // Remove existing image if any
+                    $imageContainer.prepend('<img src="' + e.target.result + '">');
+                    $imageContainer.find('.file-name').text(file.name); // Display file name
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // 파일을 선택하지 않은 경우 해당 이미지 컨테이너의 파일을 무시
+                var $imageContainer = $(this).parent('.image-container');
                 $imageContainer.find('img').remove(); // Remove existing image if any
-                $imageContainer.prepend('<img src="' + e.target.result + '">');
-                $imageContainer.find('.file-name').text(file.name); // Display file name
-            };
-
-            reader.readAsDataURL(file);
+                $imageContainer.find('.file-name').text(''); // Clear file name
+            }
         });
 
 
