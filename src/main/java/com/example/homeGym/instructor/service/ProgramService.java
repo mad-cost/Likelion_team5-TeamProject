@@ -7,19 +7,21 @@ import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.homeGym.instructor.entity.Program.*;
+
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProgramService {
   private final ProgramRepository programRepository;
@@ -61,37 +63,45 @@ public class ProgramService {
 
   // 프로그램 생성
   @Transactional
-  public ProgramDto createProgram(ProgramDto programDto) {
-    Instructor instructor = facade.getCurrentInstructor();
+  public void createProgram(ProgramDto programDto) {
+    Instructor currentInstructor = facade.getCurrentInstructor();
 
-    Program program = Program.builder()
-            .id(programDto.getId())
+    Program program = builder()
+            .instructorId(currentInstructor.getId())
             .category(programDto.getCategory())
             .title(programDto.getTitle())
             .description(programDto.getDescription())
             .supplies(programDto.getSupplies())
             .curriculum(programDto.getCurriculum())
             .price1(programDto.getPrice1())
-            .price10(programDto.getPrice1())
+            .price10(programDto.getPrice10())
             .price20(programDto.getPrice20())
             .build();
 
-    return ProgramDto.fromEntity(programRepository.save(program));
+    programRepository.save(program);
   }
 
   // 프로그램 수정
   @Transactional
   public void updateProgram(Long programId, ProgramDto programDto) {
-    Optional<Program> optionalProgram =programRepository.findById(programId);
-    // 프로그램이 없을 경우
-    if (optionalProgram.isEmpty())
+    Optional<Program> optionalProgram = programRepository.findById(programId);
+    if (optionalProgram.isEmpty()) {
       throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_NOT_EXISTS);
+    }
 
     Program program = optionalProgram.get();
-    Instructor instructor = facade.getCurrentInstructor();
+    Instructor currentInstructor = facade.getCurrentInstructor();
 
-    // 프로그램 강사가 현재 접속 강사와 다르면
-//    if (!program.get)
+    if (!program.getInstructorId().equals(currentInstructor.getId())) {
+      throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
+    }
+
+    program.setTitle(programDto.getTitle());
+    program.setDescription(programDto.getDescription());
+    program.setSupplies(programDto.getSupplies());
+    program.setCurriculum(programDto.getCurriculum());
+
+    programRepository.save(program);
   }
 //  모든 프로그램 가져오기
   public List<Program> findAll(){
@@ -140,4 +150,20 @@ public class ProgramService {
     return stateCreateDto;
   }
 
+  // 프로그램 삭제
+  @Transactional
+  public void deleteProgram(Long programId) {
+    Optional<Program> optionalProgram = programRepository.findById(programId);
+    if (optionalProgram.isEmpty()) {
+      throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_NOT_EXISTS);
+    }
+
+    Program program = optionalProgram.get();
+    Instructor currentInstructor = facade.getCurrentInstructor();
+    if (!program.getInstructorId().equals(currentInstructor.getId())) {
+      throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
+    }
+
+    programRepository.deleteById(programId);
+  }
 }
