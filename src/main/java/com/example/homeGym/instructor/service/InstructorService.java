@@ -2,27 +2,46 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+import com.example.homeGym.instructor.dto.InstructorReviewDto;
+import com.example.homeGym.instructor.dto.InstructorUpdateDto;
+import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.user.entity.Review;
+import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.repository.ReviewRepository;
+import com.example.homeGym.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
-
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final ReviewRepository reviewRepository;
+    private final PasswordEncoder passwordEncoder;
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
     public void createInstructor(InstructorCreateDto dto){
         log.info("Creating instructor with name: {}", dto.getName());
-        instructorRepository.save(dto.toEntity());
+        Instructor instructor = dto.toEntity();
+        instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
+        instructorRepository.save(instructor);
     }
     //로그인 아이디 존재 확인
     public boolean isLoginIdAvailable(String loginId) {
@@ -64,6 +83,28 @@ public class InstructorService {
     public InstructorDto findById(Long instructorId){
         return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
     }
+
+    //강사페이지에서 정산금 띄우기
+
+
+    //강사 정보 수정
+    @Transactional
+    public void updateInstructor(InstructorUpdateDto dto) {
+        Optional<Instructor> instructorOpt = instructorRepository.findById(dto.getId());
+
+        if (instructorOpt.isPresent()) {
+            Instructor instructor = instructorOpt.get();
+            dto.updateEntity(instructor); // DTO를 사용하여 엔티티 업데이트
+            instructorRepository.save(instructor);
+            log.info("Updated instructor with id: {}", dto.getId());
+        } else {
+            throw new RuntimeException("Instructor not found with id: " + dto.getId());
+        }
+    }
+
+
+
+
     public void saveMedal(Long instructorId, String medal){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setMedal(medal);
@@ -112,5 +153,36 @@ public class InstructorService {
     public void delete(Long instructorId){
         instructorRepository.deleteById(instructorId);
     }
+
+
+    @Transactional(readOnly = true)
+    public Page<InstructorReviewDto> findReviewsByInstructorId(Long instructorId, Pageable pageable) {
+        //강사 id로 리뷰들을 페이지 단위로 가져오기
+        Page<Review> reviews = reviewRepository.findByInstructorId(instructorId, pageable);
+        //리뷰 id List로 가져오기
+        List<Long> reviewIds = reviews.getContent().stream().map(Review::getId).collect(Collectors.toList());
+        //답글 조회
+        List<Comment> comments = commentRepository.findByReviewIdIn(reviewIds);
+        Map<Long, String> commentMap = comments.stream()
+                .collect(Collectors.toMap(Comment::getReviewId, Comment::getContent));
+        //리뷰 페이지 스트림으로 변환, 각 리뷰는 InstructorReviewDto로 변환
+        return reviews.map(review -> convertToDto(review, commentMap.get(review.getId())));
+    }
+
+    //Dto 생성 메소드
+    private InstructorReviewDto convertToDto(Review review, String commentContent) {
+        User user = userRepository.findById(review.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        return new InstructorReviewDto(
+                review.getId(),
+                user.getName(),
+                review.getMemo(),
+                review.getStars(),
+                review.getCreatedAt(),
+                commentContent,
+                review.getImageUrl()  // Assume this is properly handled
+        );
+    }
+
+
 
 }
