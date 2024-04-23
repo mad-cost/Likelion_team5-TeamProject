@@ -1,5 +1,7 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.auth.dto.CustomUserDetails;
+import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -34,12 +36,12 @@ public class JwtTokenUtils {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
 
         Instant now = Instant.now();
         Claims jwtClaims = Jwts.claims()
 
-                .setSubject(userDetails.getUsername())
+                .setSubject(userDetails.getEmail())
 
                 .setIssuedAt(Date.from(now))
 

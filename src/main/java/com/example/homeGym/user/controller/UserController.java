@@ -34,17 +34,8 @@ public class UserController {
     private final ProgramServiceForUser programServiceForUser;
     private final InstructorServiceForUser instructorServiceForUser;
 
-    private final UserRepository userRepository;
-    private final JpaUserDetailsManager jpaUserDetailsManager;
-
     @GetMapping("/main")
     public String mainPage(){
-
-        String useremail = "admin@gmail.com";
-
-        Optional<User> optionalUser = userRepository.findByEmail(useremail);
-
-        System.out.println(optionalUser.toString());
 
         return "main";
     }
