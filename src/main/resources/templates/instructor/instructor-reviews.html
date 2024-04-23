@@ -63,12 +63,30 @@
             height: 20px;  /* 별 아이콘 크기 조절 */
             vertical-align: middle; /* 별 아이콘을 텍스트 중간 높이에 맞춤 */
         }
+        .review-image {
+            margin-right: 15px; /* 이미지와 리뷰 정보 사이의 간격 조절 */
+        }
+        .reply-card {
+            margin-top: 10px;
+        }
+        .reply-header {
+            font-weight: bold;
+        }
+        .btn-group-vertical > button {
+            display: block; /* 각 버튼을 블록 요소로 만들어 줄바꿈 */
+            margin-bottom: 5px; /* 버튼 사이의 간격 조정 */
+            border-radius: 0.25rem !important; /* 모든 버튼의 모서리를 둥글게 */
+        }
+        .btn-group-vertical > button:last-child {
+            margin-bottom: 0; /* 마지막 버튼의 하단 간격 제거 */
+        }
+        .reply-actions {
+            text-align: right; /* 버튼들을 오른쪽으로 정렬 */
+        }
         .review-info .card-subtitle {
             display: flex; /* Flexbox를 사용하여 아이템들을 한 줄에 나열 */
             align-items: center; /* 세로 중앙 정렬 */
-        }
-        .review-info .card-subtitle span, .review-info .card-subtitle .star-icon {
-            margin-right: 5px; /* 요소들 사이의 간격 조정 */
+            gap: 5px; /* 요소들 사이의 간격 */
         }
     </style>
 </head>
@@ -85,10 +103,10 @@
                 <div class="review-info w-100">
                     <h5 class="card-title" th:text="${review.userName}">User Name</h5>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        <span th:text="${review.stars} + ' stars'">5 stars</span>
+                        <span th:text="${review.stars}">5</span>
                         <div class="star-icon">
-                            <img src="/static/images/star-icon.png" alt="Star rating" />
-                        </div>·
+                            <img src="/static/assets/icon/star.png" alt="Star rating" />
+                        </div>
                         <span th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">Date</span>
                     </h6>
                     <p class="card-text" th:text="${review.memo}">Review text here</p>
