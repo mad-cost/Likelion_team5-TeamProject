@@ -12,4 +12,5 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
 
   List<Program> findAllByInstructorId(Long id);
 
+  List<Program> findByInstructorId(Long instructorId);
 }
