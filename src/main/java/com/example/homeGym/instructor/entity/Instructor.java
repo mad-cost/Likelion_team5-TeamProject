@@ -3,6 +3,7 @@ package com.example.homeGym.instructor.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,6 +59,11 @@ public class Instructor {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    // 비밀번호 설정 메서드
+    public void setPassword(String password, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
 
     public enum InstructorState{
         REGISTRATION_PENDING, WITHDRAWAL_PENDING, ACTIVE, WITHDRAWAL_COMPLETE

@@ -7,6 +7,7 @@ import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +20,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
-
+    private final PasswordEncoder passwordEncoder;
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
     public void createInstructor(InstructorCreateDto dto){
         log.info("Creating instructor with name: {}", dto.getName());
-        instructorRepository.save(dto.toEntity());
+        Instructor instructor = dto.toEntity();
+        instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
+        instructorRepository.save(instructor);
     }
     //로그인 아이디 존재 확인
     public boolean isLoginIdAvailable(String loginId) {
