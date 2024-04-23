@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @ToString
 @Builder
 @NoArgsConstructor
@@ -27,5 +28,15 @@ public class SettlementDto {
             .createdAt(entity.getCreatedAt())
             .completeTime(entity.getCompleteTime());
     return builder.build();
+  }
+
+  //create settlement
+  public Settlement toEntity(){
+   return Settlement.builder()
+           .id(this.id)
+           .instructorId(this.instructorId)
+           .amount(this.amount)
+           .state(Settlement.SettlementState.SETTLEMENT_PENDING)
+           .build();
   }
 }
