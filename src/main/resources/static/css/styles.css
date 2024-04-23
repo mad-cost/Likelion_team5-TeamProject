@@ -10,13 +10,18 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+.Bronze {
+  background-color: var(--bs-brown);
+  /* 또는 border-color: var(--bs-brown); */
+  /* 필요한 다른 스타일을 추가하세요 */
+}
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
   --bs-pink: #d63384;
   --bs-red: #dc3545;
-  --bs-orange: #fd7e14;
+  --bs-brown: #d97f18;
   --bs-yellow: #ffc107;
   --bs-green: #198754;
   --bs-teal: #20c997;
@@ -2858,6 +2863,23 @@ textarea.form-control-lg {
   background-color: var(--bs-btn-disabled-bg);
   border-color: var(--bs-btn-disabled-border-color);
   opacity: var(--bs-btn-disabled-opacity);
+}
+
+.btn-brown {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #D97F18FF;
+  --bs-btn-border-color: #D97F18FF;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #D97F18FF;
+  --bs-btn-hover-border-color: #D97F18FF;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #D97F18FF;
+  --bs-btn-active-border-color: #D97F18FF;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #D97F18FF;
+  --bs-btn-disabled-border-color: #D97F18FF;
 }
 
 .btn-primary {

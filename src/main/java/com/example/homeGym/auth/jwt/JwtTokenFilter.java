@@ -1,9 +1,11 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.auth.utils.CookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -18,32 +20,28 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtils jwtTokenUtils;
     private final UserDetailsManager manager;
+    private final CookieUtil cookieUtil;
 
-    public JwtTokenFilter(JwtTokenUtils jwtTokenUtils, UserDetailsManager manager) {
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.manager = manager;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.debug("try jwt filter");
 
-        String authHeader
-                = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String jwtToken = cookieUtil.getCookie("Authorization", request);
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.split(" ")[1];
 
-            if (jwtTokenUtils.validate(token)){
+        if(jwtToken != null) {
+            if (jwtTokenUtils.validate(jwtToken)){
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-                String username = jwtTokenUtils.parseClaims(token).getSubject();
+                String email = jwtTokenUtils.parseClaims(jwtToken).getSubject();
 
-                UserDetails userDetails = manager.loadUserByUsername(username);
+                UserDetails userDetails = manager.loadUserByUsername(email);
                 for (GrantedAuthority authority : userDetails.getAuthorities()){
                     log.info("authorities: {}",authority.getAuthority());
                 }
@@ -51,7 +49,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 AbstractAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(
                         userDetails,
-                        token,
+                        jwtToken,
                         userDetails.getAuthorities()
                 );
                 // 인증 정보 등록
