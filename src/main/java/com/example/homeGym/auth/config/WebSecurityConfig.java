@@ -4,6 +4,7 @@ import com.example.homeGym.auth.jwt.JwtTokenFilter;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;
 import com.example.homeGym.auth.kakao.OAuth2UserServiceImpl;
+import com.example.homeGym.auth.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ public class WebSecurityConfig {
     private final UserDetailsManager manager;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2UserServiceImpl oAuth2UserService;
+    private final CookieUtil cookieUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -65,7 +67,8 @@ public class WebSecurityConfig {
                 .addFilterBefore(
                         new JwtTokenFilter(
                                 jwtTokenUtils,
-                                manager
+                                manager,
+                                cookieUtil
                         ),
                         AuthorizationFilter.class
                 )
@@ -75,7 +78,7 @@ public class WebSecurityConfig {
                         .logoutSuccessUrl("/user/main") // 로그아웃 성공 후 리다이렉트될 URL
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID") // 로그아웃 시 삭제할 쿠키 이름
+                        .deleteCookies("Authorization") // 로그아웃 시 삭제할 쿠키 이름
                 );
         return http.build();
     }

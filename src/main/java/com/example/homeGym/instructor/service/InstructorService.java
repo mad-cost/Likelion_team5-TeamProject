@@ -68,6 +68,7 @@ public class InstructorService {
         return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
     }
 
+
     //강사페이지에서 정산금 띄우기
 
 
@@ -86,6 +87,27 @@ public class InstructorService {
         }
     }
 
+
+
+    public void saveMedal(Long instructorId, String medal){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setMedal(medal);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+
+    public String findRank(String Gold, String Silver, String Bronze, String Unranked){
+        String myRank = null;
+        // rank값 찾아서 저장
+        if (Gold != null) {
+            myRank = Gold;
+        } else if (Silver != null) {
+            myRank = Silver;
+        } else if (Bronze != null) {
+            myRank = Bronze;
+        } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
+        return myRank;
+    }
 
 
 }
