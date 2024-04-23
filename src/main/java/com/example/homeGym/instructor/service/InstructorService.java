@@ -29,8 +29,13 @@ public class InstructorService {
         return !instructorRepository.existsByLoginId(loginId);
     }
 
+    //이메일 존재 확인
+    public boolean isEmailAvailable(String email) {
+        return !instructorRepository.existsByEmail(email);
+    }
+
     //회원탈퇴 신청
-    public String withdrawalProposal(Long instructorId) {
+    public String withdrawalProposal(Long instructorId, String withdrawalReason) {
         Optional<Instructor> instructorOpt = instructorRepository.findById(instructorId);
 
         if (!instructorOpt.isPresent()) {
@@ -43,6 +48,7 @@ public class InstructorService {
         }
 
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_PENDING);
+        instructor.setWithdrawalReason(withdrawalReason);
         instructorRepository.save(instructor);
         return "탈퇴 신청이 완료되었습니다.";
     }
@@ -59,6 +65,11 @@ public class InstructorService {
     public InstructorDto findById(Long instructorId){
         return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
     }
+
+
+    //강사페이지에서 정산금 띄우기
+
+
 
     public void saveMedal(Long instructorId, String medal){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
@@ -79,5 +90,6 @@ public class InstructorService {
         } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
         return myRank;
     }
+
 
 }

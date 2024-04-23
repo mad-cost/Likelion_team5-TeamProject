@@ -3,6 +3,7 @@ package com.example.homeGym.auth.kakao;
 import com.example.homeGym.auth.dto.CustomUserDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
+import com.example.homeGym.auth.utils.CookieUtil;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.UserRepository;
 import jakarta.servlet.ServletException;
@@ -28,6 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtTokenUtils tokenUtils;
     private final UserRepository userRepository;
     private final JpaUserDetailsManager userDetailsManager;
+    private final CookieUtil cookieUtil;
 
     @Override
     public void onAuthenticationSuccess(
@@ -65,11 +67,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 
         CustomUserDetails details = (CustomUserDetails) userDetailsManager.loadUserByUsername(email);
-        // JWT 생성
+
         String jwt = tokenUtils.generateToken(details);
-        // 어디로 리다이렉트 할지 지정
+        cookieUtil.createCookie(response, "Authorization", jwt);
+
         String targetUrl = String.format(
-                "http://localhost:8080/token/validate?token=%s", jwt
+                "http://localhost:8080/user/main"
         );
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

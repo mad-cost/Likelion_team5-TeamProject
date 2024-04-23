@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -47,6 +48,11 @@ public class Instructor {
     private String bankName;
     @Setter
     private String account;
+    @Setter
+    private String withdrawalReason;
+    @Setter
+    private Double rating;   //별점 평점
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
