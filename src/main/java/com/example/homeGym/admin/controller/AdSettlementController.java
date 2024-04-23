@@ -1,10 +1,8 @@
 package com.example.homeGym.admin.controller;
 
-
 import com.example.homeGym.instructor.dto.InstructorDto;
-import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.service.InstructorService;
-import com.example.homeGym.instructor.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,22 +16,19 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/admin/instructor")
-public class AdminInstController {
+@RequestMapping("/admin/settlement")
+public class AdSettlementController {
   private final InstructorService instructorService;
-  private final ProgramService programService;
 
-  @GetMapping("/{instructorId}")
-  public String instructorId(
-          @PathVariable("instructorId")
-          Long instructorId,
+  @GetMapping
+  public String settlement(
           Model model
   ){
-    model.addAttribute("instructor", instructorService.findById(instructorId));
+    model.addAttribute("instructors", instructorService.findAllByOrderByName());
 
-//    List<ProgramDto> programs = programService.findAllByInstructorIdConvertProgramId(instructorId);
-//    model.addAttribute("programs", programs);
-
-    return "/admin/instructor";
+    return "/admin/settlement";
   }
+
+
+
 }
