@@ -88,6 +88,7 @@ public class InstructorService {
         return instructorRepository.findById(instructorId).orElseThrow();
     }
 
+    // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
     public List<InstructorDto> findAllByStateIsREGISTRATION(){
         List<InstructorDto> instructorDto = new ArrayList<>();
         // state가 REGISTRATION인 강사 모두 가져오기
@@ -99,4 +100,17 @@ public class InstructorService {
         }
         return instructorDto;
     }
+//    강사 신청 승인
+    public void accept(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setRoles("ROLE_INSTRUCTOR");
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+//    강사 신청 거절
+    public void delete(Long instructorId){
+        instructorRepository.deleteById(instructorId);
+    }
+
 }

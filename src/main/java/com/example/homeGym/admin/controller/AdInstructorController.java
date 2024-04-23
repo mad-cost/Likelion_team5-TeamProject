@@ -65,15 +65,35 @@ public class AdInstructorController {
     instructorService.saveMedal(instructorId, medal);
     return "redirect:/admin/instructor/{instructorId}";
   }
-
+//  강사 승인 페이지
   @GetMapping("/accept")
   public String accept(
           Model model
   ){
+    //강사의 상태가 REGISTRATION인 강사 모두 가져오기
     List<InstructorDto> instructorDto = instructorService.findAllByStateIsREGISTRATION();
-    log.info("@@@@ : {}", instructorDto.size());
-    return "/admin/test";
+    model.addAttribute("instructors", instructorDto);
+    return "/admin/accept";
   }
-
+// 강사 승인하기
+  @PostMapping("{instructorId}/accept")
+  public String instIdAccept(
+          @PathVariable("instructorId")
+          Long instructorId
+  ){
+//    강사 승인 state 변경하기
+    instructorService.accept(instructorId);
+    return "redirect:/admin/instructor/accept";
+  }
+ //강사 거절하기
+  @PostMapping("{instructorId}/delete")
+  public String instIdDelete(
+          @PathVariable("instructorId")
+          Long instructorId
+  ){
+//    강사 거절
+    instructorService.delete(instructorId);
+    return "redirect:/admin/instructor/accept";
+  }
 }
 
