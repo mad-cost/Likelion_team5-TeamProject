@@ -24,7 +24,7 @@ public class ProgramController {
     ) {
         model.addAttribute("instructorId", instructorId);
         model.addAttribute("programDto", new ProgramDto());
-        return "instructor-program"; // 생성 페이지의 뷰 이름
+        return "/instructor/instructor-program"; // 생성 페이지의 뷰 이름
     }
 
     @PostMapping("/{instructorId}")
@@ -36,10 +36,10 @@ public class ProgramController {
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("instructorId", instructorId);
-            return "instructor-program"; // 에러가 있으면 다시 생성 페이지로 이동
+            return "/instructor/instructor-program"; // 에러가 있으면 다시 생성 페이지로 이동
         }
         programService.createProgram(programDto);
-        return "redirect:/program/list/" + instructorId; // 생성된 프로그램 목록 페이지로 리다이렉트
+        return "redirect:instructor/{instructorId}/{programId}"; // 생성된 프로그램 목록 페이지로 리다이렉트
     }
 
     @GetMapping("/update/{programId}")
@@ -49,7 +49,7 @@ public class ProgramController {
     ) {
         ProgramDto programDto = programService.findByProgramId(List.of(programId)).get(0);
         model.addAttribute("programDto", programDto);
-        return "update-program"; // 수정 페이지의 뷰 이름
+        return "/instructor/update-program"; // 수정 페이지의 뷰 이름
     }
 
     @PostMapping("/update/{programId}")
@@ -59,7 +59,7 @@ public class ProgramController {
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return "update-program"; // 에러가 있으면 다시 수정 페이지로 이동
+            return "/instructor/update-program"; // 에러가 있으면 다시 수정 페이지로 이동
         }
         programService.updateProgram(programId, programDto);
         return "redirect:/program"; // 수정된 프로그램 목록 페이지로 리다이렉트
