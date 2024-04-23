@@ -63,7 +63,7 @@ public class ProgramService {
 
   // 프로그램 생성
   @Transactional
-  public ProgramDto createProgram(ProgramDto programDto) {
+  public void createProgram(ProgramDto programDto) {
     Instructor currentInstructor = facade.getCurrentInstructor();
 
     Program program = builder()
@@ -79,7 +79,7 @@ public class ProgramService {
             .price20(programDto.getPrice20())
             .build();
 
-    return ProgramDto.fromEntity(programRepository.save(program));
+    ProgramDto.fromEntity(programRepository.save(program));
   }
 
   // 프로그램 수정

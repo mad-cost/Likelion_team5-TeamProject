@@ -30,7 +30,7 @@
   <!-- 스케줄 생성 -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Create New Schedule</h5>
+      <h5 class="card-title">스케줄 생성</h5>
       <form th:action="@{/instructor/{instructorId}/schedule}" method="post">
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
         <div class="form-group">
@@ -49,7 +49,7 @@
   <!-- 스케줄 수정 -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Update Schedule</h5>
+      <h5 class="card-title">수정</h5>
       <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
         <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
@@ -69,7 +69,7 @@
   <!-- 스케줄 삭제 -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Delete Schedule</h5>
+      <h5 class="card-title">삭제</h5>
       <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
         <input type="hidden" name="_method" value="delete" />
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
