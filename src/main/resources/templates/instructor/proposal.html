@@ -18,6 +18,11 @@
             margin-left: 0.5rem;
             margin-right: 0.5rem;
         }
+
+        button span {
+            display: block; /* 각 span을 새 줄에 표시 */
+            text-align: center; /* 텍스트를 버튼의 중앙에 정렬 */
+        }
     </style>
 </head>
 <body>
@@ -65,7 +70,7 @@
                                 <label for="passwordCheck">Password Check</label>
                             </div>
 
-                            <!-- 이메일 입력 필드 -->
+                            <!-- 이메일 입력 필드 및 중복 확인 버튼 -->
                             <div class="form-group d-flex align-items-center mb-3">
                                 <div class="form-floating flex-grow-1">
                                     <input type="text" class="form-control" id="emailUser" name="emailUser" placeholder="이메일 사용자 이름">
@@ -81,11 +86,15 @@
                                     </select>
                                     <label for="emailDomain">도메인</label>
                                 </div>
+                                <!-- 사용자 정의 도메인 입력 필드 -->
+                                <input type="text" class="form-control mx-2" id="customDomain" name="customDomain" style="display: none;" placeholder="직접 입력">
+                                <!-- 중복 확인 버튼, 텍스트를 두 줄로 나눔 -->
+                                <button type="button" class="btn btn-outline-primary ms-2" onclick="checkEmail()">
+                                    <span>중복</span>
+                                    <span>확인</span>
+                                </button>
                             </div>
-                            <!-- 사용자 정의 도메인 입력 필드 -->
-                            <input type="text" class="form-floating mb-3" id="customDomain" name="customDomain" style="display: none;" placeholder="직접 입력">
                             <input type="hidden" id="email" name="email">
-
 
                             <!-- 전화번호 입력 필드 -->
                             <div class="form-group d-flex mb-3">
@@ -157,6 +166,14 @@
 </main>
 
 <script>
+    let isEmailAvailable = false; // 이메일 중복 상태를 추적합니다.
+    let isEmailChecked = false;
+    document.getElementById('emailUser').addEventListener('input', function() {
+        // 이메일 사용자 이름을 변경할 때마다 중복 검사 상태를 초기화합니다.
+        isEmailAvailable = false;
+        isEmailChecked = false;
+    });
+
     let isLoginIdAvailable = false; // 중복 상태를 추적합니다.
     let isLoginIdChecked = false; // 중복 검사가 수행되었는지 여부를 추적합니다.
 
@@ -168,24 +185,67 @@
 
     document.getElementById('registrationForm').addEventListener('submit', function(event) {
         event.preventDefault(); // 폼의 기본 제출을 방지
+
+
+        // 필수 필드 검사
+        let name = document.getElementById('name').value.trim();
+        let gender = document.getElementById('gender').value;
+        let birthdate = document.getElementById('birthdate').value.trim();
+        let loginId = document.getElementById('loginId').value.trim();
+        let password = document.getElementById('password').value.trim();
+        let passwordCheck = document.getElementById('passwordCheck').value.trim();
+        let emailUser = document.getElementById('emailUser').value.trim();
+        let emailDomain = document.getElementById('emailDomain').value;
+        let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+        let phonePart1 = document.getElementById('phonePart1').value.trim();
+        let phonePart2 = document.getElementById('phonePart2').value.trim();
+        let phonePart3 = document.getElementById('phonePart3').value.trim();
+        let career = document.getElementById('career').value.trim();
+        let certificate = document.getElementById('certificate').value.trim();
+
+        let email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+        // 모든 필수 필드가 채워졌는지 확인
+        if (!name || !gender || !birthdate || !loginId || !password || !passwordCheck || !emailUser || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+            alert('모든 내용을 작성해 주세요.');
+            return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
+        }
+
         if (!isLoginIdChecked) {
             alert('아이디 중복 확인을 해주세요.');
             return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
         }
-
         // 아이디 중복 상태 검사
         if (!isLoginIdAvailable) {
             alert('사용할 수 없는 아이디입니다. 다른 아이디를 입력해주세요.');
             return; // 중복된 아이디가 있으면 폼 제출을 중단
         }
+        if (!isEmailChecked) {
+            alert('이메일 중복 확인을 해주세요.');
+            return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
+        }
+        // 이메일 중복 상태 검사
+        if (!isEmailAvailable) {
+            alert('이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.');
+            return; // 중복된 이메일이 있으면 폼 제출을 중단합니다.
+        }
+
+        // 비밀번호 일치 검사
+        password = document.getElementById('password').value;
+        passwordCheck = document.getElementById('passwordCheck').value;
+        if (password !== passwordCheck) {
+            alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
+            return; // 비밀번호가 일치하지 않으면 폼 제출을 중단
+        }
+
         // 이메일 조합
-        var emailUser = document.getElementById('emailUser').value;
-        var emailDomain = document.getElementById('emailDomain').value;
-        var customDomain = document.getElementById('customDomain').value;
-        var email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+         emailUser = document.getElementById('emailUser').value;
+         emailDomain = document.getElementById('emailDomain').value;
+         customDomain = document.getElementById('customDomain').value;
+         email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
 
         // 이메일 숨겨진 필드 업데이트 또는 추가
-        var emailInput = document.getElementById('email');
+        let emailInput = document.getElementById('email');
         if (!emailInput) {
             emailInput = document.createElement('input');
             emailInput.type = 'hidden';
@@ -196,15 +256,15 @@
         emailInput.value = email;
 
         // 전화번호 조합
-        const phonePart1 = document.getElementById('phonePart1').value;
-        const phonePart2 = document.getElementById('phonePart2').value;
-        const phonePart3 = document.getElementById('phonePart3').value;
-        const phone = phonePart1 + '-' + phonePart2 + '-' + phonePart3; // 하이픈 추가
+         phonePart1 = document.getElementById('phonePart1').value;
+         phonePart2 = document.getElementById('phonePart2').value;
+         phonePart3 = document.getElementById('phonePart3').value;
+        let phone = phonePart1 + '-' + phonePart2 + '-' + phonePart3; // 하이픈 추가
         this.appendChild(createHiddenInput('phone', phone)); // 전화번호 숨겨진 필드에 추가
 
         // 생년월일 분리
-        const birthdateInput = document.getElementById('birthdate');
-        const birthdateValue = birthdateInput.value;
+        let birthdateInput = document.getElementById('birthdate');
+        let birthdateValue = birthdateInput.value;
         if (birthdateValue) {
             const [year, month, day] = birthdateValue.split('-');
             this.appendChild(createHiddenInput('birthyear', year));
@@ -224,8 +284,8 @@
     }
 
     function toggleBankInput() {
-        var bankSelect = document.getElementById('bank');
-        var otherBankContainer = document.getElementById('otherBankContainer');
+        const bankSelect = document.getElementById('bank');
+        const otherBankContainer = document.getElementById('otherBankContainer');
         if (bankSelect.value === 'other') {
             otherBankContainer.style.display = 'block';
         } else {
@@ -234,8 +294,8 @@
     }
 
     function showCustomDomainInput() {
-        var emailDomainSelect = document.getElementById('emailDomain');
-        var customDomainInput = document.getElementById('customDomain');
+        const emailDomainSelect = document.getElementById('emailDomain');
+        const customDomainInput = document.getElementById('customDomain');
         if (emailDomainSelect.value === 'other') {
             customDomainInput.style.display = '';
             customDomainInput.classList.add('form-control');
@@ -266,6 +326,40 @@
                     alert('아이디가 사용 가능합니다.');
                 } else {
                     alert('이미 사용 중인 아이디입니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('중복 확인 중 오류가 발생했습니다.');
+            });
+    }
+
+    function checkEmail() {
+        const emailUser = document.getElementById('emailUser').value;
+        const emailDomain = document.getElementById('emailDomain').value;
+        const customDomain = document.getElementById('customDomain').value;
+        const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+        if (!emailUser) {
+            alert('이메일을 입력해주세요.');
+            return;
+        }
+
+        fetch('/instructor/check-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: email})
+        })
+            .then(response => response.json())
+            .then(data => {
+                isEmailAvailable = data.isAvailable;
+                isEmailChecked = true; // 중복 검사를 수행했음을 표시
+                if (isEmailAvailable) {
+                    alert('이메일이 사용 가능합니다.');
+                } else {
+                    alert('이미 사용 중인 이메일입니다.');
                 }
             })
             .catch(error => {

@@ -22,6 +22,7 @@ public class CommentController {
     ) {
         model.addAttribute("instructorId", instructorId);
         model.addAttribute("reviewId", reviewId);
+        model.addAttribute("commentDto", new CommentDto()); // 빈 CommentDto 객체 추가
         return "create-review";
     }
 
@@ -30,7 +31,8 @@ public class CommentController {
     public String createReview(
             @PathVariable("instructorId") Long instructorId,
             @PathVariable("reviewId") Long reviewId,
-            @ModelAttribute CommentDto commentDto
+            @ModelAttribute CommentDto commentDto,
+            Model model
     ) {
         commentService.createReview(instructorId, commentDto);
         return "redirect:/instructor/{instructorId}/review/{reviewId}/comment";
@@ -47,6 +49,8 @@ public class CommentController {
         model.addAttribute("instructorId", instructorId);
         model.addAttribute("reviewId", reviewId);
         model.addAttribute("commentId", commentId);
+        CommentDto commentDto = commentService.getCommentDtoById(commentId); // 수정할 댓글 정보 가져오기
+        model.addAttribute("commentDto", commentDto); // 가져온 댓글 정보 추가
         return "update-review";
     }
 
@@ -56,7 +60,8 @@ public class CommentController {
             @PathVariable("instructorId") Long instructorId,
             @PathVariable("reviewId") Long reviewId,
             @PathVariable("commentId") Long commentId,
-            @ModelAttribute CommentDto commentDto
+            @ModelAttribute CommentDto commentDto,
+            Model model
     ) {
         commentService.updateReview(instructorId, reviewId, commentDto);
         return "redirect:/instructor/{instructorId}/review/{reviewId}/comment";
@@ -67,7 +72,8 @@ public class CommentController {
     public String deleteReview(
             @PathVariable("instructorId") Long instructorId,
             @PathVariable("reviewId") Long reviewId,
-            @PathVariable("commentId") Long commentId
+            @PathVariable("commentId") Long commentId,
+            Model model
     ) {
         commentService.deleteReview(instructorId, commentId);
         return "redirect:/instructor/{instructorId}/review/{reviewId}/comment";

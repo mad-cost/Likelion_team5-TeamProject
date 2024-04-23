@@ -1,11 +1,12 @@
 package com.example.homeGym.admin.dto;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.example.homeGym.admin.entity.SettlementFee;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @ToString
 @Builder
 @NoArgsConstructor
@@ -16,4 +17,15 @@ public class SettlementFeeDto {
   private Integer totalFee;
   private Long instructorId;
   private LocalDateTime createdAt;
+
+  public static SettlementFeeDto fromEntity(SettlementFee entity){
+    SettlementFeeDto.SettlementFeeDtoBuilder builder = SettlementFeeDto.builder()
+            .id(entity.getId())
+            .currentFee(entity.getCurrentFee())
+            .totalFee(entity.getTotalFee())
+            .instructorId(entity.getInstructorId())
+            .createdAt(entity.getCreatedAt());
+    return builder.build();
+  }
+
 }

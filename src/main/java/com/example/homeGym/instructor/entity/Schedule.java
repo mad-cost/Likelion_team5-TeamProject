@@ -20,10 +20,9 @@ public class Schedule {
     @Setter
     private String time;
 
-//    @ManyToOne
-//    private Instructor instructor;
     @Setter
     private Long instructorId;
     @CreationTimestamp
     private LocalDateTime createAt;
 }
+
