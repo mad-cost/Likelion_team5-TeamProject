@@ -101,7 +101,7 @@ public class InstructorController {
 
         //임시 데이터 넣기
         model.addAttribute("profileDto", new InstructorProfileDto(
-                "/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
+                "/static/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
         return "instructor/instructor-page";
     }
 
