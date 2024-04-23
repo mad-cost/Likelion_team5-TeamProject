@@ -29,9 +29,11 @@ public class ProgramDto {
   private Integer price20;
   private Program.ProgramState state;
   @Setter
-  private String monthAmount;
+  private String monthAmount; // id에 해당하는 프로그램의 한달 수입
   @Setter
-  private String totalAmount;
+  private String totalAmount; // id에 해당하는 프로그램의 전체 수입
+  @Setter
+  private Instructor instructor;
 
   public static ProgramDto fromEntity(Program entity){
     return ProgramDto.builder()

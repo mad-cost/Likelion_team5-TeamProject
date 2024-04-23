@@ -80,11 +80,9 @@ public class InstructorService {
         }
         return instructorDtos;
     }
-
     public InstructorDto findById(Long instructorId){
         return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
     }
-
 
     //강사페이지에서 정산금 띄우기
 
@@ -103,6 +101,7 @@ public class InstructorService {
             throw new RuntimeException("Instructor not found with id: " + dto.getId());
         }
     }
+
 
 
 
@@ -126,6 +125,34 @@ public class InstructorService {
         return myRank;
     }
 
+    public Instructor findByLongId(Long instructorId){
+        return instructorRepository.findById(instructorId).orElseThrow();
+    }
+
+    // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
+    public List<InstructorDto> findAllByStateIsREGISTRATION(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 REGISTRATION인 강사 모두 가져오기
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors){
+            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+//    강사 신청 승인
+    public void accept(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setRoles("ROLE_INSTRUCTOR");
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+//    강사 신청 거절
+    public void delete(Long instructorId){
+        instructorRepository.deleteById(instructorId);
+    }
 
 
     @Transactional(readOnly = true)
