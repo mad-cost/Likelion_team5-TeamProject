@@ -3,8 +3,7 @@ package com.example.homeGym.order.dto;
 import com.example.homeGym.order.entity.ProgramOrder;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

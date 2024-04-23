@@ -15,6 +15,7 @@ public class PaymentConfirmDto {
     private Long userId;
     private String successUrl;
     private String failUrl;
+    private String paymentKey;
 
     private String failReason;
     private boolean cancelYN;

@@ -1,9 +1,13 @@
 package com.example.homeGym.user.controller;
 
+import com.example.homeGym.auth.dto.CustomUserDetails;
+import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.dto.UserDto;
+import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.repository.UserRepository;
 import com.example.homeGym.user.service.InstructorServiceForUser;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.ReviewService;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +33,21 @@ public class UserController {
     private final ReviewService reviewService;
     private final ProgramServiceForUser programServiceForUser;
     private final InstructorServiceForUser instructorServiceForUser;
+
+    private final UserRepository userRepository;
+    private final JpaUserDetailsManager jpaUserDetailsManager;
+
+    @GetMapping("/main")
+    public String mainPage(){
+
+        String useremail = "admin@gmail.com";
+
+        Optional<User> optionalUser = userRepository.findByEmail(useremail);
+
+        System.out.println(optionalUser.toString());
+
+        return "main";
+    }
 
     @GetMapping("/loginpage")
     public String loginPage(){
@@ -76,7 +96,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/program/{userProgramId}")
-    @ResponseBody
     public String userProgramDetail(
             @PathVariable("userId")
             Long userId,
@@ -97,16 +116,17 @@ public class UserController {
         ReviewDto reviewDto = new ReviewDto();
 
         //TODO 후기 뭔가 이상해서 나중에 수정 예정
-        if (reviewService.findByUserProgramIdAndUserId(userProgramId, 1L) == null){
-            model.addAttribute("reviews", reviewDto);
-        }else {
-            reviewDto = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
-        }
+//        if (reviewService.findByUserProgramIdAndUserId(userProgramId, 1L) == null){
+//            model.addAttribute("reviews", reviewDto);
+//        }else {
+//            reviewDto = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
+//        }
+        List<ReviewDto> reviewDtos = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
 
-        model.addAttribute("reviews", reviewDto);
+        model.addAttribute("reviews", reviewDtos);
         System.out.println("reviewDto = " + reviewDto);
         model.addAttribute("program", userProgramDto);
 
-        return "test";
+        return "user/myDetail";
     }
 }

@@ -1,16 +1,14 @@
 package com.example.homeGym.instructor.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Program {
@@ -41,7 +39,6 @@ public class Program {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime approvalTime;
-
     public enum ProgramState {
         CREATION_PENDING,  // 생성 대기중
         MODIFICATION_PENDING,  // 수정 대기중

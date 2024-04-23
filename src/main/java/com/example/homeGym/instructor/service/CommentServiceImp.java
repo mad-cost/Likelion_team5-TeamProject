@@ -27,7 +27,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public CommentDto createReview(Long instructorId, CommentDto commentDto) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
-        // instructor가 존제하지 않을 경우
+        // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
 
@@ -91,5 +91,15 @@ public class CommentServiceImp implements CommentService {
         if (!instructorReview.getInstructor().equals(currentInstructor))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_FORBIDDEN);
         commentRepository.deleteById(reviewId);
+    }
+
+    @Override
+    public CommentDto getCommentDtoById(Long commentId) {
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            // 댓글이 존재하지 않을 경우 예외 처리
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
+        }
+        return CommentDto.fromEntity(optionalComment.get());
     }
 }
