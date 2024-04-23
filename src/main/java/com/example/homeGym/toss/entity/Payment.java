@@ -1,7 +1,7 @@
 package com.example.homeGym.toss.entity;
 
 
-import com.example.homeGym.toss.dto.PaymentResponseDto;
+import com.example.homeGym.toss.dto.PaymentConfirmDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -57,8 +57,8 @@ public class Payment {
     @CreationTimestamp
     private LocalDateTime createAt;
 
-    public PaymentResponseDto toPaymentResponseDto() {
-        return PaymentResponseDto.builder()
+    public PaymentConfirmDto toPaymentResponseDto() {
+        return PaymentConfirmDto.builder()
                 .payType(payType.getPayTypeDescription())
                 .amount(amount)
                 .orderName(orderName)
