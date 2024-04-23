@@ -20,9 +20,12 @@ public class Instructor {
     private String name;
     private String loginId;
     private String password;
+    @Setter
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Setter
     private String birthyear;
+    @Setter
     private String birthday;
     //회원가입 승인 전 x, 승인 후 ROLE_INSTRUCTOR
     @Setter

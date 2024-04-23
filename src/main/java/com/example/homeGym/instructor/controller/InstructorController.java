@@ -1,10 +1,7 @@
 package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.common.util.AuthenticationFacade;
-import com.example.homeGym.instructor.dto.InstructorCreateDto;
-import com.example.homeGym.instructor.dto.InstructorProfileDto;
-import com.example.homeGym.instructor.dto.InstructorUpdateDto;
-import com.example.homeGym.instructor.dto.InstructorWithdrawalDto;
+import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
@@ -14,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
 
@@ -109,21 +108,36 @@ public class InstructorController {
     //강사 정보 수정 페이지
     @GetMapping("/profile")
     public String profileUpdatePage(Model model){
-        Instructor instructor = facade.getCurrentInstructor();
-        model.addAttribute("instructor", instructor);
+      //  Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        InstructorDto instructorDto = instructorService.findById(/*currentInstructor.getId()*/ 1L);
         InstructorUpdateDto updateDto = new InstructorUpdateDto();
+
+        model.addAttribute("instructorDto", instructorDto);
         model.addAttribute("updateDto", updateDto);
         return "instructor/instructor-update";
     }
 
     // 강사 정보 수정
     @PutMapping("/profile")
-    public void profile() {
-
+    public String updateProfile(@ModelAttribute InstructorUpdateDto updateDto, RedirectAttributes attributes) {
+        try {
+            instructorService.updateInstructor(updateDto);
+            attributes.addFlashAttribute("message", "강사 정보가 업데이트 되었습니다.");
+            return "redirect:/instructor/update-result";
+        } catch (Exception e) {
+            attributes.addFlashAttribute("message", "업데이트 실패: " + e.getMessage());
+            return "redirect:/instructor/update-result";
+        }
+    }
+    @GetMapping("/update-result")
+    public String updateResultPage(){
+        return "instructor/update-result";
     }
 
+
+
     // 강사 후기 페이지
-    @PostMapping("/{instructorId}/review")
+    @PostMapping("/review")
     public String ViewReview() {
         return null;
     }

@@ -10,9 +10,11 @@
         .form-group.d-flex {
             flex-wrap: nowrap;
         }
+
         .form-floating {
             flex-grow: 1;
         }
+
         .mx-2 {
             margin-left: 0.5rem;
             margin-right: 0.5rem;
@@ -27,29 +29,153 @@
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-8 col-xl-6">
                         <h1 class="text-center mb-5">강사 정보 수정</h1>
-                        <form action="/instructor/update-profile" th:action="@{/instructor/update-profile}" th:object="${instructor}" method="post" id="updateForm">
+                        <form action="/instructor/profile" th:action="@{/instructor/profile}" method="post" id="updateForm">
+                            <!-- 숨겨진 필드로 PUT 메소드 지정 -->
+                            <input type="hidden" name="_method" value="PUT" />
+                            <!-- ID 값을 숨겨진 필드로 전송 -->
+                            <input type="hidden" name="id" th:value="${instructorDto.id}">
                             <!-- 기존 정보를 불러와서 표시 -->
                             <div class="form-group d-flex mb-3">
                                 <div class="form-floating flex-grow-1">
-                                    <input type="text" class="form-control" id="loginId" th:value="*{loginId}" disabled>
+                                    <input type="text" class="form-control" id="loginId" th:value="*{instructorDto.loginId}" disabled>
                                     <label for="loginId">아이디 (수정 불가)</label>
                                 </div>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="name" th:field="*{name}" type="text" placeholder="이름">
+                                <input class="form-control" id="name" th:field="*{instructorDto.name}" type="text" placeholder="이름">
                                 <label for="name">이름</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="email" th:field="*{email}" type="email" placeholder="이메일">
-                                <label for="email">이메일</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">성별을 선택하세요</option>
+                                    <option value="FEMALE" th:selected="${instructorDto.gender.name() == 'FEMALE'}">여성</option>
+                                    <option value="MALE" th:selected="${instructorDto.gender.name() == 'MALE'}">남성</option>
+                                </select>
+                                <label for="gender">성별</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="phone" th:field="*{phone}" type="text" placeholder="전화번호">
-                                <label for="phone">전화번호</label>
+                                <input class="form-control" id="birthdate" type="date" th:value="${instructorDto.birthyear + '-' + instructorDto.birthday}" placeholder="YYYY-MM-DD">
+                                <label for="birthdate">생년월일</label>
                             </div>
+
+                            <!-- 이메일 입력 필드와 도메인 선택 필드 -->
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="text" class="form-control" id="emailUser" name="emailUser"
+                                           placeholder="이메일 사용자 이름" th:value="${instructorDto.email.split('@')[0]}">
+                                    <label for="emailUser">이메일 사용자 이름</label>
+                                </div>
+                                <span class="mx-2">@</span>
+                                <div class="form-floating flex-grow-1">
+                                    <select class="form-control" id="emailDomain" name="emailDomain" onchange="showCustomDomainInput()">
+                                        <option value="naver.com" th:selected="${instructorDto.email.split('@')[1] == 'naver.com'}">naver.com</option>
+                                        <option value="gmail.com" th:selected="${instructorDto.email.split('@')[1] == 'gmail.com'}">gmail.com</option>
+                                        <option value="daum.net" th:selected="${instructorDto.email.split('@')[1] == 'daum.net'}">daum.net</option>
+                                        <option value="other" th:selected="${instructorDto.email.split('@')[1] != 'naver.com' and instructorDto.email.split('@')[1] != 'gmail.com' and instructorDto.email.split('@')[1] != 'daum.net'}">기타(직접 입력)</option>
+                                    </select>
+                                    <label for="emailDomain">도메인</label>
+                                </div>
+                                <!-- 중복 확인 버튼 -->
+                                <button type="button" class="btn btn-outline-primary ms-2" onclick="checkEmail()">
+                                    <span>중복</span>
+                                    <span>확인</span>
+                                </button>
+                            </div>
+
+                            <!-- 사용자 정의 도메인 입력 필드, 아래에 배치 -->
+                            <div class="form-group mb-3" id="customDomainContainer" style="display:none;">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="customDomain" name="customDomain"
+                                           placeholder="도메인 직접 입력" th:value="${instructorDto.email.split('@')[1]}">
+                                    <label for="customDomain">도메인 직접 입력</label>
+                                </div>
+                            </div>
+                            <!-- 현재 이메일 주소 저장 (숨김 필드) -->
+                            <input type="hidden" id="currentEmail" th:value="${instructorDto.email}" />
+
+                            <input type="hidden" id="email" name="email">
+
+
+                            <!-- 전화번호 입력 필드 -->
+                            <div class="form-group d-flex mb-3">
+                                <div class="form-floating flex-grow-1 me-1">
+                                    <input type="text" class="form-control" id="phonePart1" name="phonePart1"
+                                           placeholder="010"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[0]}" maxlength="3">
+                                    <label for="phonePart1">전화번호 앞자리</label>
+                                </div>
+                                <div class="form-floating flex-grow-1 mx-1">
+                                    <input type="text" class="form-control" id="phonePart2" name="phonePart2"
+                                           placeholder="1111"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[1]}" maxlength="4">
+                                    <label for="phonePart2">중간</label>
+                                </div>
+                                <div class="form-floating flex-grow-1 ms-1">
+                                    <input type="text" class="form-control" id="phonePart3" name="phonePart3"
+                                           placeholder="1234"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[2]}" maxlength="4">
+                                    <label for="phonePart3">끝</label>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="career" name="career" placeholder="Enter your career and activities here..." th:value="${instructorDto.career}" style="height: 150px;"></textarea>
+                                <label for="career">경력사항 및 활동내역</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="certificate" name="certificate" placeholder="Enter your certificates here..." th:value="${instructorDto.certificate}" style="height: 100px;"></textarea>
+                                <label for="certificate">자격증</label>
+                            </div>
+
+
+                            <!-- 은행 선택 드롭다운 -->
+                            <div class="form-floating mb-3">
+                                <select class="form-control" id="bank" name="bank" onchange="toggleBankInput()">
+                                    <option value="">은행을 선택하세요</option>
+                                    <option value="KB국민은행" th:selected="${instructorDto.bank == 'KB국민은행'}">KB국민은행</option>
+                                    <option value="신한은행" th:selected="${instructorDto.bank == '신한은행'}">신한은행</option>
+                                    <option value="하나은행" th:selected="${instructorDto.bank == '하나은행'}">하나은행</option>
+                                    <option value="우리은행" th:selected="${instructorDto.bank == '우리은행'}">우리은행</option>
+                                    <option value="NH농협은행" th:selected="${instructorDto.bank == 'NH농협은행'}">NH농협은행</option>
+                                    <option value="기업은행" th:selected="${instructorDto.bank == '기업은행'}">기업은행</option>
+                                    <option value="씨티은행" th:selected="${instructorDto.bank == '씨티은행'}">씨티은행</option>
+                                    <option value="카카오뱅크" th:selected="${instructorDto.bank == '카카오뱅크'}">카카오뱅크</option>
+                                    <option value="케이뱅크" th:selected="${instructorDto.bank == '케이뱅크'}">케이뱅크</option>
+                                    <!-- 추가 은행 옵션 -->
+                                    <option value="other" th:selected="${instructorDto.bank != null and
+                                          !(instructorDto.bank == 'KB국민은행' or
+                                            instructorDto.bank == '신한은행' or
+                                            instructorDto.bank == '하나은행' or
+                                            instructorDto.bank == '우리은행' or
+                                            instructorDto.bank == 'NH농협은행' or
+                                            instructorDto.bank == '기업은행' or
+                                            instructorDto.bank == '씨티은행' or
+                                            instructorDto.bank == '카카오뱅크' or
+                                            instructorDto.bank == '케이뱅크')}">기타</option>
+                                </select>
+                                <label for="bank">은행 선택</label>
+                            </div>
+
+                            <!-- 사용자 정의 은행 이름 입력 필드 -->
+                            <div class="form-floating mb-3" id="otherBankContainer" style="display:none;">
+                                <input class="form-control" id="otherBank" name="otherBank" type="text" placeholder="Enter your bank name" th:value="${instructorDto.bank}">
+                                <label for="otherBank">은행 이름 입력</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="bankName" name="bankName" type="text" placeholder="Enter account holder's name" th:value="${instructorDto.bankName}">
+                                <label for="bankName">예금주명</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="account" name="account" type="text" placeholder="Enter account number" th:value="${instructorDto.account}">
+                                <label for="account">계좌번호</label>
+                            </div>
+
 
                             <!-- 변경사항 저장 버튼 -->
                             <div class="d-grid">
@@ -63,6 +189,171 @@
     </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+<script>
+    let isEmailAvailable = false; // 이메일 중복 상태를 추적합니다.
+    let isEmailChecked = false;
+    document.getElementById('emailUser').addEventListener('input', function () {
+        // 이메일 사용자 이름을 변경할 때마다 중복 검사 상태를 초기화합니다.
+        isEmailAvailable = false;
+        isEmailChecked = false;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleBankInput(); // 페이지 로드 시 상태 확인
+        showCustomDomainInput();
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 폼의 기본 제출을 방지
+
+        // 필수 필드 검사
+        let name = document.getElementById('name').value.trim();
+        let gender = document.getElementById('gender').value;
+        let birthdate = document.getElementById('birthdate').value.trim();
+        let emailUser = document.getElementById('emailUser').value.trim();
+        let emailDomain = document.getElementById('emailDomain').value;
+        let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+        let phonePart1 = document.getElementById('phonePart1').value.trim();
+        let phonePart2 = document.getElementById('phonePart2').value.trim();
+        let phonePart3 = document.getElementById('phonePart3').value.trim();
+        let career = document.getElementById('career').value.trim();
+        let certificate = document.getElementById('certificate').value.trim();
+
+        let email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+        // 모든 필수 필드가 채워졌는지 확인
+        if (!name || !gender || !birthdate || !emailUser || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+            alert('모든 내용을 작성해 주세요.');
+            return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
+        }
+
+        if (!isEmailChecked) {
+            alert('이메일 중복 확인을 해주세요.');
+            return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
+        }
+        // 이메일 중복 상태 검사
+        if (!isEmailAvailable) {
+            alert('이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.');
+            return; // 중복된 이메일이 있으면 폼 제출을 중단합니다.
+        }
+
+
+        // 이메일 조합
+        emailUser = document.getElementById('emailUser').value;
+        emailDomain = document.getElementById('emailDomain').value;
+        customDomain = document.getElementById('customDomain').value;
+        email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+        // 이메일 숨겨진 필드 업데이트 또는 추가
+        let emailInput = document.getElementById('email');
+        if (!emailInput) {
+            emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.id = 'email'; // id 속성 추가
+            emailInput.name = 'email';
+            this.appendChild(emailInput);
+        }
+        emailInput.value = email;
+
+        // 전화번호 조합
+        phonePart1 = document.getElementById('phonePart1').value;
+        phonePart2 = document.getElementById('phonePart2').value;
+        phonePart3 = document.getElementById('phonePart3').value;
+        let phone = phonePart1 + '-' + phonePart2 + '-' + phonePart3; // 하이픈 추가
+        this.appendChild(createHiddenInput('phone', phone)); // 전화번호 숨겨진 필드에 추가
+
+        // 생년월일 분리
+        let birthdateInput = document.getElementById('birthdate');
+        let birthdateValue = birthdateInput.value;
+        if (birthdateValue) {
+            const [year, month, day] = birthdateValue.split('-');
+            this.appendChild(createHiddenInput('birthyear', year));
+            this.appendChild(createHiddenInput('birthday', `${month}-${day}`));
+        }
+
+        // 폼을 프로그래밍 방식으로 제출
+        this.submit();
+    });
+
+    function createHiddenInput(name, value) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        return input;
+    }
+
+    function toggleBankInput() {
+        var bankSelect = document.getElementById('bank');
+        var otherBankContainer = document.getElementById('otherBankContainer');
+        var otherBankInput = document.getElementById('otherBank');
+
+        // "기타" 선택 시 은행 이름 입력 필드 표시
+        if (bankSelect.value === 'other') {
+            otherBankContainer.style.display = 'block';
+        } else {
+            otherBankContainer.style.display = 'none';
+            otherBankInput.value = ''; // 기타가 아닐 때 입력 필드를 비웁니다.
+        }
+    }
+    function showCustomDomainInput() {
+        var emailDomainSelect = document.getElementById('emailDomain');
+        var customDomainContainer = document.getElementById('customDomainContainer');
+
+        if (emailDomainSelect.value === 'other') {
+            customDomainContainer.style.display = 'block'; // '기타' 선택 시 입력 필드 표시
+        } else {
+            customDomainContainer.style.display = 'none'; // 그 외 경우 입력 필드 숨김
+        }
+    }
+
+        function checkEmail() {
+            const emailUser = document.getElementById('emailUser').value;
+            const emailDomain = document.getElementById('emailDomain').value;
+            const customDomain = document.getElementById('customDomain').value;
+            const currentEmail = document.getElementById('currentEmail').value;
+            const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+            // 변경된 이메일만 중복 검사 실행
+            if (email === currentEmail) {
+                alert('이메일 주소가 변경되지 않았습니다.');
+                return;
+            }
+
+            if (!emailUser) {
+                alert('이메일을 입력해주세요.');
+                return;
+            }
+
+            fetch('/instructor/check-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email: email})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    isEmailAvailable = data.isAvailable;
+                    isEmailChecked = true; // 중복 검사를 수행했음을 표시
+                    if (isEmailAvailable) {
+                        alert('이메일이 사용 가능합니다.');
+                    } else {
+                        alert('이미 사용 중인 이메일입니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('중복 확인 중 오류가 발생했습니다.');
+                });
+
+    }
+
+
+</script>
+
+
 </body>
 </html>

@@ -2,11 +2,13 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,22 @@ public class InstructorService {
     }
 
     //강사페이지에서 정산금 띄우기
+
+
+    //강사 정보 수정
+    @Transactional
+    public void updateInstructor(InstructorUpdateDto dto) {
+        Optional<Instructor> instructorOpt = instructorRepository.findById(dto.getId());
+
+        if (instructorOpt.isPresent()) {
+            Instructor instructor = instructorOpt.get();
+            dto.updateEntity(instructor); // DTO를 사용하여 엔티티 업데이트
+            instructorRepository.save(instructor);
+            log.info("Updated instructor with id: {}", dto.getId());
+        } else {
+            throw new RuntimeException("Instructor not found with id: " + dto.getId());
+        }
+    }
 
 
 
