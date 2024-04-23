@@ -93,5 +93,51 @@ public class ProgramService {
     // 프로그램 강사가 현재 접속 강사와 다르면
 //    if (!program.get)
   }
+//  모든 프로그램 가져오기
+  public List<Program> findAll(){
+    return programRepository.findAll();
+  }
+//  state가 CREATION_PENDING 가져오기
+  public List<ProgramDto> findAllByStateIsCreation(List<Program> programs){
+    List<ProgramDto> stateCreateDto = new ArrayList<>();
+    for (Program program : programs){
+      if (program.getState() == Program.ProgramState.CREATION_PENDING){
+        stateCreateDto.add(ProgramDto.fromEntity(program));
+      }
+    }
+    return stateCreateDto;
+  }
+//  신규 등록 프로그램 State -> IN_PROGRESS
+  public void stateConvertInProgress(Long programId){
+    Program program = programRepository.findById(programId).orElseThrow();
+
+    program.setState(Program.ProgramState.IN_PROGRESS);
+    programRepository.save(program);
+  }
+//  신규 등록 프로그램 거절
+  public void deleteInProgress(Long programId){
+    Program program = programRepository.findById(programId).orElseThrow();
+    programRepository.delete(program);
+  }
+  //  state가 MODIFICATION_PENDING 가져오기
+  public List<ProgramDto> findAllByStateIsModification(List<Program> programs){
+    List<ProgramDto> stateCreateDto = new ArrayList<>();
+    for (Program program : programs){
+      if (program.getState() == Program.ProgramState.MODIFICATION_PENDING){
+        stateCreateDto.add(ProgramDto.fromEntity(program));
+      }
+    }
+    return stateCreateDto;
+  }
+  //  state가 DELETION_PENDING 가져오기
+  public List<ProgramDto> findAllByStateIsDeletion(List<Program> programs){
+    List<ProgramDto> stateCreateDto = new ArrayList<>();
+    for (Program program : programs){
+      if (program.getState() == Program.ProgramState.DELETION_PENDING){
+        stateCreateDto.add(ProgramDto.fromEntity(program));
+      }
+    }
+    return stateCreateDto;
+  }
 
 }

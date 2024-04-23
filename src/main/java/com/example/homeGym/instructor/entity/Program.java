@@ -39,7 +39,7 @@ public class Program {
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime approvalTime;
-    public enum ProgramState {
+    public enum ProgramState { 
         CREATION_PENDING,  // 생성 대기중
         MODIFICATION_PENDING,  // 수정 대기중
         DELETION_PENDING,  // 삭제 대기중
