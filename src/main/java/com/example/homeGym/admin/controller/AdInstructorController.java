@@ -2,6 +2,7 @@ package com.example.homeGym.admin.controller;
 
 
 import com.example.homeGym.admin.service.NumberUtils;
+import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.ProgramService;
@@ -37,7 +38,8 @@ public class AdInstructorController {
     List<Long> programLongId = programService.ConvertLong(programDtos);
 //    programId에 해당하는 user_program의 id값들의 Total금액 가져오기, Program에 값 저장
     List<Integer> totalAmount = userProgramService.totalAmount(programLongId);
-//    이번달 금액 가져오기
+
+
     List<Integer> monthAmount = userProgramService.monthAmount(programLongId);
 //    각각의 Program id값에 해당하는 totalAmount, monthAmount 넣어주기
     for (int i = 0; i < programDtos.size(); i++) {
@@ -62,6 +64,15 @@ public class AdInstructorController {
     String medal = instructorService.findRank(Gold, Silver, Bronze, Unranked);
     instructorService.saveMedal(instructorId, medal);
     return "redirect:/admin/instructor/{instructorId}";
+  }
+
+  @GetMapping("/accept")
+  public String accept(
+          Model model
+  ){
+    List<InstructorDto> instructorDto = instructorService.findAllByStateIsREGISTRATION();
+    log.info("@@@@ : {}", instructorDto.size());
+    return "/admin/test";
   }
 
 }

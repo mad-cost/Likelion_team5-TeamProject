@@ -53,11 +53,6 @@ public class AdminController {
     }
     model.addAttribute("userPrograms", userPrograms);
 
-////    user_program객체에서 userId의 programId의 타입을 Long으로 바꿔주기
-//    List<Long> userProgramProgramId = userProgramService.findAllByUserIdConvertProgramId(userId);
-//    List<ProgramDto> programs = programService.findByProgramId(userProgramProgramId);
-//    model.addAttribute("programs", programs);
-
     return "admin/user";
   }
 

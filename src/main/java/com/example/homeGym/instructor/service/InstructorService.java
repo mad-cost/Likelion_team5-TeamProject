@@ -1,5 +1,6 @@
 package com.example.homeGym.instructor.service;
 
+import com.example.homeGym.admin.dto.SettlementDto;
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.entity.Instructor;
@@ -55,7 +56,6 @@ public class InstructorService {
         }
         return instructorDtos;
     }
-
     public InstructorDto findById(Long instructorId){
         return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
     }
@@ -78,6 +78,22 @@ public class InstructorService {
             myRank = Bronze;
         } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
         return myRank;
+    }
+
+    public Instructor findByLongId(Long instructorId){
+        return instructorRepository.findById(instructorId).orElseThrow();
+    }
+
+    public List<InstructorDto> findAllByStateIsREGISTRATION(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 REGISTRATION인 강사 모두 가져오기
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors){
+            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
     }
 
 }

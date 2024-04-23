@@ -27,7 +27,12 @@ public class Settlement {
     private SettlementState state;
     @CreationTimestamp
     private LocalDateTime createdAt; // 정산 신청 날짜
+    @Setter
     private LocalDateTime completeTime;
+    @Setter
+    private String dateCreateAt; // yyyy-mm-dd
+    @Setter
+    private String dateCompleteTime;
     public enum SettlementState{
         SETTLEMENT_PENDING, COMPLETE
     }
