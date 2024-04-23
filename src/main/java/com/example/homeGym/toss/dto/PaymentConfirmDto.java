@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentResponseDto {
+public class PaymentConfirmDto {
     private String payType;
     private Long amount;
     private String orderName;

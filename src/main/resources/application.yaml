@@ -1,4 +1,34 @@
 spring:
+  security:
+    oauth2:
+      client:
+        # OAuth2 서비스 제공자를 사용하는 방법
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+        registration:
+          kakao:
+            # REST API키
+            client-id: a3e2a31bbb751580cb4c296e8a85df6b
+            client-secret: QEGb6X6RrUkcD7T6zOMVqAFn0Mi0S9bN
+            redirect-uri: http://localhost:8080/main
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+              - name
+              - gender
+              - age_range
+              - birthday
+              - birthyear
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://database1.cvqi4qeimxir.us-east-1.rds.amazonaws.com:3306/homeGym
@@ -11,7 +41,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+      dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:
@@ -21,11 +51,12 @@ logging:
     root: info
 
 jwt:
-  secret:
+  secret: fdsafasgwagrag4554sdfeshrthdrhrdthrdttrhaf
 
 payment:
   toss:
-    test_client_api_key: test_ck_jExPeJWYVQRJaBZ76ggor49R5gvN
-    test_secrete_api_key: test_sk_DLJOpm5QrlWwQK71RMaoVPNdxbWn
+    test_client_api_key: ${TOSS_CLIENT_API_KEY}
+    test_secret_api_key: ${TOSS_SECRET_API_KEY}
     success_url: "http://localhost"
     fail_url: "http://localhost"
+

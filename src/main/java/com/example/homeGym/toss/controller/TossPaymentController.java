@@ -1,8 +1,8 @@
 package com.example.homeGym.toss;
 
 import com.example.homeGym.toss.config.TossPaymentConfig;
+import com.example.homeGym.toss.dto.PaymentConfirmDto;
 import com.example.homeGym.toss.dto.PaymentDto;
-import com.example.homeGym.toss.dto.PaymentResponseDto;
 import com.example.homeGym.toss.service.TossPaymentService;
 import com.example.homeGym.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,15 +37,15 @@ public class TossPaymentController {
             @RequestBody
             @Validated
             PaymentDto paymentDto
-            ) {
-        PaymentResponseDto responseDto
+    ) {
+        PaymentConfirmDto confirmDto
                 = paymentService.requestTossPayment(
-                        paymentDto.toEntity(),
+                paymentDto.toEntity(),
                 principal.getId()).toPaymentResponseDto();
         paymentDto.setSuccessfulUrl(paymentDto.getSuccessfulUrl());
         paymentDto.setFailUrl(paymentDto.getFailUrl());
 
-        return ResponseEntity.ok().body(new PaymentResponseDto());
+        return ResponseEntity.ok().body(new PaymentConfirmDto());
     }
 
 
