@@ -8,4 +8,6 @@ public interface CommentService {
     CommentDto updateReview(Long instructorId, Long reviewId, CommentDto commentDto);
 
     void deleteReview(Long instructorId, Long reviewId);
+
+    CommentDto getCommentDtoById(Long commentId);
 }

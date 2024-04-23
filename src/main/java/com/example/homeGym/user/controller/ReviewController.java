@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +40,21 @@ public class ReviewController {
     @PostMapping("review")
     @ResponseBody
     public String reviewWrite(
-            @RequestParam("images")
+            @RequestParam(value = "images", required = false)
             List<MultipartFile> images,
+            @RequestParam("memo")
+            String memo,
+            @RequestParam("rating")
+            Integer rating,
             @RequestParam("userProgramId")
             Long userProgramId
     ){
+        System.out.println("images = " + images);
+        System.out.println("memo = " + memo);
+        System.out.println("rating = " + rating);
+        System.out.println("userProgramId = " + userProgramId);
         try {
-            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images);
+            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images, rating, memo);
             return "good";
         }catch (IOException e){
             return "error";
@@ -64,13 +73,39 @@ public class ReviewController {
     }
 
     @PutMapping("review")
-    @ResponseBody
-    public String updateReview(
+    public String updateReviewPage(
             @RequestParam("reviewId")
-            Long reviewId
+            Long reviewId,
+            Model model
     ){
 
-        return "update";
+        model.addAttribute("review", reviewService.updateReview(reviewId));
+        return "user/updatereview";
     }
 
+    @PostMapping("review/update")
+    @ResponseBody
+    public String updateReview(
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images,
+            @RequestParam("memo")
+            String memo,
+            @RequestParam("rating")
+            Integer rating,
+            @RequestParam("reviewId")
+            Long reviewId
+
+    ){
+        System.out.println("images = " + images);
+        if (images != null){
+            for (MultipartFile image :
+                    images) {
+                System.out.println(image.getOriginalFilename());
+                System.out.println(image.getSize());
+            }
+        }
+        reviewService.updateReview(1L, reviewId, images, rating, memo);
+
+        return "test";
+    }
 }
