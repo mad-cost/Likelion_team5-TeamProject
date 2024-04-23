@@ -7,6 +7,10 @@ import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -136,10 +140,15 @@ public class InstructorController {
 
 
 
-    // 강사 후기 페이지
-    @PostMapping("/review")
-    public String ViewReview() {
-        return null;
+    // 로그인한 강사의 리뷰 페이지
+    @GetMapping("/reviews")
+    public String getInstructorReviews(@PageableDefault(size = 10)Pageable pageable, Model model) {
+       // Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        // Fetch the instructor ID based on the username
+        Page<InstructorReviewDto> reviews = instructorService.findReviewsByInstructorId(/*currentInstructor.getId()*/1L, pageable);
+
+        model.addAttribute("reviews", reviews);
+        return "instructor/instructor-reviews"; // 타임리프 템플릿 파일 이름
     }
 
     // 강사 프로그램 상세

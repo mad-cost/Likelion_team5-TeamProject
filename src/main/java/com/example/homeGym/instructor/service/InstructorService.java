@@ -2,24 +2,38 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
+import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.user.entity.Review;
+import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.repository.ReviewRepository;
+import com.example.homeGym.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
@@ -111,6 +125,37 @@ public class InstructorService {
         } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
         return myRank;
     }
+
+
+
+    @Transactional(readOnly = true)
+    public Page<InstructorReviewDto> findReviewsByInstructorId(Long instructorId, Pageable pageable) {
+        //강사 id로 리뷰들을 페이지 단위로 가져오기
+        Page<Review> reviews = reviewRepository.findByInstructorId(instructorId, pageable);
+        //리뷰 id List로 가져오기
+        List<Long> reviewIds = reviews.getContent().stream().map(Review::getId).collect(Collectors.toList());
+        //답글 조회
+        List<Comment> comments = commentRepository.findByReviewIdIn(reviewIds);
+        Map<Long, String> commentMap = comments.stream()
+                .collect(Collectors.toMap(Comment::getReviewId, Comment::getContent));
+        //리뷰 페이지 스트림으로 변환, 각 리뷰는 InstructorReviewDto로 변환
+        return reviews.map(review -> convertToDto(review, commentMap.get(review.getId())));
+    }
+
+    //Dto 생성 메소드
+    private InstructorReviewDto convertToDto(Review review, String commentContent) {
+        User user = userRepository.findById(review.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        return new InstructorReviewDto(
+                review.getId(),
+                user.getName(),
+                review.getMemo(),
+                review.getStars(),
+                review.getCreatedAt(),
+                commentContent,
+                review.getImageUrl()  // Assume this is properly handled
+        );
+    }
+
 
 
 }
