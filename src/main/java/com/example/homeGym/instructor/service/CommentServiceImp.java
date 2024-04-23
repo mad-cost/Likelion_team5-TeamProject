@@ -92,4 +92,14 @@ public class CommentServiceImp implements CommentService {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_FORBIDDEN);
         commentRepository.deleteById(reviewId);
     }
+
+    @Override
+    public CommentDto getCommentDtoById(Long commentId) {
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            // 댓글이 존재하지 않을 경우 예외 처리
+            throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
+        }
+        return CommentDto.fromEntity(optionalComment.get());
+    }
 }
