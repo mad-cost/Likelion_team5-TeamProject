@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/program")
@@ -16,7 +17,6 @@ import javax.validation.Valid;
 public class ProgramController {
     private final ProgramService programService;
 
-    // 생성 페이지
     @GetMapping("/{instructorId}")
     public String createPage(
             @PathVariable("instructorId") Long instructorId,
@@ -27,36 +27,44 @@ public class ProgramController {
         return "instructor-program"; // 생성 페이지의 뷰 이름
     }
 
-    // 생성 요청
     @PostMapping("/{instructorId}")
     public String requestCreate(
             @PathVariable("instructorId") Long instructorId,
             @Valid @ModelAttribute ProgramDto programDto,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Model model
     ) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("instructorId", instructorId);
             return "instructor-program"; // 에러가 있으면 다시 생성 페이지로 이동
         }
         programService.createProgram(programDto);
-        return "redirect:/program/" + instructorId; // 생성된 프로그램 목록 페이지로 리다이렉트
+        return "redirect:/program/list/" + instructorId; // 생성된 프로그램 목록 페이지로 리다이렉트
     }
 
-    // 수정 요청
-    @PostMapping("/{programId}/update")
+    @GetMapping("/update/{programId}")
+    public String updateProgram(
+            @PathVariable("programId") Long programId,
+            Model model
+    ) {
+        ProgramDto programDto = programService.findByProgramId(List.of(programId)).get(0);
+        model.addAttribute("programDto", programDto);
+        return "update-program"; // 수정 페이지의 뷰 이름
+    }
+
+    @PostMapping("/update/{programId}")
     public String requestUpdate(
             @PathVariable("programId") Long programId,
-            @Valid
-            @ModelAttribute ProgramDto programDto,
+            @Valid @ModelAttribute ProgramDto programDto,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return "editProgram"; // 에러가 있으면 다시 수정 페이지로 이동
+            return "update-program"; // 에러가 있으면 다시 수정 페이지로 이동
         }
         programService.updateProgram(programId, programDto);
         return "redirect:/program"; // 수정된 프로그램 목록 페이지로 리다이렉트
     }
 
-    // 프로그램 삭제
     @DeleteMapping("/{programId}")
     public String deleteProgram(
             @PathVariable("programId") Long programId

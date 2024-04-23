@@ -67,7 +67,6 @@ public class ProgramService {
     Instructor currentInstructor = facade.getCurrentInstructor();
 
     Program program = builder()
-            .id(programDto.getId())
             .instructorId(currentInstructor.getId())
             .category(programDto.getCategory())
             .title(programDto.getTitle())
@@ -79,7 +78,7 @@ public class ProgramService {
             .price20(programDto.getPrice20())
             .build();
 
-    ProgramDto.fromEntity(programRepository.save(program));
+    programRepository.save(program);
   }
 
   // 프로그램 수정
