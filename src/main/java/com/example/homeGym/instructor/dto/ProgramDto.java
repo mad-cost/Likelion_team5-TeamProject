@@ -1,15 +1,14 @@
 package com.example.homeGym.instructor.dto;
 
 import com.example.homeGym.instructor.entity.Category;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
+import com.example.homeGym.instructor.entity.UserProgram;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import com.example.homeGym.user.dto.ProgramDtoForUser;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +28,10 @@ public class ProgramDto {
   private Integer price10;
   private Integer price20;
   private Program.ProgramState state;
+  @Setter
+  private String monthAmount;
+  @Setter
+  private String totalAmount;
 
   public static ProgramDto fromEntity(Program entity){
     return ProgramDto.builder()
