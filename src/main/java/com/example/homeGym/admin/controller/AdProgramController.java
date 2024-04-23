@@ -31,7 +31,6 @@ public class AdProgramController {
 
 //    Program의 state가 CREATION_PENDING 가져오기
     List<ProgramDto> stateCreates = programService.findAllByStateIsCreation(programs);
-    log.info("@@@@@:{}",stateCreates.size());
     for (ProgramDto dto : stateCreates){
       Long InstructorId  = dto.getInstructorId();
       dto.setInstructor(instructorService.findByLongId(InstructorId));
@@ -58,5 +57,43 @@ public class AdProgramController {
     return "redirect:/admin/program/creation";
   }
 
+  @GetMapping("/modification")
+  public String modification(
+          Model model
+  ){
+    List<Program> programs = programService.findAll();
 
+//    Program의 state가 MODIFICATION_PENDING 가져오기
+    List<ProgramDto> stateModification = programService.findAllByStateIsModification(programs);
+    for (ProgramDto dto : stateModification){
+      Long InstructorId  = dto.getInstructorId();
+      dto.setInstructor(instructorService.findByLongId(InstructorId));
+    }
+    model.addAttribute("programs", stateModification);
+    return "/admin/modification";
+  }
+//  수정 프로그램 수락
+  @PostMapping("/{programId}/modification")
+  public String modification(
+          @PathVariable("programId")
+          Long programId
+  ){
+    programService.stateConvertInProgress(programId);
+    return "redirect:/admin/modification";
+  }
+  @GetMapping("/deletion")
+  public String deletion(
+          Model model
+  ){
+    List<Program> programs = programService.findAll();
+
+//    Program의 state가 CREATION_PENDING 가져오기
+    List<ProgramDto> stateDeletion = programService.findAllByStateIsDeletion(programs);
+    for (ProgramDto dto : stateDeletion){
+      Long InstructorId  = dto.getInstructorId();
+      dto.setInstructor(instructorService.findByLongId(InstructorId));
+    }
+    model.addAttribute("programs", stateDeletion);
+    return "/admin/deletion";
+  }
 }

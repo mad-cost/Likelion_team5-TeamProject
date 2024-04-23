@@ -107,7 +107,7 @@ public class ProgramService {
     }
     return stateCreateDto;
   }
-//  신규 등록 프로그램 CREATION_PENDING -> IN_PROGRESS
+//  신규 등록 프로그램 State -> IN_PROGRESS
   public void stateConvertInProgress(Long programId){
     Program program = programRepository.findById(programId).orElseThrow();
 
@@ -119,7 +119,25 @@ public class ProgramService {
     Program program = programRepository.findById(programId).orElseThrow();
     programRepository.delete(program);
   }
-
-
+  //  state가 MODIFICATION_PENDING 가져오기
+  public List<ProgramDto> findAllByStateIsModification(List<Program> programs){
+    List<ProgramDto> stateCreateDto = new ArrayList<>();
+    for (Program program : programs){
+      if (program.getState() == Program.ProgramState.MODIFICATION_PENDING){
+        stateCreateDto.add(ProgramDto.fromEntity(program));
+      }
+    }
+    return stateCreateDto;
+  }
+  //  state가 DELETION_PENDING 가져오기
+  public List<ProgramDto> findAllByStateIsDeletion(List<Program> programs){
+    List<ProgramDto> stateCreateDto = new ArrayList<>();
+    for (Program program : programs){
+      if (program.getState() == Program.ProgramState.DELETION_PENDING){
+        stateCreateDto.add(ProgramDto.fromEntity(program));
+      }
+    }
+    return stateCreateDto;
+  }
 
 }
