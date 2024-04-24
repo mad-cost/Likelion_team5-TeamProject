@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Schedule Management</title>
+  <title>스케줄 관리</title>
   <!-- 부트스트랩 CDN -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container mt-5">
-  <h2 class="mb-4">Schedule Management</h2>
+  <h2 class="mb-4">스케줄 관리</h2>
 
   <!-- 스케줄 메인 화면 -->
   <div class="card mb-4">
@@ -22,7 +22,7 @@
         <p><strong>Created At:</strong> <span th:text="${scheduleDto.createAt}"></span></p>
       </div>
       <div th:if="${scheduleDto == null}">
-        <p>No schedule found.</p>
+        <p>해당 강사를 찾을 수 없습니다.</p>
       </div>
     </div>
   </div>
@@ -34,14 +34,14 @@
       <form th:action="@{/instructor/{instructorId}/schedule}" method="post">
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
         <div class="form-group">
-          <label for="week">Week:</label>
+          <label for="week">주:</label>
           <input type="text" class="form-control" id="week" name="week" required />
         </div>
         <div class="form-group">
-          <label for="time">Time:</label>
+          <label for="time">시간:</label>
           <input type="text" class="form-control" id="time" name="time" required />
         </div>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">생성</button>
       </form>
     </div>
   </div>
@@ -54,14 +54,14 @@
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
         <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
         <div class="form-group">
-          <label for="weekUpdate">Week:</label>
+          <label for="weekUpdate">주:</label>
           <input type="text" class="form-control" id="weekUpdate" name="week" th:value="${scheduleDto.week}" required />
         </div>
         <div class="form-group">
-          <label for="timeUpdate">Time:</label>
+          <label for="timeUpdate">시간:</label>
           <input type="text" class="form-control" id="timeUpdate" name="time" th:value="${scheduleDto.time}" required />
         </div>
-        <button type="submit" class="btn btn-success">Update</button>
+        <button type="submit" class="btn btn-success">수정</button>
       </form>
     </div>
   </div>
@@ -74,7 +74,7 @@
         <input type="hidden" name="_method" value="delete" />
         <input type="hidden" name="instructorId" th:value="${instructorId}" />
         <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
-        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="submit" class="btn btn-danger">삭제</button>
       </form>
     </div>
   </div>
