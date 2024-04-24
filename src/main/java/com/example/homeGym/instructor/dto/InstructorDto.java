@@ -28,6 +28,7 @@ public class InstructorDto {
     private String bank;
     private String bankName;
     private String account;
+    private String withdrawalReason;
 
     public static InstructorDto fromEntity(Instructor entity) {
 
@@ -49,6 +50,7 @@ public class InstructorDto {
                 .bank(entity.getBank())
                 .bankName(entity.getBankName())
                 .account(entity.getAccount())
+                .withdrawalReason(entity.getWithdrawalReason())
                 .build();
     }
 }

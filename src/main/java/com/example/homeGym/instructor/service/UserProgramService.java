@@ -76,7 +76,7 @@ public class UserProgramService {
         return userProgramDtos;
     }
 
-    public void deleteByProgram(List<Long> userPrograms, Long programId){
+    public void stateIsCancel(List<Long> userPrograms, Long programId){
         List<UserProgram> userIds = userProgramRepository.findAllById(userPrograms);
         for (UserProgram userId : userIds){
             if (userId.getProgramId().equals(programId)){
@@ -146,9 +146,14 @@ public class UserProgramService {
             result.add(sumAmount);
         }
         return  result;
-
-
-
+    }
+//  유저 프로그램 전액 환불
+    public void allRefund(Long userProgramId){
+        UserProgram userProgram = userProgramRepository.findById(userProgramId).orElseThrow();
+        userProgram.setState(UserProgram.UserProgramState.CANCEL);
+        userProgramRepository.save(userProgram);
+        log.info("@@@@@@Status : {}", userProgram.getState());
+        UserProgramDto.fromEntity(userProgram);
     }
 
 }

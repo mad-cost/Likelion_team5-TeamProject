@@ -42,7 +42,7 @@ public class AdminController {
 //    user객체에서 Id가져오기
     model.addAttribute("user", userService.findById(userId));
 
-//    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
+//    user_program객체에서 userId를 통해 user_program의 Id값 가져오기 (State가 IN_PROGRESS값만 가져온다)
     List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
 //    user_program객체의 Id값을 형변환 Long -> UserProgramDto
     List<UserProgramDto> userPrograms = userProgramService.findByIds(userProgramsId);
@@ -56,44 +56,73 @@ public class AdminController {
     return "admin/user";
   }
 
-  //  유저 삭제
-  @PostMapping("/user/{userId}/program/{programId}")
-  public String userProgramDelete(
+  //  유저 전체 환불
+  @PostMapping("/user/{userId}/userProgram/{userProgramId}/allRefund")
+  public String allRefund(
           @PathVariable("userId")
           Long userId,
-          @PathVariable("programId")
-          Long programId
-  ) {
-    //    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
-    List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
-    userProgramService.deleteByProgram(userProgramsId, programId);
-    return "redirect:/admin/user/{userId}";
-  }
+          @PathVariable("userProgramId")
+          Long userProgramId
+  ){
+    // 전액 환불
+      userProgramService.allRefund(userProgramId);
+      return "redirect:/admin/user/" + userId;
 
-  //  유저 수정
-  @PostMapping("/user/{userId}/update/program/{programId}")
-  public String userProgramUpdate(
+  }
+//    유저 수정
+  @PostMapping("/user/{userId}/userProgram/{userProgramId}/update")
+  public String update(
           @PathVariable("userId")
           Long userId,
-          @PathVariable("programId")
-          Long programId,
+          @PathVariable("userProgramId")
+          Long userProgramId,
           Model model
   ) {
-    //    user객체에서 Id가져오기
-    model.addAttribute("user", userService.findById(userId));
-    //    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
-    List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
+      model.addAttribute("user", userService.findById(userId));
+      model.addAttribute("userProgramId", userProgramId);
+      log.info("@@@@ : {}", userId); // 5
+      log.info("@@@@@@ : {}", userProgramId); // 12
+
+    //    user_program객체에서 userId를 통해 user_program의 Id값 가져오기 (State가 IN_PROGRESS값만 가져온다)
+    List<Long> userProgramAll = userProgramService.findAllByUserIdConvertId(userId);
+      log.info("@@@@Size : {}", userProgramAll); // 5, 12
     //    user_program객체의 Id값을 형변환 Long -> UserProgramDto
-    List<UserProgramDto> userPrograms = userProgramService.findByIds(userProgramsId);
+    List<UserProgramDto> userPrograms = userProgramService.findByIds(userProgramAll);
+    log.info("#### : {}", userPrograms.size());
     for (UserProgramDto dto : userPrograms) {
       Long programs = dto.getProgramId();
       dto.setProgram(programServiceForUser.findById(programs));
     }
+    log.info("####### : {}", userPrograms.get(0).getId());
+    log.info("####### : {}", userPrograms.get(1).getId());
     model.addAttribute("userPrograms", userPrograms);
 
-    model.addAttribute("programId", programId);
-    return "/admin/userUpdate";
+      return "/admin/userUpdate";
   }
+
+//  @PostMapping("/user/{userId}/update/program/{programId}")
+//  public String userProgramUpdate(
+//          @PathVariable("userId")
+//          Long userId,
+//          @PathVariable("programId")
+//          Long programId,
+//          Model model
+//  ) {
+//    //    user객체에서 Id가져오기
+//    model.addAttribute("user", userService.findById(userId));
+//    //    user_program객체에서 userId를 통해 user_program의 Id값 가져오기
+//    List<Long> userProgramsId = userProgramService.findAllByUserIdConvertId(userId);
+//    //    user_program객체의 Id값을 형변환 Long -> UserProgramDto
+//    List<UserProgramDto> userPrograms = userProgramService.findByIds(userProgramsId);
+//    for (UserProgramDto dto : userPrograms) {
+//      Long programs = dto.getProgramId();
+//      dto.setProgram(programServiceForUser.findById(programs));
+//    }
+//    model.addAttribute("userPrograms", userPrograms);
+//
+//    model.addAttribute("programId", programId);
+//    return "/admin/userUpdate";
+//  }
 
   // 카운트 수정 및 redirect
   @PostMapping("/user/{userId}/updated/program/{programId}")

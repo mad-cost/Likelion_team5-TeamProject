@@ -35,11 +35,17 @@ public class ProgramService {
     return programDtos;
   }
 
-  public List<ProgramDto> findAllByInstructorIdConvertId(Long instructorId){
+  public List<ProgramDto> findAllByInstructorIdConvertId(Long instructorId) {
     List<ProgramDto> programs = new ArrayList<>();
-    for (Program program : programRepository.findAllByInstructorId(instructorId)){
-      programs.add(ProgramDto.fromEntity(program));
+    for (Program program : programRepository.findAllByInstructorId(instructorId)) {
+      // 진행중인 프로그램, 수정 대기중인 프로그램, 삭제 대기중인 프로그램만 가져오기
+      if (program.getState() == Program.ProgramState.IN_PROGRESS
+              || program.getState() == Program.ProgramState.MODIFICATION_PENDING
+              || program.getState() == Program.ProgramState.DELETION_PENDING) {
+        programs.add(ProgramDto.fromEntity(program));
+      }
     }
+
     return programs;
   }
 
@@ -138,6 +144,13 @@ public class ProgramService {
       }
     }
     return stateCreateDto;
+  }
+  //  삭제 등록 프로그램 State -> DELETION_COMPLETE
+  public void stateConvertInDeletionComplete(Long programId){
+    Program program = programRepository.findById(programId).orElseThrow();
+
+    program.setState(Program.ProgramState.DELETION_COMPLETE);
+    programRepository.save(program);
   }
 
 }

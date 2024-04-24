@@ -2,6 +2,7 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import lombok.RequiredArgsConstructor;
@@ -89,7 +90,7 @@ public class InstructorService {
     }
 
     // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
-    public List<InstructorDto> findAllByStateIsREGISTRATION(){
+    public List<InstructorDto> findAllByStateIsRegistration(){
         List<InstructorDto> instructorDto = new ArrayList<>();
         // state가 REGISTRATION인 강사 모두 가져오기
         List<Instructor> instructors = instructorRepository.findAll();
@@ -111,6 +112,33 @@ public class InstructorService {
 //    강사 신청 거절
     public void delete(Long instructorId){
         instructorRepository.deleteById(instructorId);
+    }
+
+//
+    public List<InstructorDto> findAllByStateIsWithdrawalComplete(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 WITHDRAWAL_PENDING 강사 모두 가져오기
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors) {
+            if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_PENDING) {
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+//    강사 회원 탈퇴 승인
+    public void withdraw(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+//     강사 회원 탈퇴 거절
+    public void withdrawCancel(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
     }
 
 }

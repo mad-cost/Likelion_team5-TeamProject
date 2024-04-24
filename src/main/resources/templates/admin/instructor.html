@@ -56,7 +56,7 @@
           <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
             <nav class="sb-sidenav-menu-nested nav">
               <a class="nav-link" href="/admin/instructor/accept">강사 승인 대기</a>
-              <a class="nav-link" href="layout-sidenav-light.html">강사 회원 탈퇴</a>
+              <a class="nav-link" href="/admin/instructor/withdraw">강사 회원 탈퇴</a>
             </nav>
           </div>
           <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
@@ -127,14 +127,14 @@
         </div>
 
 
-
         <tr th:each="program: ${programs}">
           <div class="card mb-4">
             <div class="card-body">
-                <td><h3 th:text="${program.title}"></h3></td>
+                <td><h3>[[${[program.category]}]][[${program.title}]]</h3></td>
               <hr>
               <td><h5 th:text="${program.description}"></h5></td>
               <td><h5 th:text="${program.curriculum}"></h5></td>
+              <td><h5>프로그램 상태 : [[${program.state}]]</h5></td>
               <div class="card mb-3">
                 <div class="card-body">
                     <a>이번달 금액 : [[${program.getMonthAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
