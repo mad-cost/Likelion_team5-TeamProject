@@ -29,6 +29,15 @@ public class UserProgramService {
         return userProgramDtoList;
     }
 
+    public List<UserProgramDto> findByProgramIdAndStateInProgress(Long programId){
+        List<UserProgram> lists = userProgramRepository.findByProgramIdAndState(programId, UserProgram.UserProgramState.IN_PROGRESS);
+        List<UserProgramDto> userProgramDtoList = new ArrayList<>();
+        for (UserProgram userProgram: lists){
+            userProgramDtoList.add(UserProgramDto.fromEntity(userProgram));
+        }
+        return userProgramDtoList;
+    }
+
     public List<UserProgramDto> findByUserIdAndStateFINISH(Long userId){
         List<UserProgram> lists = userProgramRepository.findByUserIdAndState(userId, UserProgram.UserProgramState.FINISH);
         List<UserProgramDto> userProgramDtoList = new ArrayList<>();

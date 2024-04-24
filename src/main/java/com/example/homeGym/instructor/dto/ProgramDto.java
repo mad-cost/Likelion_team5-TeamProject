@@ -1,6 +1,7 @@
 package com.example.homeGym.instructor.dto;
 
 import com.example.homeGym.instructor.entity.Category;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
 import lombok.*;
 

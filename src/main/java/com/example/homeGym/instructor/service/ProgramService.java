@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.example.homeGym.instructor.entity.Program.*;
@@ -29,12 +30,11 @@ public class ProgramService {
   private final AuthenticationFacade facade;
 
   // 프로그램 목록
-  public List<ProgramDto> findByProgramId(List<Long> id){
-    List<ProgramDto> programDtos = new ArrayList<>();
-    for (Program program : programRepository.findAllById(id)){
-      programDtos.add(ProgramDto.fromEntity(program));
-    }
-    return programDtos;
+  public ProgramDto findByProgramId(Long id) {
+    Program program = programRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Program not found with id: " + id));
+
+    return ProgramDto.fromEntity(program);
   }
 
   public List<ProgramDto> findAllByInstructorIdConvertId(Long instructorId){
