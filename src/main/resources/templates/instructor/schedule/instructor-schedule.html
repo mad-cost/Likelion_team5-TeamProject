@@ -1,87 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>스케줄 관리</title>
-  <!-- 부트스트랩 CDN -->
+  <title>Instructor Schedule</title>
+  <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container mt-5">
-  <h2 class="mb-4">스케줄 관리</h2>
+  <h2>강사 스케줄</h2>
 
-  <!-- 스케줄 메인 화면 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Current Schedule</h5>
-      <div th:if="${scheduleDto != null}">
-        <p><strong>ID:</strong> <span th:text="${scheduleDto.id}"></span></p>
-        <p><strong>Week:</strong> <span th:text="${scheduleDto.week}"></span></p>
-        <p><strong>Time:</strong> <span th:text="${scheduleDto.time}"></span></p>
-        <p><strong>Created At:</strong> <span th:text="${scheduleDto.createAt}"></span></p>
-      </div>
-      <div th:if="${scheduleDto == null}">
-        <p>해당 강사를 찾을 수 없습니다.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 스케줄 생성 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">스케줄 생성</h5>
-      <form th:action="@{/instructor/{instructorId}/schedule}" method="post">
-        <input type="hidden" name="instructorId" th:value="${instructorId}" />
-        <div class="form-group">
-          <label for="week">주:</label>
-          <input type="text" class="form-control" id="week" name="week" required />
-        </div>
-        <div class="form-group">
-          <label for="time">시간:</label>
-          <input type="text" class="form-control" id="time" name="time" required />
-        </div>
-        <button type="submit" class="btn btn-primary">생성</button>
+  <!-- 스케줄 조회 -->
+  <h4>Current Schedule</h4>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Week</th>
+      <th>Time</th>
+      <th>Created At</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody th:each="scheduleDto : ${scheduleDtos}">
+    <!-- 여러 스케줄을 출력 -->
+    <tr>
+      <form th:action="@{/instructor/schedule/{scheduleId}(scheduleId=${scheduleDto.id})}" method="post" onsubmit="return confirm('프로그램을 수정하시겠습니까?');">>
+        <td th:text="${scheduleDto.id}"></td>
+        <td>
+          <input type="text" name="week" th:value="${scheduleDto.week}" />
+        </td>
+        <td>
+          <input type="text" name="time" th:value="${scheduleDto.time}" />
+        </td>
+        <td th:text="${#temporals.format(scheduleDto.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td>
+          <input type="hidden" name="_method" value="put"/>
+          <button type="submit" class="btn btn-danger">스케줄 수정</button>
+        </td>
       </form>
-    </div>
-  </div>
+    </tr>
+    </tbody>
+  </table>
 
-  <!-- 스케줄 수정 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">수정</h5>
-      <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
-        <input type="hidden" name="instructorId" th:value="${instructorId}" />
-        <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
-        <div class="form-group">
-          <label for="weekUpdate">주:</label>
-          <input type="text" class="form-control" id="weekUpdate" name="week" th:value="${scheduleDto.week}" required />
-        </div>
-        <div class="form-group">
-          <label for="timeUpdate">시간:</label>
-          <input type="text" class="form-control" id="timeUpdate" name="time" th:value="${scheduleDto.time}" required />
-        </div>
-        <button type="submit" class="btn btn-success">수정</button>
-      </form>
+  <!-- 스케줄 생성 폼 -->
+  <h4>새 스케줄 생성</h4>
+  <form th:action="@{'/instructor/schedule'}" method="post">
+    <div class="form-group">
+      <label for="week">요일:</label>
+      <input type="text" class="form-control" id="week" name="week" required>
     </div>
-  </div>
-
-  <!-- 스케줄 삭제 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">삭제</h5>
-      <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
-        <input type="hidden" name="_method" value="delete" />
-        <input type="hidden" name="instructorId" th:value="${instructorId}" />
-        <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
-        <button type="submit" class="btn btn-danger">삭제</button>
-      </form>
+    <div class="form-group">
+      <label for="time">시간:</label>
+      <input type="text" class="form-control" id="time" name="time" required>
     </div>
-  </div>
-
+    <button type="submit" class="btn btn-success">스케줄 생성</button>
+  </form>
 </div>
 
-<!-- 부트스트랩 스크립트 -->
+<!-- Bootstrap JS 및 Popper.js -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
