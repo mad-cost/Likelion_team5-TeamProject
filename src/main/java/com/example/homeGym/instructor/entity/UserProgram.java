@@ -29,6 +29,7 @@ public class UserProgram {
     private Integer amount;
     @CreationTimestamp
     private LocalDateTime createAt;
+    @Setter
     private LocalDateTime endTime;
 
 //    @ManyToOne
