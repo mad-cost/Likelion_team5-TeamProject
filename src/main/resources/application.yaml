@@ -48,8 +48,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: kgukid38@gmail.com
-    password: hoem cjey pcwk gzue
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PW}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
