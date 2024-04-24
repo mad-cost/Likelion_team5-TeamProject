@@ -2,6 +2,7 @@ package com.example.homeGym.admin.controller;
 
 
 import com.example.homeGym.admin.service.NumberUtils;
+import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.ProgramService;
@@ -37,7 +38,8 @@ public class AdInstructorController {
     List<Long> programLongId = programService.ConvertLong(programDtos);
 //    programId에 해당하는 user_program의 id값들의 Total금액 가져오기, Program에 값 저장
     List<Integer> totalAmount = userProgramService.totalAmount(programLongId);
-//    이번달 금액 가져오기
+
+
     List<Integer> monthAmount = userProgramService.monthAmount(programLongId);
 //    각각의 Program id값에 해당하는 totalAmount, monthAmount 넣어주기
     for (int i = 0; i < programDtos.size(); i++) {
@@ -63,6 +65,35 @@ public class AdInstructorController {
     instructorService.saveMedal(instructorId, medal);
     return "redirect:/admin/instructor/{instructorId}";
   }
-
+//  강사 승인 페이지
+  @GetMapping("/accept")
+  public String accept(
+          Model model
+  ){
+    //강사의 상태가 REGISTRATION인 강사 모두 가져오기
+    List<InstructorDto> instructorDto = instructorService.findAllByStateIsREGISTRATION();
+    model.addAttribute("instructors", instructorDto);
+    return "/admin/accept";
+  }
+// 강사 승인하기
+  @PostMapping("{instructorId}/accept")
+  public String instIdAccept(
+          @PathVariable("instructorId")
+          Long instructorId
+  ){
+//    강사 승인 state 변경하기
+    instructorService.accept(instructorId);
+    return "redirect:/admin/instructor/accept";
+  }
+ //강사 거절하기
+  @PostMapping("{instructorId}/delete")
+  public String instIdDelete(
+          @PathVariable("instructorId")
+          Long instructorId
+  ){
+//    강사 거절
+    instructorService.delete(instructorId);
+    return "redirect:/admin/instructor/accept";
+  }
 }
 

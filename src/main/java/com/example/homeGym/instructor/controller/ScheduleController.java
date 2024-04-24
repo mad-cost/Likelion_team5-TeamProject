@@ -4,6 +4,7 @@ import com.example.homeGym.instructor.dto.ScheduleDto;
 import com.example.homeGym.instructor.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -14,43 +15,46 @@ public class ScheduleController {
 
     // 강사 스케쥴
     @GetMapping()
-    public ScheduleDto readSchedule(
-            @PathVariable("instructorId")
-            Long instructorId
+    public String readSchedule(
+            @PathVariable("instructorId") Long instructorId,
+            Model model
     ) {
-        return scheduleService.readSchedule(instructorId);
+        ScheduleDto scheduleDto = scheduleService.readSchedule(instructorId);
+        model.addAttribute("scheduleDto", scheduleDto);
+        return "/instructor/instructor-schedule";
     }
 
     // 스케줄 생성
     @PostMapping()
-    public ScheduleDto createSchedule(
-            @RequestPart("week")
-            String week,
-            @RequestPart("time")
-            String time
+    public String createSchedule(
+            @RequestPart("week") String week,
+            @RequestPart("time") String time,
+            Model model
     ) {
-        return scheduleService.createSchedule(week, time);
+        ScheduleDto scheduleDto = scheduleService.createSchedule(week, time);
+        model.addAttribute("scheduleDto", scheduleDto);
+        return "redirect:/instructor/{instructorId}/schedule";
     }
 
     // 스켸줄 수정
     @PutMapping("/{scheduleId}")
-    public ScheduleDto updateSchedule(
-            @PathVariable("scheduleId")
-            Long scheduleId,
-            @RequestPart("week")
-            String week,
-            @RequestPart("time")
-            String time
+    public String updateSchedule(
+            @PathVariable("scheduleId") Long scheduleId,
+            @RequestPart("week") String week,
+            @RequestPart("time") String time,
+            Model model
     ) {
-        return scheduleService.updateSchedule(scheduleId, week, time);
+        ScheduleDto scheduleDto = scheduleService.updateSchedule(scheduleId, week, time);
+        model.addAttribute("scheduleDto", scheduleDto);
+        return "redirect:/instructor/{instructorId}/schedule";
     }
 
     // 스케줄 삭제
     @DeleteMapping("{scheduleId}")
-    public void deleteSchedule(
-            @PathVariable("scheduleId")
-            Long scheduleId
+    public String deleteSchedule(
+            @PathVariable("scheduleId") Long scheduleId
     ) {
         scheduleService.deleteSchedule(scheduleId);
+        return "redirect:/instructor/{instructorId}/schedule";
     }
 }

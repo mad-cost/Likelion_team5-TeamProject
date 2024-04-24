@@ -1,13 +1,90 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Schedule Management</title>
+  <!-- 부트스트랩 CDN -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<div class="container mt-5">
+  <h2 class="mb-4">Schedule Management</h2>
+
+  <!-- 스케줄 메인 화면 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Current Schedule</h5>
+      <div th:if="${scheduleDto != null}">
+        <p><strong>ID:</strong> <span th:text="${scheduleDto.id}"></span></p>
+        <p><strong>Week:</strong> <span th:text="${scheduleDto.week}"></span></p>
+        <p><strong>Time:</strong> <span th:text="${scheduleDto.time}"></span></p>
+        <p><strong>Created At:</strong> <span th:text="${scheduleDto.createAt}"></span></p>
+      </div>
+      <div th:if="${scheduleDto == null}">
+        <p>No schedule found.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스케줄 생성 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">스케줄 생성</h5>
+      <form th:action="@{/instructor/{instructorId}/schedule}" method="post">
+        <input type="hidden" name="instructorId" th:value="${instructorId}" />
+        <div class="form-group">
+          <label for="week">Week:</label>
+          <input type="text" class="form-control" id="week" name="week" required />
+        </div>
+        <div class="form-group">
+          <label for="time">Time:</label>
+          <input type="text" class="form-control" id="time" name="time" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 스케줄 수정 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">수정</h5>
+      <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
+        <input type="hidden" name="instructorId" th:value="${instructorId}" />
+        <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
+        <div class="form-group">
+          <label for="weekUpdate">Week:</label>
+          <input type="text" class="form-control" id="weekUpdate" name="week" th:value="${scheduleDto.week}" required />
+        </div>
+        <div class="form-group">
+          <label for="timeUpdate">Time:</label>
+          <input type="text" class="form-control" id="timeUpdate" name="time" th:value="${scheduleDto.time}" required />
+        </div>
+        <button type="submit" class="btn btn-success">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 스케줄 삭제 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">삭제</h5>
+      <form th:action="@{/instructor/{instructorId}/schedule/{scheduleId}}" method="post">
+        <input type="hidden" name="_method" value="delete" />
+        <input type="hidden" name="instructorId" th:value="${instructorId}" />
+        <input type="hidden" name="scheduleId" th:value="${scheduleDto.id}" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- 부트스트랩 스크립트 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

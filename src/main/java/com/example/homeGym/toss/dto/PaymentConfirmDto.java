@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentResponseDto {
+public class PaymentConfirmDto {
     private String payType;
     private Long amount;
     private String orderName;
@@ -15,6 +15,7 @@ public class PaymentResponseDto {
     private Long userId;
     private String successUrl;
     private String failUrl;
+    private String paymentKey;
 
     private String failReason;
     private boolean cancelYN;
