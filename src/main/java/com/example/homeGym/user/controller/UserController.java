@@ -1,25 +1,22 @@
 package com.example.homeGym.user.controller;
 
-import com.example.homeGym.auth.dto.CustomUserDetails;
-import com.example.homeGym.auth.service.JpaUserDetailsManager;
+import com.example.homeGym.common.util.AuthenticationUtilService;
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.dto.UserDto;
-import com.example.homeGym.user.entity.User;
-import com.example.homeGym.user.repository.UserRepository;
 import com.example.homeGym.user.service.InstructorServiceForUser;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +27,7 @@ public class UserController {
     private final ReviewService reviewService;
     private final ProgramServiceForUser programServiceForUser;
     private final InstructorServiceForUser instructorServiceForUser;
+    private final AuthenticationUtilService authenticationUtilService;
 
     @GetMapping("/main")
     public String mainPage(){
@@ -45,14 +43,16 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String myPage(
-            Model model
+            Model model,
+            Authentication authentication
     ){
-        UserDto userDto = new UserDto();
+        Long userId = authenticationUtilService.getId(authentication);
+
         //유저 정보
-        userDto = userService.findById(1L);
+        UserDto userDto = userService.findById(userId);
 
         //유저가 진행중인 수업
-        List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(1L);
+        List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(userId);
 //        System.out.println("inProgressList = " + inProgressList);
         //dto에 program정보 및 강사 정보 저장
         for (UserProgramDto programDto : inProgressList) {
@@ -63,7 +63,7 @@ public class UserController {
         }
 
         //유저의 종료된 수업
-        List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(1L);
+        List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(userId);
         //dto에 program정보 및 강사 정보 저장
         for (UserProgramDto userProgramDto : finishList) {
             long programId = userProgramDto.getProgramId();
@@ -81,15 +81,17 @@ public class UserController {
         return "user/myPage";
     }
 
-    @PostMapping("/program")
+    @GetMapping("/program/{userProgramId}")
     public String userProgramDetail(
-            @RequestParam("userProgramId")
+            @PathVariable("userProgramId")
             Long userProgramId,
-            Model model
+            Model model,
+            Authentication authentication
     ){
-        UserProgramDto userProgramDto = new UserProgramDto();
+        Long userId = authenticationUtilService.getId(authentication);
+        new UserProgramDto();
+        UserProgramDto userProgramDto = userProgramService.findById(userProgramId);
         //유저 프로그램의 정보 하나를 가져온다
-        userProgramDto = userProgramService.findById(userProgramId);
 
         //프로그램 정보를 가져온다
         userProgramDto.setProgram(programServiceForUser.findById(userProgramDto.getProgramId()));
@@ -98,7 +100,7 @@ public class UserController {
         userProgramDto.setInstructor(instructorServiceForUser.findById(userProgramDto.getProgram().getInstructorId()));
 
         //리뷰 가져오기
-        List<ReviewDto> reviewDtos = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
+        List<ReviewDto> reviewDtos = reviewService.findByUserProgramIdAndUserId(userProgramId, userId);
 
         model.addAttribute("reviews", reviewDtos);
         model.addAttribute("program", userProgramDto);
