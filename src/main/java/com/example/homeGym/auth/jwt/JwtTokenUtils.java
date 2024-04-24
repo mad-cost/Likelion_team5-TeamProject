@@ -1,5 +1,6 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.auth.dto.CustomUserDetails;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import io.jsonwebtoken.Claims;
@@ -54,6 +55,23 @@ public class JwtTokenUtils {
                 .compact();
     }
 
+    public String generateToken(CustomInstructorDetails instructorDetails) {
+
+        Instant now = Instant.now();
+        Claims jwtClaims = Jwts.claims()
+
+                .setSubject(instructorDetails.getUsername())
+
+                .setIssuedAt(Date.from(now))
+
+                .setExpiration(Date.from(now.plusSeconds(60 * 60 * 24 * 30)));
+
+
+        return Jwts.builder()
+                .setClaims(jwtClaims)
+                .signWith(this.signingKey)
+                .compact();
+    }
 
     public boolean validate(String token) {
         try {

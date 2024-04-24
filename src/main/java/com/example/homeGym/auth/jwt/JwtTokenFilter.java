@@ -36,7 +36,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String jwtToken = cookieUtil.getCookie("Authorization", request);
 
-
         if(jwtToken != null) {
             if (jwtTokenUtils.validate(jwtToken)){
                 SecurityContext context = SecurityContextHolder.createEmptyContext();

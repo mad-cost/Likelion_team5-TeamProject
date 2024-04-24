@@ -15,6 +15,8 @@ import java.util.Collections;
 public class CustomInstructorDetails implements UserDetails {
     private Instructor instructor;
 
+    private final String userType = "instructor";
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(
@@ -28,7 +30,7 @@ public class CustomInstructorDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return instructor.getLoginId();
+        return instructor.getEmail();
     }
 
     @Override
@@ -50,4 +52,7 @@ public class CustomInstructorDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
+
 }
