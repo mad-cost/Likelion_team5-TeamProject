@@ -1,7 +1,10 @@
 package com.example.homeGym.admin.controller;
 
 
+import com.example.homeGym.admin.dto.SettlementFeeDto;
+import com.example.homeGym.admin.entity.SettlementFee;
 import com.example.homeGym.admin.service.NumberUtils;
+import com.example.homeGym.admin.service.SettlementFeeService;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.service.InstructorService;
@@ -24,6 +27,7 @@ public class AdInstructorController {
   private final ProgramService programService;
   private final UserProgramService userProgramService;
   private final NumberUtils numberUtils;
+  private final SettlementFeeService settlementFeeService;
 
   @GetMapping("/{instructorId}")
   public String instructorId(
@@ -46,8 +50,11 @@ public class AdInstructorController {
       programDto.setTotalAmount(numberUtils.addCommasToNumber(totalAmount.get(i)));
       programDto.setMonthAmount(numberUtils.addCommasToNumber(monthAmount.get(i)));
     }
-
     model.addAttribute("programs", programDtos);
+
+    SettlementFeeDto settlementFeeId = settlementFeeService.findByInstructorId(instructorId);
+    model.addAttribute("settlementFee", settlementFeeId);
+
     return "/admin/instructor";
   }
 

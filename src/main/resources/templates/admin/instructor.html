@@ -110,6 +110,7 @@
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item active">[[${instructor.email}]]</li>
           <li class="breadcrumb-item active">[[${instructor.state}]]</li>
+          <li class="breadcrumb-item active">총 금액 : [[${settlementFee.getTotalFee()}]]</li>
         </ol>
   <!--메달 수여하기-->
         <div class="card mb-4">
@@ -126,7 +127,6 @@
           </div>
         </div>
 
-
         <tr th:each="program: ${programs}">
           <div class="card mb-4">
             <div class="card-body">
@@ -137,7 +137,7 @@
               <td><h5>프로그램 상태 : [[${program.state}]]</h5></td>
               <div class="card mb-3">
                 <div class="card-body">
-                    <a>이번달 금액 : [[${program.getMonthAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
+                    <a>이번달 금액 : [[${program.getTotalAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
                 </div>
               </div>
             </div>
