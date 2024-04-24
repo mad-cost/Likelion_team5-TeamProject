@@ -9,6 +9,7 @@ import com.example.homeGym.user.service.InstructorServiceForUser;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
+import com.example.homeGym.user.utils.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ public class UserController {
     private final ProgramServiceForUser programServiceForUser;
     private final InstructorServiceForUser instructorServiceForUser;
     private final AuthenticationUtilService authenticationUtilService;
+    private final EmailService emailService;
 
     @GetMapping("/main")
     public String mainPage(){
@@ -106,5 +108,10 @@ public class UserController {
         model.addAttribute("program", userProgramDto);
 
         return "user/myDetail";
+    }
+
+    @GetMapping("mail")
+    public void mailTest(){
+        emailService.sendMail();
     }
 }

@@ -45,6 +45,14 @@ spring:
   web:
     resources:
       static-locations: file:media/,classpath:/static
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kgukid38@gmail.com
+    password: hoem cjey pcwk gzue
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 logging:
   level:

@@ -100,7 +100,10 @@
                             <a href="#" class="program-link" th:data-program-id="${finish.id}">
                                 <div class="card-body">
                                     <h3 class="card-title" th:text="${finish.program.title}"></h3>
-<!--                                    <p th th:text="${finish.instructor.name}"></p>-->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img th:src="${finish.instructor.profileImageUrl}" alt="img" class="rounded-circle mr-2" style="width: 30px; height: 30px;">
+                                        <p th:text="${finish.instructor.name} + ' 강사님'"></p>
+                                    </div>
                                     <p class="card-description" th:text="${finish.program.description}"></p>
                                     <p class="card-count" th:text="'진행 회차: ' + ${finish.count}"></p>
                                     <p class="card-max-count" th:text="'총 회차: ' + ${finish.maxCount}"></p>
@@ -124,7 +127,10 @@
                             <a href="#" class="program-link" th:data-program-id="${progress.id}">
                                 <div class="card-body">
                                     <h3 class="card-title" th:text="${progress.program.title}"></h3>
-<!--                                    <p th th:text="${finish.instructor.name}"></p>-->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img th:src="${progress.instructor.profileImageUrl}" alt="img" class="rounded-circle mr-2" style="width: 30px; height: 30px;">
+                                        <p th:text="${progress.instructor.name} + ' 강사님'"></p>
+                                    </div>
                                     <p class="card-description" th:text="${progress.program.description}"></p>
                                     <p class="card-count" th:text="'진행 회차: ' + ${progress.count}"></p>
                                     <p class="card-max-count" th:text="'총 회차: ' + ${progress.maxCount}"></p>
