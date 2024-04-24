@@ -4,6 +4,7 @@ import com.example.homeGym.auth.jwt.JwtTokenFilter;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;
 import com.example.homeGym.auth.kakao.OAuth2UserServiceImpl;
+import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
@@ -20,7 +20,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 public class WebSecurityConfig {
 
     private final JwtTokenUtils jwtTokenUtils;
-    private final UserDetailsManager manager;
+    private final JpaUserDetailsManager manager;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2UserServiceImpl oAuth2UserService;
     private final CookieUtil cookieUtil;
@@ -35,6 +35,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/user/main",
+                                "/user/loginpage",
+                                "/user/logout",
                                 "/token/issue",
                                 "/token/validate",
                                 "/instructor",

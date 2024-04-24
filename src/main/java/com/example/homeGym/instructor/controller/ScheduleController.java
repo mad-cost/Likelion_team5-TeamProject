@@ -21,7 +21,7 @@ public class ScheduleController {
     ) {
         ScheduleDto scheduleDto = scheduleService.readSchedule(instructorId);
         model.addAttribute("scheduleDto", scheduleDto);
-        return "schedule";
+        return "/instructor/instructor-schedule";
     }
 
     // 스케줄 생성

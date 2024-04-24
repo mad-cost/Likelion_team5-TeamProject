@@ -15,10 +15,7 @@ import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +31,8 @@ public class UserController {
     private final ProgramServiceForUser programServiceForUser;
     private final InstructorServiceForUser instructorServiceForUser;
 
-    private final UserRepository userRepository;
-    private final JpaUserDetailsManager jpaUserDetailsManager;
-
     @GetMapping("/main")
     public String mainPage(){
-
-        String useremail = "admin@gmail.com";
-
-        Optional<User> optionalUser = userRepository.findByEmail(useremail);
-
-        System.out.println(optionalUser.toString());
 
         return "main";
     }
@@ -55,18 +43,16 @@ public class UserController {
     }
 
 
-    @GetMapping("/{userId}/mypage")
+    @GetMapping("/mypage")
     public String myPage(
-            @PathVariable("userId")
-            Long userId,
             Model model
     ){
         UserDto userDto = new UserDto();
         //유저 정보
-        userDto = userService.findById(userId);
+        userDto = userService.findById(1L);
 
         //유저가 진행중인 수업
-        List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(userId);
+        List<UserProgramDto> inProgressList = userProgramService.findByUserIdAndStateInProgress(1L);
 //        System.out.println("inProgressList = " + inProgressList);
         //dto에 program정보 및 강사 정보 저장
         for (UserProgramDto programDto : inProgressList) {
@@ -77,7 +63,7 @@ public class UserController {
         }
 
         //유저의 종료된 수업
-        List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(userId);
+        List<UserProgramDto> finishList = userProgramService.findByUserIdAndStateFINISH(1L);
         //dto에 program정보 및 강사 정보 저장
         for (UserProgramDto userProgramDto : finishList) {
             long programId = userProgramDto.getProgramId();
@@ -95,11 +81,9 @@ public class UserController {
         return "user/myPage";
     }
 
-    @GetMapping("/{userId}/program/{userProgramId}")
+    @PostMapping("/program")
     public String userProgramDetail(
-            @PathVariable("userId")
-            Long userId,
-            @PathVariable("userProgramId")
+            @RequestParam("userProgramId")
             Long userProgramId,
             Model model
     ){
@@ -109,22 +93,14 @@ public class UserController {
 
         //프로그램 정보를 가져온다
         userProgramDto.setProgram(programServiceForUser.findById(userProgramDto.getProgramId()));
+
         //강사 정보를 가져온다
         userProgramDto.setInstructor(instructorServiceForUser.findById(userProgramDto.getProgram().getInstructorId()));
 
-        //내가 이 프로그램에 작성한 후기 가져오기
-        ReviewDto reviewDto = new ReviewDto();
-
-        //TODO 후기 뭔가 이상해서 나중에 수정 예정
-//        if (reviewService.findByUserProgramIdAndUserId(userProgramId, 1L) == null){
-//            model.addAttribute("reviews", reviewDto);
-//        }else {
-//            reviewDto = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
-//        }
+        //리뷰 가져오기
         List<ReviewDto> reviewDtos = reviewService.findByUserProgramIdAndUserId(userProgramId, 1L);
 
         model.addAttribute("reviews", reviewDtos);
-        System.out.println("reviewDto = " + reviewDto);
         model.addAttribute("program", userProgramDto);
 
         return "user/myDetail";

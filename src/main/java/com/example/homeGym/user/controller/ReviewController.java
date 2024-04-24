@@ -96,16 +96,16 @@ public class ReviewController {
             Long reviewId
 
     ){
-        System.out.println("images = " + images);
-        if (images != null){
-            for (MultipartFile image :
-                    images) {
-                System.out.println(image.getOriginalFilename());
-                System.out.println(image.getSize());
-            }
-        }
+//        System.out.println("images = " + images);
+//        if (images != null){
+//            for (MultipartFile image :
+//                    images) {
+//                System.out.println(image.getOriginalFilename());
+//                System.out.println(image.getSize());
+//            }
+//        }
         reviewService.updateReview(1L, reviewId, images, rating, memo);
 
-        return "test";
+        return "re";
     }
 }
