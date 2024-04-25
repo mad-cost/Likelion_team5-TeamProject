@@ -30,7 +30,7 @@ public class ProgramController {
             @ModelAttribute ProgramDto programDto
     ) {
         programService.createProgram(programDto);
-        return "/instructor/program";
+        return "redirect:/instructor/program";
     }
 
 
