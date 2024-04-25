@@ -2,6 +2,7 @@ package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.service.ProgramService;
+import com.example.homeGym.instructor.service.UserProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProgramController {
     private final ProgramService programService;
+    private final UserProgramService userProgramService;
 
     @GetMapping()
     public String createPage(
@@ -63,12 +65,18 @@ public class ProgramController {
         }
     }
 
+
     @DeleteMapping("/{programId}")
     public String deleteProgram(
             @PathVariable("programId") Long programId,
             Model model
     ) {
         try {
+            // 프로그램 삭제 시 관련 수강생 확인
+            if (userProgramService.hasEnrolledUsers(programId)) {
+                throw new RuntimeException("Cannot delete program with enrolled users");
+            }
+
             programService.deleteProgram(programId);
             return "redirect:/instructor/program";
         } catch (Exception e) {
@@ -76,4 +84,6 @@ public class ProgramController {
             return "error-page"; // 에러 페이지로 리다이렉트
         }
     }
+
+
 }
