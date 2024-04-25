@@ -1,60 +1,84 @@
 package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.service.ScheduleService;
+import com.example.homeGym.common.util.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("instructor/{instructorId}/schedule")
+@RequestMapping("instructor/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
+    private final AuthenticationFacade facade;
 
-    // 강사 스케쥴
+    private boolean isAuthenticated(Long instructorId) {
+        Long currentInstructorId = facade.getCurrentInstructor().getId();
+        return currentInstructorId.equals(instructorId);
+    }
+
     @GetMapping()
     public String readSchedule(
-            @PathVariable("instructorId") Long instructorId,
             Model model
     ) {
-        ScheduleDto scheduleDto = scheduleService.readSchedule(instructorId);
-        model.addAttribute("scheduleDto", scheduleDto);
-        return "/instructor/instructor-schedule";
+//        Instructor currentInstructor = facade.getCurrentInstructor();
+//        if (!isAuthenticated(instructorId)) {
+//            throw new IllegalArgumentException("Authentication failed");
+//        }
+
+        List<ScheduleDto> scheduleDtos = scheduleService.readSchedules();
+        model.addAttribute("scheduleDtos", scheduleDtos);
+        return "/instructor/schedule/instructor-schedule";
     }
 
-    // 스케줄 생성
     @PostMapping()
     public String createSchedule(
-            @RequestPart("week") String week,
-            @RequestPart("time") String time,
+            @RequestParam("week") String week,
+            @RequestParam("time") String time,
             Model model
     ) {
+//        if (!isAuthenticated(instructorId)) {
+//            throw new IllegalArgumentException("Authentication failed");
+//        }
+
         ScheduleDto scheduleDto = scheduleService.createSchedule(week, time);
         model.addAttribute("scheduleDto", scheduleDto);
-        return "redirect:/instructor/{instructorId}/schedule";
+        return "redirect:/instructor/schedule";
     }
 
-    // 스켸줄 수정
     @PutMapping("/{scheduleId}")
     public String updateSchedule(
             @PathVariable("scheduleId") Long scheduleId,
-            @RequestPart("week") String week,
-            @RequestPart("time") String time,
+            @RequestParam("week") String week,
+            @RequestParam("time") String time,
             Model model
     ) {
+//        Instructor currentInstructor = facade.getCurrentInstructor();
+//        if (!isAuthenticated(instructorId)) {
+//            throw new IllegalArgumentException("Authentication failed");
+//        }
+
         ScheduleDto scheduleDto = scheduleService.updateSchedule(scheduleId, week, time);
         model.addAttribute("scheduleDto", scheduleDto);
-        return "redirect:/instructor/{instructorId}/schedule";
+        return "redirect:/instructor/schedule";
     }
 
-    // 스케줄 삭제
     @DeleteMapping("{scheduleId}")
     public String deleteSchedule(
             @PathVariable("scheduleId") Long scheduleId
     ) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+//        if (!isAuthenticated(instructorId)) {
+//            throw new IllegalArgumentException("Authentication failed");
+//        }
+
         scheduleService.deleteSchedule(scheduleId);
-        return "redirect:/instructor/{instructorId}/schedule";
+        return "redirect:/instructor/schedule";
     }
 }

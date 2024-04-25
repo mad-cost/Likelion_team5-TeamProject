@@ -69,7 +69,7 @@ public class ProgramService {
 
   // 프로그램 생성
   @Transactional
-  public void createProgram(ProgramDto programDto) {
+  public Long createProgram(ProgramDto programDto) {
     Instructor currentInstructor = facade.getCurrentInstructor();
 
     Program program = builder()
@@ -84,7 +84,8 @@ public class ProgramService {
             .price20(programDto.getPrice20())
             .build();
 
-    programRepository.save(program);
+    Program savedProgram = programRepository.save(program);
+    return savedProgram.getId(); // 저장된 프로그램의 ID 반환
   }
 
   // 프로그램 수정
