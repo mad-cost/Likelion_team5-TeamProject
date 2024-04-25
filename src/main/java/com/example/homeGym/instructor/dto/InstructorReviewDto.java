@@ -19,6 +19,7 @@ public class InstructorReviewDto {
     private Integer stars;
     private LocalDateTime reviewDate;
     private String comment; // 강사의 답글
+    private Long commentId;
     private List<String> imageUrls; // 후기와 함께 제공된 이미지 URL 목록
 
 
