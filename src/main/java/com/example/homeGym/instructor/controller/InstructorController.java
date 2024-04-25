@@ -39,6 +39,7 @@ public class InstructorController {
     private final AuthenticationFacade facade;
     private final ProgramService programService;
 
+    // 성공 ㅠㅠ
     //인증쪽에서 작성
     // 강사 로그인
     @GetMapping("/signin")
