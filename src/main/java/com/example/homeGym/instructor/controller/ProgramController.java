@@ -27,20 +27,10 @@ public class ProgramController {
 
     @PostMapping()
     public String requestCreate(
-            @Valid @ModelAttribute ProgramDto programDto,
-            BindingResult bindingResult,
-            Model model
+            @ModelAttribute ProgramDto programDto
     ) {
-        if (bindingResult.hasErrors()) {
-            return "/instructor/program";
-        }
-        try {
-            programService.createProgram(programDto);
-            return "redirect:/instructor/program";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "error-page"; // 에러 페이지로 리다이렉트
-        }
+        programService.createProgram(programDto);
+        return "redirect:/instructor/program";
     }
 
 
@@ -66,7 +56,7 @@ public class ProgramController {
         }
         try {
             programService.updateProgram(programId, programDto);
-            return "redirect:/program";
+            return "redirect:/instructor/program";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error-page"; // 에러 페이지로 리다이렉트
@@ -80,7 +70,7 @@ public class ProgramController {
     ) {
         try {
             programService.deleteProgram(programId);
-            return "redirect:/program";
+            return "redirect:/instructor/program";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error-page"; // 에러 페이지로 리다이렉트
