@@ -177,7 +177,7 @@ public class ProgramService {
         programRepository.save(program);
     }
 
-    // 프로그램 삭제
+    // 프로그램 삭제 d
     @Transactional
     public void deleteProgram(Long programId) {
         Optional<Program> optionalProgram = programRepository.findById(programId);
