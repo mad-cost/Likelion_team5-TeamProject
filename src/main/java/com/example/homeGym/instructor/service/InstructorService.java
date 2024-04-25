@@ -12,8 +12,10 @@ import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
+import com.example.homeGym.instructor.entity.ProgramCheck;
 import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.instructor.repository.ProgramCheckRepository;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
@@ -40,6 +42,7 @@ public class InstructorService {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProgramRepository programRepository;
+    private final ProgramCheckRepository programCheckRepository;
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
@@ -157,6 +160,21 @@ public class InstructorService {
         separatedPrograms.put("other", otherPrograms);
         return separatedPrograms;
     }
+
+    //강사 일지 작성
+    public void createDaily(ProgramCheckDto dto){
+        ProgramCheck programCheck = dto.toEntity();
+        log.info("create daily: {}", dto.getMemo());
+        programCheckRepository.save(programCheck);
+    }
+
+    //강사 일지 수정
+    public void updateDaily(ProgramCheckDto dto){
+
+    }
+
+    //강사 일지 전체 보기
+
 
 
 
