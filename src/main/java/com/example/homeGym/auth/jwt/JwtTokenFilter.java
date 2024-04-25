@@ -1,6 +1,8 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.dto.CustomUserDetails;
+import com.example.homeGym.auth.service.InstructorDetailsManager;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
 import jakarta.servlet.FilterChain;
@@ -9,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +27,9 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtils jwtTokenUtils;
-    private final JpaUserDetailsManager manager;
+    private final JpaUserDetailsManager jpaUserDetailsManager;
+    private final InstructorDetailsManager instructorDetailsManager;
+
     private final CookieUtil cookieUtil;
 
 
@@ -38,25 +41,46 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if(jwtToken != null) {
             if (jwtTokenUtils.validate(jwtToken)){
+
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
 
                 String email = jwtTokenUtils.parseClaims(jwtToken).getSubject();
+                String userType = jwtTokenUtils.parseClaims(jwtToken).get("userType", String.class);
 
-                CustomUserDetails userDetails = (CustomUserDetails) manager.loadUserByUsername(email);
-                for (GrantedAuthority authority : userDetails.getAuthorities()){
-                    log.info("authorities: {}",authority.getAuthority());
+                if(userType.equals("user")){
+                    CustomUserDetails userDetails = (CustomUserDetails) jpaUserDetailsManager.loadUserByUsername(email);
+                    for (GrantedAuthority authority : userDetails.getAuthorities()){
+                        log.info("authorities: {}",authority.getAuthority());
+                    }
+                    // 인증 정보 생성
+                    AbstractAuthenticationToken authenticationToken
+                            = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            jwtToken,
+                            userDetails.getAuthorities()
+                    );
+                    // 인증 정보 등록
+                    context.setAuthentication(authenticationToken);
+                    SecurityContextHolder.setContext(context);
+                    log.info("set security context with jwt");
                 }
-                // 인증 정보 생성
-                AbstractAuthenticationToken authenticationToken
-                        = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        jwtToken,
-                        userDetails.getAuthorities()
-                );
-                // 인증 정보 등록
-                context.setAuthentication(authenticationToken);
-                SecurityContextHolder.setContext(context);
-                log.info("set security context with jwt");
+                else {
+                    CustomInstructorDetails instructorDetails = (CustomInstructorDetails) instructorDetailsManager.loadUserByUsername(email);
+                    for (GrantedAuthority authority : instructorDetails.getAuthorities()){
+                        log.info("authorities: {}",authority.getAuthority());
+                    }
+                    // 인증 정보 생성
+                    AbstractAuthenticationToken authenticationToken
+                            = new UsernamePasswordAuthenticationToken(
+                            instructorDetails,
+                            jwtToken,
+                            instructorDetails.getAuthorities()
+                    );
+                    // 인증 정보 등록
+                    context.setAuthentication(authenticationToken);
+                    SecurityContextHolder.setContext(context);
+                    log.info("set security context with jwt");
+                }
             }
             else {
                 log.warn("jwt validation failed");

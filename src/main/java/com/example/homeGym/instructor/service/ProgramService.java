@@ -5,10 +5,8 @@ import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
-import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import jakarta.transaction.Transactional;
@@ -28,7 +26,6 @@ import static com.example.homeGym.instructor.entity.Program.*;
 @RequiredArgsConstructor
 public class ProgramService {
     private final ProgramRepository programRepository;
-    private final UserProgramService userProgramService;
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
 
@@ -73,10 +70,10 @@ public class ProgramService {
     // 프로그램 생성
     @Transactional
     public void createProgram(ProgramDto programDto) {
-      //  Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
         Program program = builder()
-                .instructorId(/*currentInstructor.getId()*/1L)
+                .instructorId(currentInstructor.getId())
                 .category(programDto.getCategory())
                 .title(programDto.getTitle())
                 .description(programDto.getDescription())
@@ -100,9 +97,9 @@ public class ProgramService {
         }
 
         Program program = optionalProgram.get();
-       // Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
-        if (!program.getInstructorId().equals(/*currentInstructor.getId()*/1L)) {
+        if (!program.getInstructorId().equals(currentInstructor.getId())) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
 
@@ -177,7 +174,7 @@ public class ProgramService {
         programRepository.save(program);
     }
 
-    // 프로그램 삭제 d
+    // 프로그램 삭제
     @Transactional
     public void deleteProgram(Long programId) {
         Optional<Program> optionalProgram = programRepository.findById(programId);
@@ -186,16 +183,10 @@ public class ProgramService {
         }
 
         Program program = optionalProgram.get();
-       // Instructor currentInstructor = facade.getCurrentInstructor();
-        if (!program.getInstructorId().equals(/*currentInstructor.getId()*/1L)) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!program.getInstructorId().equals(currentInstructor.getId())) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
-
-        // 수강생 확인
-        if (userProgramService.hasEnrolledUsers(programId)) {
-            throw new RuntimeException("Cannot delete program with enrolled users");
-        }
-
 
         programRepository.deleteById(programId);
     }
