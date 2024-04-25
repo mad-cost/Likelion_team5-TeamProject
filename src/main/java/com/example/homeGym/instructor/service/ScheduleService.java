@@ -1,7 +1,6 @@
 package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
-import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Schedule;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.common.util.AuthenticationFacade;
@@ -23,7 +22,8 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
-    public List<ScheduleDto> findAllByOrderByName() {
+    @Transactional
+    public List<ScheduleDto> readSchedule() {
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
         for (Schedule schedule : scheduleRepository.findByInstructorIdOrderByWeekAscTimeAsc(1L)) {
             scheduleDtos.add(ScheduleDto.fromEntity(schedule));
