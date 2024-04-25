@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 public class InstructorCreateDto {
     private Long id;
-    private String email;
+    private String loginId;
     private String password;
     private String passwordCheck;
     private String name;
@@ -23,6 +23,7 @@ public class InstructorCreateDto {
     private String career;
     private String profileImageUrl;
     private String certificate;
+    private String email;
     private String phone;
     private String bank;
     private String bankName;
@@ -32,6 +33,7 @@ public class InstructorCreateDto {
 
         return InstructorCreateDto.builder()
                 .id(entity.getId())
+                .loginId(entity.getLoginId())
                 .password(entity.getPassword())
                 .name(entity.getName())
                 .gender(entity.getGender())
@@ -50,6 +52,7 @@ public class InstructorCreateDto {
     public Instructor toEntity(){
         return Instructor.builder()
                 .id(this.id)
+                .loginId(this.loginId)
                 .password(this.password)
                 .name(this.name)
                 .gender(this.gender)

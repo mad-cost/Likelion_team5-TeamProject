@@ -1,10 +1,6 @@
 package com.example.homeGym.instructor.service;
 
 
-import com.example.homeGym.auth.dto.CustomInstructorDetails;
-import com.example.homeGym.auth.jwt.JwtTokenUtils;
-import com.example.homeGym.auth.service.InstructorDetailsManager;
-import com.example.homeGym.auth.utils.CookieUtil;
 import com.example.homeGym.instructor.dto.*;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
@@ -16,19 +12,14 @@ import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.ProgramCheck;
 import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
-import com.example.homeGym.instructor.repository.ProgramCheckRepository;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
 import com.example.homeGym.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +33,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ToString
 public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final UserRepository userRepository;
@@ -50,10 +40,6 @@ public class InstructorService {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProgramRepository programRepository;
-    private final ProgramCheckRepository programCheckRepository;
-    private final CookieUtil cookieUtil;
-    private final JwtTokenUtils jwtTokenUtils;
-    private final InstructorDetailsManager instructorDetailsManager;
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
@@ -63,21 +49,10 @@ public class InstructorService {
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
         instructorRepository.save(instructor);
     }
-
-    public boolean signIn(HttpServletResponse res, String email, String password) throws Exception{
-        Optional<Instructor> nowInstructor= instructorRepository.findByEmail(email);
-        Instructor instructor = nowInstructor.get();
-        Boolean pwCheck = passwordEncoder.matches(password, instructor.getPassword());
-        if(pwCheck){
-            CustomInstructorDetails customInstructorDetails = (CustomInstructorDetails) instructorDetailsManager.loadUserByUsername(email);
-            String jwtToken = jwtTokenUtils.generateToken(customInstructorDetails);
-
-            cookieUtil.createCookie(res,"Authorization", jwtToken);
-            return true;
-        }
-        return false;
+    //로그인 아이디 존재 확인
+    public boolean isLoginIdAvailable(String loginId) {
+        return !instructorRepository.existsByLoginId(loginId);
     }
-
 
     //이메일 존재 확인
     public boolean isEmailAvailable(String email) {
@@ -187,21 +162,6 @@ public class InstructorService {
         separatedPrograms.put("other", otherPrograms);
         return separatedPrograms;
     }
-
-    //강사 일지 작성
-    public void createDaily(ProgramCheckDto dto){
-        ProgramCheck programCheck = dto.toEntity();
-        log.info("create daily: {}", dto.getMemo());
-        programCheckRepository.save(programCheck);
-    }
-
-    //강사 일지 수정
-    public void updateDaily(ProgramCheckDto dto){
-
-    }
-
-    //강사 일지 전체 보기
-
 
 
 

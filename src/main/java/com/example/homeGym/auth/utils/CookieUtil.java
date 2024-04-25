@@ -40,5 +40,4 @@ public class CookieUtil {
 
         return cookie;
     }
-
 }
