@@ -32,7 +32,7 @@ public class ScheduleController {
 //            throw new IllegalArgumentException("Authentication failed");
 //        }
 
-        List<ScheduleDto> scheduleDtos = scheduleService.readSchedules();
+        List<ScheduleDto> scheduleDtos = scheduleService.findAllByOrderByName();
         model.addAttribute("scheduleDtos", scheduleDtos);
         return "/instructor/schedule/instructor-schedule";
     }

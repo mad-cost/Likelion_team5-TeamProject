@@ -23,31 +23,14 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
-    @Transactional(readOnly = true)
-    public List<ScheduleDto> readSchedules() {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
-
-        List<Schedule> schedules = scheduleRepository.findByInstructorId(1L);
-
-        return schedules.stream()
-                .map(ScheduleDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
     public List<ScheduleDto> findAllByOrderByName() {
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        for (Schedule schedule : scheduleRepository.findAllByOrderByInstructorId()) {
+        for (Schedule schedule : scheduleRepository.findByInstructorIdOrderByWeekAscTimeAsc(1L)) {
             scheduleDtos.add(ScheduleDto.fromEntity(schedule));
         }
         return scheduleDtos;
     }
 
-    @Transactional(readOnly = true)
-    public ScheduleDto readSchedule(Long scheduleId) {
-        Schedule schedule = findScheduleById(scheduleId);
-        return ScheduleDto.fromEntity(schedule);
-    }
 
     @Transactional
     public ScheduleDto createSchedule(String week, String time) {
