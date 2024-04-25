@@ -1,6 +1,6 @@
 package com.example.homeGym.common.util;
 
-import com.example.homeGym.common.CustomInstructorDetails;
+import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.instructor.entity.Instructor;

@@ -10,6 +10,7 @@ import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.UserDto;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -39,20 +41,24 @@ public class InstructorController {
     private final ProgramService programService;
 
     //인증쪽에서 작성
-   /* // 강사 로그인
-    @GetMapping("/login")
+    // 강사 로그인
+    @GetMapping("/signin")
     public String loginPage(){
-        return "instructor-login";
+        return "instructor/instructor-signin";
     }
 
-    @PostMapping("/login")
-    public void login() {
+    @PostMapping("/signin")
+    public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
+//        Optional<Instructor> instructor = instructorRepository.findByEmail(signInDto.getEmail());
+//        log.info(instructor.toString());
+        instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+        return "redirect:/user/main";
     }
 
     // 강사 로그아웃
     @PostMapping("/logout")
     public void logout() {
-    }*/
+    }
 
 
     // 강사 신청

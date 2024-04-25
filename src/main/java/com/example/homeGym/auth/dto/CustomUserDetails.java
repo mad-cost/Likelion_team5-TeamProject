@@ -58,13 +58,11 @@ public class CustomUserDetails implements UserDetails {
         return userDetails;
     }
 
-    public String getEmail() {return this.email;}
-
     @Override
     public String getPassword() {return this.password;}
 
     @Override
-    public String getUsername() {return this.name;}
+    public String getUsername() {return this.email;}
 
     @Override
     public boolean isAccountNonExpired() {return true;}

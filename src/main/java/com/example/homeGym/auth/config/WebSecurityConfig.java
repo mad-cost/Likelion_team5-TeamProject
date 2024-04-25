@@ -4,6 +4,7 @@ import com.example.homeGym.auth.jwt.JwtTokenFilter;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.kakao.OAuth2SuccessHandler;
 import com.example.homeGym.auth.kakao.OAuth2UserServiceImpl;
+import com.example.homeGym.auth.service.InstructorDetailsManager;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,8 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 public class WebSecurityConfig {
 
     private final JwtTokenUtils jwtTokenUtils;
-    private final JpaUserDetailsManager manager;
+    private final JpaUserDetailsManager jpaUserDetailsManager;
+    private final InstructorDetailsManager instructorDetailsManager;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2UserServiceImpl oAuth2UserService;
     private final CookieUtil cookieUtil;
@@ -70,7 +72,8 @@ public class WebSecurityConfig {
                 .addFilterBefore(
                         new JwtTokenFilter(
                                 jwtTokenUtils,
-                                manager,
+                                jpaUserDetailsManager,
+                                instructorDetailsManager,
                                 cookieUtil
                         ),
                         AuthorizationFilter.class
