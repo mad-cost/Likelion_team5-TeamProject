@@ -46,14 +46,17 @@ public class CustomInstructorDetails implements UserDetails {
         return grantedAuthorities;
     }
 
+
+
+
     @Override
     public String getPassword() {
-        return this.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return this.getEmail();
+        return this.email;
     }
 
     @Override

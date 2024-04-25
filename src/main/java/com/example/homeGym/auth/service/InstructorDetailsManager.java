@@ -56,6 +56,7 @@ public class InstructorDetailsManager implements UserDetailsManager {
         Instructor instructor = optionalInstructor.get();
 
         return CustomInstructorDetails.builder()
+                .instructor(instructor)
                 .name(instructor.getName())
                 .loginId(instructor.getLoginId())
                 .password(instructor.getPassword())

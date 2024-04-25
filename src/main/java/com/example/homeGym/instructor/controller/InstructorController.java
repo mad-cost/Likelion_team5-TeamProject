@@ -104,7 +104,8 @@ public class InstructorController {
 
     @PostMapping("/withdraw")
     public String submitWithdrawForm(@ModelAttribute("withdrawal") InstructorWithdrawalDto withdrawalDto, Model model) {
-        String message = instructorService.withdrawalProposal(1L, withdrawalDto.getWithdrawalReason());
+        Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        String message = instructorService.withdrawalProposal(currentInstructor.getId(), withdrawalDto.getWithdrawalReason());
         model.addAttribute("message", message);
         return "instructor/withdrawResult";
     }
@@ -113,20 +114,17 @@ public class InstructorController {
     @GetMapping("/")
     public String InstructorPage(Model model) {
         //인증에서 강사 정보 가져오기
-//        Instructor instructor = facade.getCurrentInstructor();
-//        model.addAttribute("instructor", instructor);
-
-        //임시 데이터 넣기
-        model.addAttribute("profileDto", new InstructorProfileDto(
-                "/static/assets/img/free-icon-lion-512px.png", "정동은", 4.2));
+        Instructor instructor = facade.getCurrentInstructor();
+        model.addAttribute("profileDto",
+                new InstructorProfileDto(instructor.getProfileImageUrl(), instructor.getName(), instructor.getRating()));
         return "instructor/instructor-page";
     }
 
     //강사 정보 수정 페이지
     @GetMapping("/profile")
     public String profileUpdatePage(Model model){
-      //  Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
-        InstructorDto instructorDto = instructorService.findById(/*currentInstructor.getId()*/ 1L);
+        Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        InstructorDto instructorDto = instructorService.findById(currentInstructor.getId());
         InstructorUpdateDto updateDto = new InstructorUpdateDto();
 
         model.addAttribute("instructorDto", instructorDto);
@@ -156,9 +154,9 @@ public class InstructorController {
     // 로그인한 강사의 리뷰 페이지
     @GetMapping("/reviews")
     public String getInstructorReviews(@PageableDefault(size = 10)Pageable pageable, Model model) {
-       // Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
         // Fetch the instructor ID based on the username
-        Page<InstructorReviewDto> reviews = instructorService.findReviewsByInstructorId(/*currentInstructor.getId()*/1L, pageable);
+        Page<InstructorReviewDto> reviews = instructorService.findReviewsByInstructorId(currentInstructor.getId(), pageable);
 
         model.addAttribute("reviews", reviews);
         return "instructor/instructor-reviews"; // 타임리프 템플릿 파일 이름
@@ -167,8 +165,8 @@ public class InstructorController {
     // 강사 수업 페이지
     @GetMapping("/program")
     public String instructorProgramList(Model model) {
-        //Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
-        Map<String, List<ProgramDto>> programs = instructorService.findProgramsByInstructorIdSeparatedByState(1L/*currentInstructor.getId()*/);
+        Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        Map<String, List<ProgramDto>> programs = instructorService.findProgramsByInstructorIdSeparatedByState(currentInstructor.getId());
         model.addAttribute("inProgressPrograms", programs.get("inProgress"));
         model.addAttribute("otherPrograms", programs.get("other"));
         return "instructor/program"; // 타임리프 템플릿 파일 이름
@@ -179,10 +177,10 @@ public class InstructorController {
     public String InstructorProgramDetail(@PathVariable Long programId, Model model) {
         ProgramDto programDto = programService.findByProgramId(programId);
 
-       /* //강사 id 와 프로그램의 주인 여부 검증
+        //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
             return "redirect:/user/main";
-        }*/
+        }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
         // 각 사용자에 대한 정보 조회
