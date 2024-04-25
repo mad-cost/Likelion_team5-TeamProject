@@ -30,7 +30,7 @@ public class ProgramController {
             @ModelAttribute ProgramDto programDto
     ) {
         programService.createProgram(programDto);
-        return "/instructor/program";
+        return "redirect:/instructor/program";
     }
 
 
@@ -56,7 +56,7 @@ public class ProgramController {
         }
         try {
             programService.updateProgram(programId, programDto);
-            return "redirect:/program";
+            return "redirect:/instructor/program";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error-page"; // 에러 페이지로 리다이렉트
@@ -70,7 +70,7 @@ public class ProgramController {
     ) {
         try {
             programService.deleteProgram(programId);
-            return "redirect:/program";
+            return "redirect:/instructor/program";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error-page"; // 에러 페이지로 리다이렉트

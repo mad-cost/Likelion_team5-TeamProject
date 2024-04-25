@@ -82,6 +82,7 @@ public class ProgramService {
                 .price1(programDto.getPrice1())
                 .price10(programDto.getPrice10())
                 .price20(programDto.getPrice20())
+                .state(ProgramState.CREATION_PENDING)
                 .build();
         log.info("program getDescription:{}", programDto.getDescription());
         programRepository.save(program);
@@ -106,7 +107,10 @@ public class ProgramService {
         program.setDescription(programDto.getDescription());
         program.setSupplies(programDto.getSupplies());
         program.setCurriculum(programDto.getCurriculum());
-
+        program.setPrice1(programDto.getPrice1());
+        program.setPrice10(programDto.getPrice10());
+        program.setPrice20(programDto.getPrice20());
+        program.setState(ProgramState.MODIFICATION_PENDING);
         programRepository.save(program);
     }
 

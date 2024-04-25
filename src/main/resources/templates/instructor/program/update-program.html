@@ -10,7 +10,7 @@
 <div class="container mt-5">
   <h2>프로그램 수정</h2>
 
-  <form action="/program/update/{programId}" method="post" class="mt-4">
+  <form th:action="@{/program/update/{programId}(programId=${programDto.id})}" method="post" class="mt-4">
 
     <div class="form-group">
       <label for="category">카테고리:</label>
