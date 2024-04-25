@@ -17,59 +17,73 @@ import java.util.List;
 public class ProgramController {
     private final ProgramService programService;
 
-    @GetMapping("/{instructorId}")
+    @GetMapping()
     public String createPage(
-            @PathVariable("instructorId") Long instructorId,
             Model model
     ) {
-        model.addAttribute("instructorId", instructorId);
         model.addAttribute("programDto", new ProgramDto());
-        return "/instructor/instructor-program"; // 생성 페이지의 뷰 이름
+        return "/instructor/program/instructor-program";
     }
 
-    @PostMapping("/{instructorId}")
+    @PostMapping()
     public String requestCreate(
-            @PathVariable("instructorId") Long instructorId,
             @Valid @ModelAttribute ProgramDto programDto,
             BindingResult bindingResult,
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("instructorId", instructorId);
-            return "/instructor/instructor-program"; // 에러가 있으면 다시 생성 페이지로 이동
+            return "/instructor/program";
         }
-        programService.createProgram(programDto);
-        return "redirect:instructor/{instructorId}/{programId}"; // 생성된 프로그램 목록 페이지로 리다이렉트
+        try {
+            programService.createProgram(programDto);
+            return "redirect:/instructor/program";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error-page"; // 에러 페이지로 리다이렉트
+        }
     }
+
 
     @GetMapping("/update/{programId}")
     public String updateProgram(
             @PathVariable("programId") Long programId,
             Model model
     ) {
-        ProgramDto programDto = programService.findByProgramId(List.of(programId)).get(0);
+        ProgramDto programDto = programService.findByProgramId(programId);
         model.addAttribute("programDto", programDto);
-        return "/instructor/update-program"; // 수정 페이지의 뷰 이름
+        return "/instructor/program/update-program";
     }
 
     @PostMapping("/update/{programId}")
     public String requestUpdate(
             @PathVariable("programId") Long programId,
             @Valid @ModelAttribute ProgramDto programDto,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Model model
     ) {
         if (bindingResult.hasErrors()) {
-            return "/instructor/update-program"; // 에러가 있으면 다시 수정 페이지로 이동
+            return "/instructor/program/update-program";
         }
-        programService.updateProgram(programId, programDto);
-        return "redirect:/program"; // 수정된 프로그램 목록 페이지로 리다이렉트
+        try {
+            programService.updateProgram(programId, programDto);
+            return "redirect:/program";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error-page"; // 에러 페이지로 리다이렉트
+        }
     }
 
     @DeleteMapping("/{programId}")
     public String deleteProgram(
-            @PathVariable("programId") Long programId
+            @PathVariable("programId") Long programId,
+            Model model
     ) {
-        programService.deleteProgram(programId);
-        return "redirect:/program"; // 삭제 후 프로그램 목록 페이지로 리다이렉트
+        try {
+            programService.deleteProgram(programId);
+            return "redirect:/program";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error-page"; // 에러 페이지로 리다이렉트
+        }
     }
 }

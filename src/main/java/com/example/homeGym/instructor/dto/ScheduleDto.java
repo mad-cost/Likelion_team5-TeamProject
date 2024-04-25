@@ -27,6 +27,7 @@ public class ScheduleDto {
                 .id(entity.getId())
                 .week(entity.getWeek())
                 .time(entity.getTime())
+                .instructorId(entity.getInstructorId())
                 .createAt(entity.getCreateAt())
                 .build();
     }

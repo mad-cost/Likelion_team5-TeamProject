@@ -30,7 +30,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final UserRepository userRepository;
     private final JpaUserDetailsManager userDetailsManager;
     private final CookieUtil cookieUtil;
-
+    //kakao chat http://pf.kakao.com/_nMxoeG
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
@@ -48,7 +48,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String profileImageUrl = oAuth2User.getAttribute("profile_image_url");
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-        String provider = oAuth2User.getAttribute("provider");
         // 처음으로 이 소셜 로그인으로 로그인을 시도했다.
         if (!userRepository.existsByEmail(email)){
             // 새 계정을 만들어야 한다.
