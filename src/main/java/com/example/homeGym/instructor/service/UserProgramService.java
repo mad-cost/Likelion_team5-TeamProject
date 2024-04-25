@@ -72,12 +72,6 @@ public class UserProgramService {
         return userProgramDtos;
     }
 
-    // 프로그램 삭제 시 관련 수강생 확인
-    public boolean hasEnrolledUsers(Long programId) {
-        List<UserProgram> userPrograms = userProgramRepository.findByProgramId(programId);
-        return !userPrograms.isEmpty();
-    }
-
     public void userCountUpdate(List<Long> userProgramsId, Long programId, Integer count){ //1, 3 / 3/ 14
         List<UserProgram> userProgramIds = userProgramRepository.findAllById(userProgramsId);
         for (UserProgram userProgram : userProgramIds){

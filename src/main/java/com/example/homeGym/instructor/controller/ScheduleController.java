@@ -23,7 +23,7 @@ public class ScheduleController {
         return currentInstructorId.equals(instructorId);
     }
 
-    @GetMapping ()
+    @GetMapping()
     public String readSchedule(
             Model model
     ) {
@@ -32,7 +32,7 @@ public class ScheduleController {
             throw new IllegalArgumentException("Authentication failed");
         }
 
-        List<ScheduleDto> scheduleDtos = scheduleService.readSchedule();
+        List<ScheduleDto> scheduleDtos = scheduleService.readSchedules();
         model.addAttribute("scheduleDtos", scheduleDtos);
         return "/instructor/schedule/instructor-schedule";
     }
@@ -75,7 +75,6 @@ public class ScheduleController {
             @PathVariable("scheduleId") Long scheduleId
     ) {
         Instructor currentInstructor = facade.getCurrentInstructor();
-
         if (!isAuthenticated(currentInstructor.getId())) {
             throw new IllegalArgumentException("Authentication failed");
         }

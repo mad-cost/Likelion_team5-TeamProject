@@ -32,9 +32,13 @@ public class UserProgram {
     @Setter
     private LocalDateTime endTime;
 
+//    @ManyToOne
+//    private Program program;
     @Setter
     private Long programId;
 
+//    @ManyToOne
+//    private User user;
     @Setter
     private Long userId;
 
