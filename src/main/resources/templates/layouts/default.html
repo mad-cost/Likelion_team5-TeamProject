@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Layout Page</title>
+</head>
+<body>
+<header>
+    <!-- 공통 헤더 -->
+</header>
+
+<nav>
+    <!-- 기본 네비게이션 바 -->
+</nav>
+
+<div th:fragment="sidebar">
+    <!-- 기본 사이드바 -->
+</div>
+
+<section>
+    <div th:replace="${content}">
+        <!-- 메인 컨텐츠 섹션, 각 페이지의 내용이 여기에 들어감 -->
+    </div>
+</section>
+
+<footer>
+    <!-- 공통 푸터 -->
+</footer>
+</body>
+</html>

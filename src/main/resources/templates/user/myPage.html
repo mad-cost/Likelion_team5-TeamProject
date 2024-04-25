@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPage</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .outer-card {
+            background-color: #f8f9fa; /* 밖의 카드 배경색 */
+            border: none;
+        }
+
+        .inner-card {
+            background-color: #ffffff; /* 안의 카드 배경색 */
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 1rem; /* 설명 크기 */
+            color: #6c757d; /* 설명 색상 */
+        }
+
+        .card-count {
+            font-size: 1.2rem; /* 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+        }
+
+        .card-max-count {
+            font-size: 1.0rem; /* 총 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+            color: #6c757d; /* 총 회차 색상 */
+        }
+        .card.inner-card a {
+            text-decoration: none;
+        }
+        .heart-icon {
+            font-size: 2rem; /* 아이콘 크기 */
+            color: red; /* 아이콘 색상 */
+        }
+
+        .heart-link {
+            position: absolute; /* 절대 위치 */
+            top: 50%; /* 중앙 정렬을 위해 상단 50%로 설정 */
+            right: 0; /* 오른쪽 정렬 */
+            transform: translateY(-50%); /* 수직으로 중앙 정렬 */
+            margin-right: 30px; /* 오른쪽으로부터 30px 간격 */
+        }
+        .card-body.position-relative.d-flex.align-items-center img.rounded-circle {
+            border-radius: 50%; /* 원형 모양으로 만듭니다. */
+        }
+
+        /* 이름과 성별을 나란히 정렬하는 CSS */
+        .card-body.position-relative.d-flex.align-items-center div {
+            margin-right: 30px; /* 이름과 성별 사이의 간격 조절 */
+            display: flex; /* 내부 요소들을 수평으로 정렬하기 위해 flex로 설정 */
+            align-items: center; /* 내부 요소들을 수직으로 중앙 정렬 */
+        }
+        .card-body.position-relative.d-flex.align-items-center p {
+            margin-right: 10px; /* 이름과 성별 사이의 간격 조절 */
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">MyPage</h1>
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card outer-card">
+                <div class="card-body position-relative d-flex align-items-center"> <!-- position-relative 클래스 추가 및 d-flex, align-items-center 추가 -->
+                    <img th:src="${userInfo.profileImageUrl}" class="rounded-circle mr-3" style="width: 50px; height: 50px;"> <!-- 이미지를 동그랗게 만들고 사이즈 조절 -->
+                    <div>
+                        <p th:text="${userInfo.name}"></p>
+                        <p th:if="${userInfo.gender == 'male'}">남</p>
+                        <p th:if="${userInfo.gender == 'female'}">여</p>
+                    </div>
+                    <!-- 하트 아이콘과 링크 추가 -->
+                    <a href="/user/zzim" class="heart-link">
+                        <i class="fas fa-heart heart-icon"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-4">
+            <div class="card outer-card">
+                <div class="card-body">
+                    <h2 class="card-title">종료된 수업</h2>
+                    <div th:unless="${finishProgress.isEmpty()}" th:each="finish : ${finishProgress}">
+                        <div class="card inner-card">
+<!--                            <a th:href="@{'/user' + '/program/' + ${finish.id}}">-->
+                            <a href="#" class="program-link" th:data-program-id="${finish.id}">
+                                <div class="card-body">
+                                    <h3 class="card-title" th:text="${finish.program.title}"></h3>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img th:src="${finish.instructor.profileImageUrl}" alt="img" class="rounded-circle mr-2" style="width: 30px; height: 30px;">
+                                        <p th:text="${finish.instructor.name} + ' 강사님'"></p>
+                                    </div>
+                                    <p class="card-description" th:text="${finish.program.description}"></p>
+                                    <p class="card-count" th:text="'진행 회차: ' + ${finish.count}"></p>
+                                    <p class="card-max-count" th:text="'총 회차: ' + ${finish.maxCount}"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${finishProgress.isEmpty()}">
+                        <p>비어 있습니다</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card outer-card">
+                <div class="card-body">
+                    <h2 class="card-title">진행중인 수업</h2>
+                    <div th:unless="${inProgress.isEmpty()}" th:each="progress : ${inProgress}">
+                        <div class="card inner-card">
+<!--                            <a th:href="@{'/user' + '/program/' + ${progress.id}}">-->
+                            <a href="#" class="program-link" th:data-program-id="${progress.id}">
+                                <div class="card-body">
+                                    <h3 class="card-title" th:text="${progress.program.title}"></h3>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img th:src="${progress.instructor.profileImageUrl}" alt="img" class="rounded-circle mr-2" style="width: 30px; height: 30px;">
+                                        <p th:text="${progress.instructor.name} + ' 강사님'"></p>
+                                    </div>
+                                    <p class="card-description" th:text="${progress.program.description}"></p>
+                                    <p class="card-count" th:text="'진행 회차: ' + ${progress.count}"></p>
+                                    <p class="card-max-count" th:text="'총 회차: ' + ${progress.maxCount}"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${inProgress.isEmpty()}">
+                        <p>비어 있습니다</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery를 CDN을 통해 로드합니다. -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('.program-link').click(function(e){
+            e.preventDefault(); // 링크의 기본 동작(페이지 이동)을 막습니다.
+
+            var programId = $(this).data('program-id'); // 클릭된 요소의 data-program-id 값을 가져옵니다.
+
+            // 폼을 생성합니다.
+            var form = $('<form></form>');
+            form.attr('method', 'GET');
+            form.attr('action', '/user/program/' + programId); // 폼의 action 속성에 이동할 URL을 설정합니다.
+
+            // // 폼 데이터를 추가합니다.
+            // var input = $('<input type="hidden" name="userProgramId" value="' + programId + '">');
+            // form.append(input);
+
+            // 폼을 body에 추가하고 제출합니다.
+            form.appendTo('body').submit();
+        });
+    });
+</script>
+
+</body>
+</html>
