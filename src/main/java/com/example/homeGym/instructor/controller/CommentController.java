@@ -23,7 +23,7 @@ public class CommentController {
         model.addAttribute("instructorId", instructorId);
         model.addAttribute("reviewId", reviewId);
         model.addAttribute("commentDto", new CommentDto()); // 빈 CommentDto 객체 추가
-        return "/instructor/create-review";
+        return "/instructor/review/create-review";
     }
 
     // 강사 답글 처리
@@ -51,7 +51,7 @@ public class CommentController {
         model.addAttribute("commentId", commentId);
         CommentDto commentDto = commentService.getCommentDtoById(commentId); // 수정할 댓글 정보 가져오기
         model.addAttribute("commentDto", commentDto); // 가져온 댓글 정보 추가
-        return "/instructor/update-review";
+        return "/instructor/review/update-review";
     }
 
     // 답글 수정 처리

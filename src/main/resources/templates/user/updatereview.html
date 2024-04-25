@@ -128,6 +128,11 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
         $('#add-image-container').on('click', function() {
             var imageIndex = $('.image-container-wrapper').children().length + 1;
             if (imageIndex <= 5) {

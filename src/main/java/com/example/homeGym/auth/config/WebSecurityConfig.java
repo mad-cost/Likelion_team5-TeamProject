@@ -42,7 +42,8 @@ public class WebSecurityConfig {
                                 "/token/issue",
                                 "/token/validate",
                                 "/instructor",
-                                "/instructor/**"
+                                "/instructor/**",
+                                "/program/**"
                         )
                         .permitAll()
 

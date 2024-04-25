@@ -22,7 +22,7 @@ import java.util.List;
 public class AdProgramController {
   private final ProgramService programService;
   private final InstructorService instructorService;
-
+//  신청 등록 프로그램 페이지
   @GetMapping("/creation")
   public String creation(
           Model model
@@ -56,7 +56,7 @@ public class AdProgramController {
     programService.deleteInProgress(programId);
     return "redirect:/admin/program/creation";
   }
-
+//  수정 등록 프로그램 페이지
   @GetMapping("/modification")
   public String modification(
           Model model
@@ -79,8 +79,9 @@ public class AdProgramController {
           Long programId
   ){
     programService.stateConvertInProgress(programId);
-    return "redirect:/admin/modification";
+    return "redirect:/admin/program/modification";
   }
+//  삭제 등록 프로그램 페이지
   @GetMapping("/deletion")
   public String deletion(
           Model model
@@ -96,4 +97,15 @@ public class AdProgramController {
     model.addAttribute("programs", stateDeletion);
     return "/admin/deletion";
   }
+//  삭제 프로그램 수락
+  @PostMapping("/{programId}/deletion")
+  public String deletion(
+          @PathVariable("programId")
+          Long programId
+  ){
+    programService.stateConvertInDeletionComplete(programId);
+    return "redirect:/admin/program/deletion";
+  }
+
+
 }

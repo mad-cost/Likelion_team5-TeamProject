@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instructor Schedule</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2>강사 스케줄</h2>
+
+  <!-- 스케줄 조회 -->
+  <h4>Current Schedule</h4>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Week</th>
+      <th>Time</th>
+      <th>Created At</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody th:each="scheduleDto : ${scheduleDtos}">
+    <!-- 여러 스케줄을 출력 -->
+    <tr>
+      <form th:action="@{/instructor/schedule/{scheduleId}(scheduleId=${scheduleDto.id})}" method="post" onsubmit="return confirm('프로그램을 수정하시겠습니까?');">>
+        <td th:text="${scheduleDto.id}"></td>
+        <td>
+          <input type="text" name="week" th:value="${scheduleDto.week}" />
+        </td>
+        <td>
+          <input type="text" name="time" th:value="${scheduleDto.time}" />
+        </td>
+        <td th:text="${#temporals.format(scheduleDto.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td>
+          <input type="hidden" name="_method" value="put"/>
+          <button type="submit" class="btn btn-danger">스케줄 수정</button>
+        </td>
+      </form>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 스케줄 생성 폼 -->
+  <h4>새 스케줄 생성</h4>
+  <form th:action="@{'/instructor/schedule'}" method="post">
+    <div class="form-group">
+      <label for="week">요일:</label>
+      <input type="text" class="form-control" id="week" name="week" required>
+    </div>
+    <div class="form-group">
+      <label for="time">시간:</label>
+      <input type="text" class="form-control" id="time" name="time" required>
+    </div>
+    <button type="submit" class="btn btn-success">스케줄 생성</button>
+  </form>
+</div>
+
+<!-- Bootstrap JS 및 Popper.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -3,12 +3,16 @@ package com.example.homeGym.instructor.controller;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
+import com.example.homeGym.instructor.service.ProgramService;
+import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.user.dto.UserDto;
+import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +20,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -27,8 +32,11 @@ import java.util.Map;
 public class InstructorController {
 
     private final InstructorService instructorService;
+    private final UserService userService;
+    private final UserProgramService userProgramService;
     private final InstructorRepository instructorRepository;
     private final AuthenticationFacade facade;
+    private final ProgramService programService;
 
     //인증쪽에서 작성
     // 강사 로그인
@@ -134,11 +142,11 @@ public class InstructorController {
             return "redirect:/instructor/update-result";
         }
     }
+
     @GetMapping("/update-result")
     public String updateResultPage(){
         return "instructor/update-result";
     }
-
 
 
     // 로그인한 강사의 리뷰 페이지
@@ -152,42 +160,66 @@ public class InstructorController {
         return "instructor/instructor-reviews"; // 타임리프 템플릿 파일 이름
     }
 
-    // 강사 프로그램 상세
-    @GetMapping("/{instructorId}/{programId}")
-    public void InstrutcorProgramList(
-            @PathVariable("instructorId") Long instructorId,
-            @PathVariable("programId") Long programId
-    ) {
+    // 강사 수업 페이지
+    @GetMapping("/program")
+    public String instructorProgramList(Model model) {
+        //Instructor currentInstructor = facade.getCurrentInstructor(); // 현재 로그인한 강사 정보 가져오기
+        Map<String, List<ProgramDto>> programs = instructorService.findProgramsByInstructorIdSeparatedByState(1L/*currentInstructor.getId()*/);
+        model.addAttribute("inProgressPrograms", programs.get("inProgress"));
+        model.addAttribute("otherPrograms", programs.get("other"));
+        return "instructor/program"; // 타임리프 템플릿 파일 이름
+    }
 
+    // 강사 프로그램 상세
+    @GetMapping("/program/{programId}")
+    public String InstructorProgramDetail(@PathVariable Long programId, Model model) {
+        ProgramDto programDto = programService.findByProgramId(programId);
+
+       /* //강사 id 와 프로그램의 주인 여부 검증
+        if (!checkInstructorAccess(programId)) {
+            return "redirect:/user/main";
+        }*/
+
+        List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
+        // 각 사용자에 대한 정보 조회
+        List<UserProgramDetailDto> userDetails = userPrograms.stream()
+                .map(userProgram -> {
+                    UserDto user = userService.findById(userProgram.getUserId());
+                    return new UserProgramDetailDto(user.getName(), user.getId(), userProgram.getCount(), userProgram.getMaxCount());
+                })
+                .toList();
+
+        model.addAttribute("program", programDto);
+        model.addAttribute("userDetails", userDetails);
+        return "instructor/program-detail";
+    }
+    private boolean checkInstructorAccess(Long programId) {
+        ProgramDto programDto = programService.findByProgramId(programId);
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        return programDto.getInstructorId().equals(currentInstructor.getId());
     }
 
     // 강사 프로그램 회원 상세
-    @GetMapping("/{instructorId}/program/{programId}/user/{userId}")
-    public void userProgramList(
-            @PathVariable("instructorId") Long instructorId,
-            @PathVariable("programId") Long programId,
-            @PathVariable("userId") Long userId
-    ) {
+    @GetMapping("/program/{programId}/user/{userId}")
+    public String userProgramList() {
 
+        /* //강사 id 와 프로그램의 주인 여부 검증
+        if (!checkInstructorAccess(programId)) {
+            return "redirect:/user/main";
+        }*/
+
+        return "instructor/program-detail-user";
     }
 
     // 강사 일지 작성
-    @PostMapping("/{instructorId}/program/{programId}/user/{userId}")
-    public void createDaily(
-            @PathVariable("instructorId") Long instructorId,
-            @PathVariable("programId") Long programId,
-            @PathVariable("userId") Long userId
-    ) {
+    @PostMapping("/program/{programId}/user/{userId}")
+    public void createDaily() {
 
     }
 
     // 강사 일지 수정
-    @PutMapping("/{instructorId}/program/{programId}/user/{userId}")
-    public void pathDaily(
-            @PathVariable("instructorId") Long instructorId,
-            @PathVariable("programId") Long programId,
-            @PathVariable("userId") Long userId
-    ) {
+    @PutMapping("/program/{programId}/user/{userId}")
+    public void pathDaily() {
 
     }
 }

@@ -1,13 +1,20 @@
 package com.example.homeGym.instructor.service;
 
+
+import com.example.homeGym.instructor.dto.*;
+
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+
+import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
@@ -20,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +39,8 @@ public class InstructorService {
     private final CommentRepository commentRepository;
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProgramRepository programRepository;
+
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
     public void createInstructor(InstructorCreateDto dto){
@@ -81,8 +87,10 @@ public class InstructorService {
         }
         return instructorDtos;
     }
-    public InstructorDto findById(Long instructorId){
-        return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
+    public InstructorDto findById(Long instructorId) {
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new NoSuchElementException("Instructor not found with ID: " + instructorId));
+        return InstructorDto.fromEntity(instructor);
     }
 
     //강사페이지에서 정산금 띄우기
@@ -103,59 +111,7 @@ public class InstructorService {
         }
     }
 
-
-
-
-    public void saveMedal(Long instructorId, String medal){
-        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
-        instructor.setMedal(medal);
-        instructorRepository.save(instructor);
-        InstructorDto.fromEntity(instructor);
-    }
-
-    public String findRank(String Gold, String Silver, String Bronze, String Unranked){
-        String myRank = null;
-        // rank값 찾아서 저장
-        if (Gold != null) {
-            myRank = Gold;
-        } else if (Silver != null) {
-            myRank = Silver;
-        } else if (Bronze != null) {
-            myRank = Bronze;
-        } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
-        return myRank;
-    }
-
-    public Instructor findByLongId(Long instructorId){
-        return instructorRepository.findById(instructorId).orElseThrow();
-    }
-
-    // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
-    public List<InstructorDto> findAllByStateIsREGISTRATION(){
-        List<InstructorDto> instructorDto = new ArrayList<>();
-        // state가 REGISTRATION인 강사 모두 가져오기
-        List<Instructor> instructors = instructorRepository.findAll();
-        for (Instructor instructor : instructors){
-            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
-                instructorDto.add(InstructorDto.fromEntity(instructor));
-            }
-        }
-        return instructorDto;
-    }
-//    강사 신청 승인
-    public void accept(Long instructorId){
-        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
-        instructor.setRoles("ROLE_INSTRUCTOR");
-        instructor.setState(Instructor.InstructorState.ACTIVE);
-        instructorRepository.save(instructor);
-        InstructorDto.fromEntity(instructor);
-    }
-//    강사 신청 거절
-    public void delete(Long instructorId){
-        instructorRepository.deleteById(instructorId);
-    }
-
-
+    //강사 리뷰 확인 페이지
     @Transactional(readOnly = true)
     public Page<InstructorReviewDto> findReviewsByInstructorId(Long instructorId, Pageable pageable) {
         //강사 id로 리뷰들을 페이지 단위로 가져오기
@@ -185,5 +141,104 @@ public class InstructorService {
     }
 
 
+    //프로그램 상태에 따라 분리해서 보여주기
+    public Map<String, List<ProgramDto>> findProgramsByInstructorIdSeparatedByState(Long instructorId) {
+        List<Program> programs = programRepository.findByInstructorId(instructorId);
+        Map<String, List<ProgramDto>> separatedPrograms = new HashMap<>();
+        List<ProgramDto> inProgressPrograms = programs.stream()
+                .filter(p -> p.getState() == Program.ProgramState.IN_PROGRESS)
+                .map(ProgramDto::fromEntity)
+                .collect(Collectors.toList());
+        List<ProgramDto> otherPrograms = programs.stream()
+                .filter(p -> p.getState() != Program.ProgramState.IN_PROGRESS)
+                .map(ProgramDto::fromEntity)
+                .collect(Collectors.toList());
+
+        separatedPrograms.put("inProgress", inProgressPrograms);
+        separatedPrograms.put("other", otherPrograms);
+        return separatedPrograms;
+    }
+
+
+
+
+
+//=============================   관리자    ==============================================================
+
+    public void saveMedal(Long instructorId, String medal){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setMedal(medal);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+
+    public String findRank(String Gold, String Silver, String Bronze, String Unranked){
+        String myRank = null;
+        // rank값 찾아서 저장
+        if (Gold != null) {
+            myRank = Gold;
+        } else if (Silver != null) {
+            myRank = Silver;
+        } else if (Bronze != null) {
+            myRank = Bronze;
+        } // Unranked는 myRank에 null을 넣어줬으므로 만들어줄 필요가 없다
+        return myRank;
+    }
+
+    public Instructor findByLongId(Long instructorId){
+        return instructorRepository.findById(instructorId).orElseThrow();
+    }
+
+    // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
+    public List<InstructorDto> findAllByStateIsRegistration(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 REGISTRATION인 강사 모두 가져오기
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors){
+            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+//    강사 신청 승인
+    public void accept(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setRoles("ROLE_INSTRUCTOR");
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+//    강사 신청 거절
+    public void delete(Long instructorId){
+        instructorRepository.deleteById(instructorId);
+    }
+
+//
+    public List<InstructorDto> findAllByStateIsWithdrawalComplete(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 WITHDRAWAL_PENDING 강사 모두 가져오기
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors) {
+            if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_PENDING) {
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+//    강사 회원 탈퇴 승인
+    public void withdraw(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
+//     강사 회원 탈퇴 거절
+    public void withdrawCancel(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
+    }
 
 }

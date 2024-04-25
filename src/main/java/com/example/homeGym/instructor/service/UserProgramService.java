@@ -29,6 +29,15 @@ public class UserProgramService {
         return userProgramDtoList;
     }
 
+    public List<UserProgramDto> findByProgramIdAndStateInProgress(Long programId){
+        List<UserProgram> lists = userProgramRepository.findByProgramIdAndState(programId, UserProgram.UserProgramState.IN_PROGRESS);
+        List<UserProgramDto> userProgramDtoList = new ArrayList<>();
+        for (UserProgram userProgram: lists){
+            userProgramDtoList.add(UserProgramDto.fromEntity(userProgram));
+        }
+        return userProgramDtoList;
+    }
+
     public List<UserProgramDto> findByUserIdAndStateFINISH(Long userId){
         List<UserProgram> lists = userProgramRepository.findByUserIdAndState(userId, UserProgram.UserProgramState.FINISH);
         List<UserProgramDto> userProgramDtoList = new ArrayList<>();
@@ -41,19 +50,6 @@ public class UserProgramService {
 
     public UserProgramDto findById(Long userProgramId){
         return UserProgramDto.fromEntity(userProgramRepository.findById(userProgramId).orElseThrow());
-    }
-
-    public List<Long> findAllByUserIdConvertProgramId(Long userId){
-        List<Long> result = new ArrayList<>();
-//        userProgram에서 userId 가져오기
-        for (UserProgram userProgram : userProgramRepository.findAllByUserId(userId)){
-//            userProgram의 state가 IN_PROGRESS인 속성만 필요
-            if (userProgram.getState().equals(UserProgram.UserProgramState.IN_PROGRESS)){
-//                가져온 userId의 programId를 result에 담아주기
-            result.add(userProgram.getProgramId());
-            } else continue;
-        }
-        return result;
     }
 
     public List<Long> findAllByUserIdConvertId(Long userId){
@@ -76,16 +72,6 @@ public class UserProgramService {
         return userProgramDtos;
     }
 
-    public void deleteByProgram(List<Long> userPrograms, Long programId){
-        List<UserProgram> userIds = userProgramRepository.findAllById(userPrograms);
-        for (UserProgram userId : userIds){
-            if (userId.getProgramId().equals(programId)){
-                userProgramRepository.delete(userId);
-                break;
-            }
-        }
-    }
-
     public void userCountUpdate(List<Long> userProgramsId, Long programId, Integer count){ //1, 3 / 3/ 14
         List<UserProgram> userProgramIds = userProgramRepository.findAllById(userProgramsId);
         for (UserProgram userProgram : userProgramIds){
@@ -105,8 +91,8 @@ public class UserProgramService {
             Integer sumAmount = 0;
             List<UserProgram> userPrograms = userProgramRepository.findAllByProgramId(programId);
             for (UserProgram userProgramId : userPrograms) {
-//                가져온 id값의 state가 CANCEL 이거나 FINISH일 경우 값 저장
-                if (userProgramId.getState() == UserProgram.UserProgramState.CANCEL || userProgramId.getState() == UserProgram.UserProgramState.FINISH) {
+//                가져온 id값의 state가 FINISH일 경우 값 저장
+                if (userProgramId.getState() == UserProgram.UserProgramState.FINISH) {
                     sumAmount += userProgramId.getAmount();
                 }
             }
@@ -136,8 +122,8 @@ public class UserProgramService {
                       int endTimeYear = endTime.getYear();
                       Month endTimeMonth = endTime.getMonth();
                       if (currentYear == endTimeYear && currentMonth == endTimeMonth) {
-                          //                가져온 id값의 state가 CANCEL 이거나 FINISH일 경우 값 저장
-                          if (userProgramId.getState() == UserProgram.UserProgramState.CANCEL || userProgramId.getState() == UserProgram.UserProgramState.FINISH) {
+                          //                가져온 id값의 state가 FINISH일 경우 값 저장
+                          if (userProgramId.getState() == UserProgram.UserProgramState.FINISH) {
                               sumAmount += userProgramId.getAmount();
                           }
                       } else continue;
@@ -146,9 +132,30 @@ public class UserProgramService {
             result.add(sumAmount);
         }
         return  result;
+    }
+//  유저 프로그램 전액 환불
+    public void allRefund(Long userProgramId){
+        UserProgram userProgram = userProgramRepository.findById(userProgramId).orElseThrow();
+        userProgram.setState(UserProgram.UserProgramState.CANCEL);
+        userProgramRepository.save(userProgram);
+        log.info("@@@@@@Status : {}", userProgram.getState());
+        UserProgramDto.fromEntity(userProgram);
+    }
 
-
-
+    public void refund(Long userProgramId){ // 13번 id
+        UserProgram userProgram = userProgramRepository.findById(userProgramId).orElseThrow();
+        int amount = userProgram.getAmount(); // 프로그램 결제 금액
+        int maxCount = userProgram.getMaxCount();
+        int count = userProgram.getCount();
+        // 회차당 1회 금액
+        int result = amount/maxCount;
+        // 진행 횟수에 따른 환불 금액
+        result = result * count;
+        userProgram.setAmount(result);
+        userProgram.setState(UserProgram.UserProgramState.FINISH);
+        userProgram.setEndTime(LocalDateTime.now());
+        userProgramRepository.save(userProgram);
+        UserProgramDto.fromEntity(userProgram);
     }
 
 }
