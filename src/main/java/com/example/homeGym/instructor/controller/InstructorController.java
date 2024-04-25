@@ -49,8 +49,7 @@ public class InstructorController {
 
     @PostMapping("/signin")
     public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
-//        Optional<Instructor> instructor = instructorRepository.findByEmail(signInDto.getEmail());
-//        log.info(instructor.toString());
+
         instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
         return "redirect:/user/main";
     }

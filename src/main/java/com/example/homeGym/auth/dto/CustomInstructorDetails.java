@@ -7,8 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Builder
@@ -36,13 +38,17 @@ public class CustomInstructorDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(
-                new SimpleGrantedAuthority(instructor.getRoles()));
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        String[] rawAuthorities = roles.split(",");
+        for (String rawAuthority : rawAuthorities){
+            grantedAuthorities.add(new SimpleGrantedAuthority(rawAuthority));
+        }
+        return grantedAuthorities;
     }
 
     @Override
     public String getPassword() {
-        return instructor.getPassword();
+        return this.getPassword();
     }
 
     @Override
