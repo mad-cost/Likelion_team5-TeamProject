@@ -5,8 +5,10 @@ import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
+import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ import static com.example.homeGym.instructor.entity.Program.*;
 @RequiredArgsConstructor
 public class ProgramService {
     private final ProgramRepository programRepository;
+    private final UserProgramService userProgramService;
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
 
@@ -187,6 +190,12 @@ public class ProgramService {
         if (!program.getInstructorId().equals(/*currentInstructor.getId()*/1L)) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
+
+        // 수강생 확인
+        if (userProgramService.hasEnrolledUsers(programId)) {
+            throw new RuntimeException("Cannot delete program with enrolled users");
+        }
+
 
         programRepository.deleteById(programId);
     }
