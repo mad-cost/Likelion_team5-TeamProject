@@ -60,7 +60,6 @@ public class InstructorService {
     public void createInstructor(InstructorCreateDto dto){
         log.info("Creating instructor with name: {}", dto.getName());
         Instructor instructor = dto.toEntity();
-        instructor.setRoles("ROLE_INSTRUCTOR");
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
         instructorRepository.save(instructor);
     }
@@ -79,10 +78,6 @@ public class InstructorService {
         return false;
     }
 
-    //로그인 아이디 존재 확인
-    public boolean isLoginIdAvailable(String loginId) {
-        return !instructorRepository.existsByLoginId(loginId);
-    }
 
     //이메일 존재 확인
     public boolean isEmailAvailable(String email) {

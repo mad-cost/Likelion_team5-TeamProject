@@ -42,14 +42,14 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-md-4">
-                    <img th:src="${instructor.profileImageUrl}" alt="강사 프로필"
+                    <img th:src="${profileDto.profileImage}" alt="강사 프로필"
                          class="img-fluid rounded-circle profile-image">
                 </div>
                 <div class="col-md-8 d-flex align-items-center">
-                    <h2 th:text="${instructor.name}" class="me-3">강사 이름</h2>
+                    <h2 th:text="${profileDto.name}" class="me-3">강사 이름</h2>
                     <div class="d-flex align-items-center">
                         <img src="/static/assets/icon/star.png" alt="Star Rating" class="me-2 star-icon"> <!-- 별 아이콘 -->
-                        <span th:text="${instructor.rating}">4.5</span> <!-- 평점 표시 -->
+                        <span th:text="${profileDto.rating}">4.5</span> <!-- 평점 표시 -->
                     </div>
                 </div>
             </div>

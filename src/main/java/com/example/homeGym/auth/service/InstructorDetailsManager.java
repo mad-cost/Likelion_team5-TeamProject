@@ -58,7 +58,6 @@ public class InstructorDetailsManager implements UserDetailsManager {
         return CustomInstructorDetails.builder()
                 .instructor(instructor)
                 .name(instructor.getName())
-                .loginId(instructor.getLoginId())
                 .password(instructor.getPassword())
                 .gender(String.valueOf(instructor.getGender()))
                 .birthyear(instructor.getBirthyear())

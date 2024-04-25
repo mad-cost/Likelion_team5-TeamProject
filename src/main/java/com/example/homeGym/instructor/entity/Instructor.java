@@ -19,8 +19,10 @@ public class Instructor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
+    private String email;
+    @Setter
     private String name;
-    private String loginId;
+    @Setter
     private String password;
     @Setter
     @Enumerated(EnumType.STRING)
@@ -43,8 +45,7 @@ public class Instructor {
     private String certificate;
     @Setter
     private String medal;
-    @Setter
-    private String email;
+
     @Setter
     private String phone;
     @Setter

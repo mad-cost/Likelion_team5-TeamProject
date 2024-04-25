@@ -3,7 +3,7 @@ package com.example.homeGym.instructor.controller;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.entity.Program;
+
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.ProgramService;
@@ -24,8 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Controller
 @Slf4j
@@ -77,14 +76,7 @@ public class InstructorController {
         return "/instructor/proposal-success";
     }
 
-    //로그인 아이디 중복 검사
-    @PostMapping("/check-loginId")
-    @ResponseBody
-    public ResponseEntity<?> checkLoginId(@RequestBody Map<String, String> request) {
-        String loginId = request.get("loginId");
-        boolean isAvailable = instructorService.isLoginIdAvailable(loginId);
-        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
-    }
+
     // 이메일 중복 검사
     @PostMapping("/check-email")
     @ResponseBody
