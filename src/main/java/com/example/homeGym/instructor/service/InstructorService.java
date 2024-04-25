@@ -185,7 +185,7 @@ public class InstructorService {
     }
 
     // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
-    public List<InstructorDto> findAllByStateIsREGISTRATION(){
+    public List<InstructorDto> findAllByStateIsRegistration(){
         List<InstructorDto> instructorDto = new ArrayList<>();
         // state가 REGISTRATION인 강사 모두 가져오기
         List<Instructor> instructors = instructorRepository.findAll();
@@ -209,38 +209,30 @@ public class InstructorService {
         instructorRepository.deleteById(instructorId);
     }
 
-    public List<InstructorDto> findAllByStateIsRegistration(){
-        List<InstructorDto> instructorDto = new ArrayList<>();
-        List<Instructor> instructors = instructorRepository.findAll();
-        for (Instructor instructor : instructors){
-            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
-                instructorDto.add(InstructorDto.fromEntity(instructor));
-            }
-        }
-        return instructorDto;
-    }
-
     public List<InstructorDto> findAllByStateIsWithdrawalComplete(){
         List<InstructorDto> instructorDto = new ArrayList<>();
+        // state가 WITHDRAWAL_PENDING 강사 모두 가져오기
         List<Instructor> instructors = instructorRepository.findAll();
-        for (Instructor instructor : instructors){
-            if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_COMPLETE){
+        for (Instructor instructor : instructors) {
+            if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_PENDING) {
                 instructorDto.add(InstructorDto.fromEntity(instructor));
             }
         }
         return instructorDto;
     }
-
+    //    강사 회원 탈퇴 승인
     public void withdraw(Long instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
         instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
     }
-
+    //     강사 회원 탈퇴 거절
     public void withdrawCancel(Long instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
+        InstructorDto.fromEntity(instructor);
     }
 
 }

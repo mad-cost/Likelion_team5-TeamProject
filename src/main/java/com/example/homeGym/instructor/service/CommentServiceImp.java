@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Slf4j
@@ -102,4 +103,15 @@ public class CommentServiceImp implements CommentService {
         }
         return CommentDto.fromEntity(optionalComment.get());
     }
+
+    public Comment findByReviewId(Long id){
+        Comment comment = commentRepository.findByReviewId(id);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년MM월dd일");
+        String changeDate = comment.getCreateAt().format(formatter);
+        comment.setDateCreatedAt(changeDate);
+        commentRepository.save(comment);
+
+        return comment;
+    }
+
 }

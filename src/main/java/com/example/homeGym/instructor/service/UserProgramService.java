@@ -158,4 +158,8 @@ public class UserProgramService {
         UserProgramDto.fromEntity(userProgram);
     }
 
+    public List<UserProgram> findAllByProgramIdConvertId(Long programId){
+        return userProgramRepository.findAllByProgramId(programId);
+    }
+
 }

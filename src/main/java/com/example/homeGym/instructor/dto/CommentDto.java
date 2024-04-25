@@ -11,12 +11,15 @@ import lombok.*;
 public class CommentDto {
     private Long id;
     private String content;
+    @Setter
+    private String dateCreatedAt;
 
 
     public static CommentDto fromEntity(Comment entity) {
         return CommentDto.builder()
                 .id(entity.getId())
                 .content(entity.getContent())
+                .dateCreatedAt(entity.getDateCreatedAt())
                 .build();
     }
 }

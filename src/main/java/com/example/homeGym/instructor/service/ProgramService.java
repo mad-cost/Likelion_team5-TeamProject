@@ -186,4 +186,11 @@ public class ProgramService {
 
         programRepository.deleteById(programId);
     }
+
+//    MainController에서 사용
+    public Program findById(Long programId){
+        return programRepository.findById(programId).orElseThrow();
+    }
+
+
 }

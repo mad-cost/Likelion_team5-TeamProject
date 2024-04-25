@@ -158,7 +158,7 @@ public class InstructorController {
         model.addAttribute("reviews", reviews);
         return "instructor/instructor-reviews"; // 타임리프 템플릿 파일 이름
     }
-
+             
     // 강사 수업 페이지
     @GetMapping("/program")
     public String instructorProgramList(Model model) {
