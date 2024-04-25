@@ -91,29 +91,28 @@
   <div id="layoutSidenav_content">
     <main>
       <div class="container-fluid px-4">
-        <h1 class="mt-4">삭제 등록 프로그램</h1>
+        <h1 class="mt-4">강사 회원 탈퇴 목록</h1>
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item active"> </li>
         </ol>
 
-        <tr th:each="program: ${programs}">
+        <tr th:each="instructor: ${instructors}">
           <div class="card mb-4">
-            <div class="card-body">
-              <form class="d-flex align-items-center justify-content-between" th:action="@{'/admin/program/'+${program.id}+'/deletion'}" method="post">
-                <td><h3 th:text="${program.title}"></h3></td>
-                <input type="submit" class="btn btn-danger" value="삭제하기">
-              </form>
-              <hr>
-              <td><h5 th:text="${program.description}"></h5></td>
-              <td><h5 th:text="${program.curriculum}"></h5></td>
-              <div class="card mb-3">
-                <div class="card-body">
-                    <a>강사 이름 : [[${program.instructor.name}]] / 이메일 : [[${program.instructor.email}]]</a>
-                </div>
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <span style="font-size: large">신청 강사 : [[${instructor.name}]] / 탈퇴 사유 : [[${instructor.withdrawalReason}]]</span>
+              <div>
+                <form th:action="@{'/admin/instructor/'+${instructor.id}+'/withdraw'}" method="post" style="display: inline;">
+                  <input type="submit" class="btn btn-primary" value="승인">
+                </form>
+                <form th:action="@{'/admin/instructor/'+${instructor.id}+'/withdraw/cancel'}" method="post" style="display: inline;">
+                  <input type="submit" class="btn btn-danger" value="거절">
+                </form>
               </div>
             </div>
           </div>
         </tr>
+
+
 
         <div style="height: 100vh"></div>
         <div class="card mb-4"><div class="card-body">When scrolling, the navigation stays at the top of the page. This is the end of the static navigation demo.</div></div>
