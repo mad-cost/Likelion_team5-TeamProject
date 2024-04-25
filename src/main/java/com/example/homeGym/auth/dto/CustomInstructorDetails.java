@@ -1,4 +1,4 @@
-package com.example.homeGym.common;
+package com.example.homeGym.auth.dto;
 
 import com.example.homeGym.instructor.entity.Instructor;
 import lombok.Builder;
@@ -15,7 +15,24 @@ import java.util.Collections;
 public class CustomInstructorDetails implements UserDetails {
     private Instructor instructor;
 
-    private final String userType = "instructor";
+    private Long id;
+    private String name;
+    private String loginId;
+    private String password;
+    private String gender;
+    private String birthyear;
+    private String birthday;
+    private String roles;
+    private String state;
+    private String career;
+    private String profileImageUrl;
+    private String certificate;
+    private String medal;
+    private String email;
+    private String phone;
+    private String bank;
+    private String bankName;
+    private Double rating;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

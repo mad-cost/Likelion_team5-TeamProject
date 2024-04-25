@@ -31,20 +31,21 @@ public class InstructorController {
     private final AuthenticationFacade facade;
 
     //인증쪽에서 작성
-   /* // 강사 로그인
-    @GetMapping("/login")
+    // 강사 로그인
+    @GetMapping("/signin")
     public String loginPage(){
-        return "instructor-login";
+        return "instructor/instructor-signin";
     }
 
-    @PostMapping("/login")
-    public void login() {
+    @PostMapping("/signin")
+    public String login() {
+        return "user/main";
     }
 
     // 강사 로그아웃
     @PostMapping("/logout")
     public void logout() {
-    }*/
+    }
 
 
     // 강사 신청

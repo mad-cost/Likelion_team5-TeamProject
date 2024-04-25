@@ -1,8 +1,7 @@
 package com.example.homeGym.auth.jwt;
 
-import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.auth.dto.CustomUserDetails;
-import com.example.homeGym.auth.service.JpaUserDetailsManager;
+import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -37,35 +36,22 @@ public class JwtTokenUtils {
     }
 
 
-    public String generateToken(CustomUserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) {
 
         Instant now = Instant.now();
         Claims jwtClaims = Jwts.claims()
 
-                .setSubject(userDetails.getEmail())
+                .setSubject(userDetails.getUsername())
 
                 .setIssuedAt(Date.from(now))
 
                 .setExpiration(Date.from(now.plusSeconds(60 * 60 * 24 * 30)));
 
-
-        return Jwts.builder()
-                .setClaims(jwtClaims)
-                .signWith(this.signingKey)
-                .compact();
-    }
-
-    public String generateToken(CustomInstructorDetails instructorDetails) {
-
-        Instant now = Instant.now();
-        Claims jwtClaims = Jwts.claims()
-
-                .setSubject(instructorDetails.getUsername())
-
-                .setIssuedAt(Date.from(now))
-
-                .setExpiration(Date.from(now.plusSeconds(60 * 60 * 24 * 30)));
-
+        if (userDetails instanceof CustomInstructorDetails) {
+            jwtClaims.put("userType", "instructor");
+        } else if (userDetails instanceof CustomUserDetails) {
+            jwtClaims.put("userType", "user");
+        }
 
         return Jwts.builder()
                 .setClaims(jwtClaims)

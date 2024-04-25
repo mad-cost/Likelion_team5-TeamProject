@@ -40,6 +40,7 @@ public class InstructorService {
     public void createInstructor(InstructorCreateDto dto){
         log.info("Creating instructor with name: {}", dto.getName());
         Instructor instructor = dto.toEntity();
+        instructor.setRoles("ROLE_INSTRUCTOR");
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
         instructorRepository.save(instructor);
     }
