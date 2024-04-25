@@ -3,6 +3,7 @@ package com.example.homeGym.instructor.dto;
 import com.example.homeGym.instructor.entity.Gender;
 import com.example.homeGym.instructor.entity.Instructor;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Setter
@@ -52,7 +53,7 @@ public class InstructorCreateDto {
         return Instructor.builder()
                 .id(this.id)
                 .loginId(this.loginId)
-                .password(this.password) // TODO: 암호화 필요
+                .password(this.password)
                 .name(this.name)
                 .gender(this.gender)
                 .birthyear(this.birthyear)

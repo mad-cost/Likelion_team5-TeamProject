@@ -19,6 +19,7 @@ public enum CustomGlobalErrorCode {
 
     // 프로그램 괸련 에러
     PROGRAM_NOT_EXISTS(404,"4003", "존재하지 않는 프로그램입니다."),
+    PROGRAM_FORBIDDEN(403, "4005", "프로그램 소유 권한이 없습니다."),
 
     // 정산 관련 에러
     SETTLEMENT_EXCEEDS_AVAILABLE(400, "9001", "정산 신청 금액이 가능 금액을 초과합니다."),

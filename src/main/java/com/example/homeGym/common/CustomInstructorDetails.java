@@ -1,4 +1,4 @@
-package com.example.homeGym;
+package com.example.homeGym.common;
 
 import com.example.homeGym.instructor.entity.Instructor;
 import lombok.Builder;
