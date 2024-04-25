@@ -76,6 +76,8 @@ public class SettlementService {
         }
         return SettlementFeeDto.fromEntity(settlementFee);
     }
+
+
 //  Settlement에서 state가 SETTLEMENT_PENDING 찾기
   public List<SettlementDto> findAllByStateIsPENDING(){
     List<SettlementDto> settlementDto = new ArrayList<>();

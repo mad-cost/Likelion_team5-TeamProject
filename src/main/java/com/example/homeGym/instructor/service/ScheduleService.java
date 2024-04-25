@@ -1,6 +1,7 @@
 package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Schedule;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.common.util.AuthenticationFacade;
@@ -22,27 +23,43 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> readSchedules() {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+
+        List<Schedule> schedules = scheduleRepository.findByInstructorId(currentInstructor.getId());
+
+        return schedules.stream()
+                .map(ScheduleDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
-    public List<ScheduleDto> readSchedule() {
+    public List<ScheduleDto> findAllByOrderByName() {
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        for (Schedule schedule : scheduleRepository.findByInstructorIdOrderByWeekAscTimeAsc(1L)) {
+        for (Schedule schedule : scheduleRepository.findAllByOrderByInstructorId()) {
             scheduleDtos.add(ScheduleDto.fromEntity(schedule));
         }
         return scheduleDtos;
     }
 
+    @Transactional(readOnly = true)
+    public ScheduleDto readSchedule(Long scheduleId) {
+        Schedule schedule = findScheduleById(scheduleId);
+        return ScheduleDto.fromEntity(schedule);
+    }
 
     @Transactional
     public ScheduleDto createSchedule(String week, String time) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
         Schedule schedule = Schedule.builder()
                 .week(week)
                 .time(time)
-                .instructorId(1L)  // 주석 해제
+                .instructorId(currentInstructor.getId())
                 .build();
 
-//        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
+        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
 
         return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
     }

@@ -73,10 +73,10 @@ public class ProgramService {
     // 프로그램 생성
     @Transactional
     public void createProgram(ProgramDto programDto) {
-      //  Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
         Program program = builder()
-                .instructorId(/*currentInstructor.getId()*/1L)
+                .instructorId(currentInstructor.getId())
                 .category(programDto.getCategory())
                 .title(programDto.getTitle())
                 .description(programDto.getDescription())
@@ -100,9 +100,9 @@ public class ProgramService {
         }
 
         Program program = optionalProgram.get();
-       // Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
-        if (!program.getInstructorId().equals(/*currentInstructor.getId()*/1L)) {
+        if (!program.getInstructorId().equals(currentInstructor.getId())) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
 
@@ -186,8 +186,8 @@ public class ProgramService {
         }
 
         Program program = optionalProgram.get();
-       // Instructor currentInstructor = facade.getCurrentInstructor();
-        if (!program.getInstructorId().equals(/*currentInstructor.getId()*/1L)) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!program.getInstructorId().equals(currentInstructor.getId())) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
 

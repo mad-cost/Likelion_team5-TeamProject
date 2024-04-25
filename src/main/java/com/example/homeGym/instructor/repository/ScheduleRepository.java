@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    List<Schedule> findByInstructorIdOrderByWeekAscTimeAsc(Long instructorId);
+    List<Schedule> findAllByOrderByInstructorId();
+
+    List<Schedule> findByInstructorId(Long id);
 }
