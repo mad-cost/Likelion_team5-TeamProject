@@ -23,14 +23,14 @@ public class ScheduleController {
         return currentInstructorId.equals(instructorId);
     }
 
-    @GetMapping()
+    @GetMapping ()
     public String readSchedule(
             Model model
     ) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
-//        if (!isAuthenticated(instructorId)) {
-//            throw new IllegalArgumentException("Authentication failed");
-//        }
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
 
         List<ScheduleDto> scheduleDtos = scheduleService.readSchedule();
         model.addAttribute("scheduleDtos", scheduleDtos);
@@ -43,9 +43,10 @@ public class ScheduleController {
             @RequestParam("time") String time,
             Model model
     ) {
-//        if (!isAuthenticated(instructorId)) {
-//            throw new IllegalArgumentException("Authentication failed");
-//        }
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
 
         ScheduleDto scheduleDto = scheduleService.createSchedule(week, time);
         model.addAttribute("scheduleDto", scheduleDto);
@@ -59,10 +60,10 @@ public class ScheduleController {
             @RequestParam("time") String time,
             Model model
     ) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
-//        if (!isAuthenticated(instructorId)) {
-//            throw new IllegalArgumentException("Authentication failed");
-//        }
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
 
         ScheduleDto scheduleDto = scheduleService.updateSchedule(scheduleId, week, time);
         model.addAttribute("scheduleDto", scheduleDto);
@@ -74,9 +75,10 @@ public class ScheduleController {
             @PathVariable("scheduleId") Long scheduleId
     ) {
         Instructor currentInstructor = facade.getCurrentInstructor();
-//        if (!isAuthenticated(instructorId)) {
-//            throw new IllegalArgumentException("Authentication failed");
-//        }
+
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
 
         scheduleService.deleteSchedule(scheduleId);
         return "redirect:/instructor/schedule";

@@ -1,6 +1,7 @@
 package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Schedule;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.common.util.AuthenticationFacade;
@@ -24,8 +25,10 @@ public class ScheduleService {
 
     @Transactional
     public List<ScheduleDto> readSchedule() {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        for (Schedule schedule : scheduleRepository.findByInstructorIdOrderByWeekAscTimeAsc(1L)) {
+        for (Schedule schedule : scheduleRepository.findByInstructorIdOrderByWeekAscTimeAsc(currentInstructor.getId())) {
             scheduleDtos.add(ScheduleDto.fromEntity(schedule));
         }
         return scheduleDtos;
@@ -34,15 +37,15 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto createSchedule(String week, String time) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
         Schedule schedule = Schedule.builder()
                 .week(week)
                 .time(time)
-                .instructorId(1L)  // 주석 해제
+                .instructorId(currentInstructor.getId())
                 .build();
 
-//        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
+        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
 
         return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
     }
