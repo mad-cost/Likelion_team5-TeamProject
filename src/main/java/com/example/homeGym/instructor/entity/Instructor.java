@@ -66,7 +66,10 @@ public class Instructor {
     }
 
     public enum InstructorState{
-        REGISTRATION_PENDING, WITHDRAWAL_PENDING, ACTIVE, WITHDRAWAL_COMPLETE
+        REGISTRATION_PENDING, // 신청 대기중인 강사
+        WITHDRAWAL_PENDING, // 탈퇴 신청 대기중인 강사
+        ACTIVE, // 활동중인 강사
+        WITHDRAWAL_COMPLETE // 탈퇴 신청 완료된 강사
     }
 
 }

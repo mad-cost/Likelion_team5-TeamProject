@@ -18,6 +18,7 @@ public class UserProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Setter
     @Enumerated(EnumType.STRING)
     private UserProgramState state;
     @Setter
@@ -28,6 +29,7 @@ public class UserProgram {
     private Integer amount;
     @CreationTimestamp
     private LocalDateTime createAt;
+    @Setter
     private LocalDateTime endTime;
 
 //    @ManyToOne
