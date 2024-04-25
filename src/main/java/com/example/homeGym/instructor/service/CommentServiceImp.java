@@ -43,23 +43,30 @@ public class CommentServiceImp implements CommentService {
     // 댓글 수정
     @Override
     public CommentDto updateReview(Long instructorId, Long reviewId, CommentDto commentDto) {
+        log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}, Content: {}", commentDto.getId(), instructorId, reviewId, commentDto.getContent());
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         // instructor가 존재하지 않을 경우
         if (optionalInstructor.isEmpty()) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.USER_NOT_EXISTS);
         }
+        log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
+
         Instructor instructor = optionalInstructor.get();
-        Optional<Comment> optionalComment = commentRepository.findById(reviewId);
+        Optional<Comment> optionalComment = commentRepository.findById(commentDto.getId());
         // review가 존재하지 않을 경우
         if (optionalComment.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
+        log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
 
         Comment comment = optionalComment.get();
         // instructorReview가 instructor의 댓글이 아닌 경우
         if (!comment.getInstructor().getId().equals(instructorId))
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_MISMATCH);
+        log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
 
         comment.setContent(commentDto.getContent());
+        log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
+
         return CommentDto.fromEntity(commentRepository.save(comment));
     }
 
