@@ -147,4 +147,11 @@ public class ReviewService {
         ReviewDto.fromEntity(reviewRepository.save(review));
 
     }
+
+    public Long getUserProgramId(Long reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return review.getUserProgramId();
+    }
 }
