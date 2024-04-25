@@ -1,5 +1,6 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.auth.dto.CustomUserDetails;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
 import jakarta.servlet.FilterChain;
@@ -35,17 +36,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String jwtToken = cookieUtil.getCookie("Authorization", request);
 
-
         if(jwtToken != null) {
             if (jwtTokenUtils.validate(jwtToken)){
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
 
                 String email = jwtTokenUtils.parseClaims(jwtToken).getSubject();
 
-                log.info("jwttoken@@@@@@@@@@@@@@@@@@" + jwtToken);
-                log.info("Email@@@@@@@@@@@@@@@@@@" + email);
-
-                UserDetails userDetails = manager.loadUserByUsername(email);
+                CustomUserDetails userDetails = (CustomUserDetails) manager.loadUserByUsername(email);
                 for (GrantedAuthority authority : userDetails.getAuthorities()){
                     log.info("authorities: {}",authority.getAuthority());
                 }
