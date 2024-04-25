@@ -1,15 +1,15 @@
 package com.example.homeGym.auth.jwt;
 
-import com.example.homeGym.CustomInstructorDetails;
 import com.example.homeGym.auth.dto.CustomUserDetails;
-import com.example.homeGym.auth.service.JpaUserDetailsManager;
+
+import com.example.homeGym.common.CustomInstructorDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Component;
 
 import java.security.Key;

@@ -17,30 +17,26 @@ import java.util.List;
 public class ProgramController {
     private final ProgramService programService;
 
-    @GetMapping("/{instructorId}")
+    @GetMapping()
     public String createPage(
-            @PathVariable("instructorId") Long instructorId,
             Model model
     ) {
-        model.addAttribute("instructorId", instructorId);
         model.addAttribute("programDto", new ProgramDto());
         return "/instructor/program/instructor-program";
     }
 
-    @PostMapping("/{instructorId}")
+    @PostMapping()
     public String requestCreate(
-            @PathVariable("instructorId") Long instructorId,
             @Valid @ModelAttribute ProgramDto programDto,
             BindingResult bindingResult,
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("instructorId", instructorId);
-            return "/instructor/program/instructor-program";
+            return "/instructor/program";
         }
         try {
-            Long programId = programService.createProgram(programDto);
-            return "redirect:/program/instructor/" + instructorId + "/" + programId;
+            programService.createProgram(programDto);
+            return "redirect:/instructor/program";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error-page"; // 에러 페이지로 리다이렉트
@@ -53,7 +49,7 @@ public class ProgramController {
             @PathVariable("programId") Long programId,
             Model model
     ) {
-        ProgramDto programDto = programService.findByProgramId(List.of(programId)).get(0);
+        ProgramDto programDto = programService.findByProgramId(programId);
         model.addAttribute("programDto", programDto);
         return "/instructor/program/update-program";
     }

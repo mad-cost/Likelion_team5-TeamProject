@@ -240,33 +240,4 @@ public class InstructorService {
         InstructorDto.fromEntity(instructor);
     }
 
-
-    @Transactional(readOnly = true)
-    public Page<InstructorReviewDto> findReviewsByInstructorId(Long instructorId, Pageable pageable) {
-        //강사 id로 리뷰들을 페이지 단위로 가져오기
-        Page<Review> reviews = reviewRepository.findByInstructorId(instructorId, pageable);
-        //리뷰 id List로 가져오기
-        List<Long> reviewIds = reviews.getContent().stream().map(Review::getId).collect(Collectors.toList());
-        //답글 조회
-        List<Comment> comments = commentRepository.findByReviewIdIn(reviewIds);
-        Map<Long, String> commentMap = comments.stream()
-                .collect(Collectors.toMap(Comment::getReviewId, Comment::getContent));
-        //리뷰 페이지 스트림으로 변환, 각 리뷰는 InstructorReviewDto로 변환
-        return reviews.map(review -> convertToDto(review, commentMap.get(review.getId())));
-    }
-
-    //Dto 생성 메소드
-    private InstructorReviewDto convertToDto(Review review, String commentContent) {
-        User user = userRepository.findById(review.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-        return new InstructorReviewDto(
-                review.getId(),
-                user.getName(),
-                review.getMemo(),
-                review.getStars(),
-                review.getCreatedAt(),
-                commentContent,
-                review.getImageUrl()  // Assume this is properly handled
-        );
-    }
-
 }

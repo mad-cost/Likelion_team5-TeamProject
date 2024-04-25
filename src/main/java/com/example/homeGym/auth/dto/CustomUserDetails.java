@@ -78,5 +78,4 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {return true;}
 
-    public String getEmail() {return this.email;}
 }
