@@ -106,7 +106,9 @@ public class ProgramService {
         program.setDescription(programDto.getDescription());
         program.setSupplies(programDto.getSupplies());
         program.setCurriculum(programDto.getCurriculum());
-
+        program.setPrice1(programDto.getPrice1());
+        program.setPrice10(programDto.getPrice10());
+        program.setPrice20(programDto.getPrice20());
         programRepository.save(program);
     }
 

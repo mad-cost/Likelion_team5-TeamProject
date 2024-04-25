@@ -93,7 +93,7 @@ public class InstructorController {
     @GetMapping("/withdraw")
     public String showWithdrawForm(Model model) {
         model.addAttribute("withdrawal", new InstructorWithdrawalDto());
-        return "/instructor/withdrawProposal";
+        return "instructor/withdrawProposal";
     }
 
 
