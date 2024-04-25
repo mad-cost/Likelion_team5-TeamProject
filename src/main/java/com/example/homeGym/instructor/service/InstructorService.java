@@ -50,7 +50,6 @@ public class InstructorService {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProgramRepository programRepository;
-    private final ProgramCheckRepository programCheckRepository;
     private final CookieUtil cookieUtil;
     private final JwtTokenUtils jwtTokenUtils;
     private final InstructorDetailsManager instructorDetailsManager;
@@ -188,19 +187,6 @@ public class InstructorService {
         return separatedPrograms;
     }
 
-    //강사 일지 작성
-    public void createDaily(ProgramCheckDto dto){
-        ProgramCheck programCheck = dto.toEntity();
-        log.info("create daily: {}", dto.getMemo());
-        programCheckRepository.save(programCheck);
-    }
-
-    //강사 일지 수정
-    public void updateDaily(ProgramCheckDto dto){
-
-    }
-
-    //강사 일지 전체 보기
 
 
 
