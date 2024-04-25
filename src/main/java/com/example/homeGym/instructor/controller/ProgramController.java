@@ -47,7 +47,7 @@ public class ProgramController {
             @PathVariable("programId") Long programId,
             Model model
     ) {
-        ProgramDto programDto = programService.findByProgramId(List.of(programId)).get(0);
+        ProgramDto programDto = programService.findByProgramId(programId);
         model.addAttribute("programDto", programDto);
         return "/instructor/update-program"; // 수정 페이지의 뷰 이름
     }
@@ -62,7 +62,7 @@ public class ProgramController {
             return "/instructor/update-program"; // 에러가 있으면 다시 수정 페이지로 이동
         }
         programService.updateProgram(programId, programDto);
-        return "redirect:/program"; // 수정된 프로그램 목록 페이지로 리다이렉트
+        return "redirect:/instructor/program"; // 수정된 프로그램 목록 페이지로 리다이렉트
     }
 
     @DeleteMapping("/{programId}")
@@ -70,6 +70,6 @@ public class ProgramController {
             @PathVariable("programId") Long programId
     ) {
         programService.deleteProgram(programId);
-        return "redirect:/program"; // 삭제 후 프로그램 목록 페이지로 리다이렉트
+        return "redirect:/instructor/program"; // 삭제 후 프로그램 목록 페이지로 리다이렉트
     }
 }

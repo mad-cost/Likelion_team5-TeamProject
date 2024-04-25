@@ -1,5 +1,8 @@
 package com.example.homeGym.instructor.service;
 
+
+import com.example.homeGym.instructor.dto.*;
+
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
 
@@ -8,8 +11,10 @@ import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
+import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
@@ -22,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +39,8 @@ public class InstructorService {
     private final CommentRepository commentRepository;
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProgramRepository programRepository;
+
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
     public void createInstructor(InstructorCreateDto dto){
@@ -82,8 +86,10 @@ public class InstructorService {
         }
         return instructorDtos;
     }
-    public InstructorDto findById(Long instructorId){
-        return InstructorDto.fromEntity(instructorRepository.findById(instructorId).orElseThrow());
+    public InstructorDto findById(Long instructorId) {
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new NoSuchElementException("Instructor not found with ID: " + instructorId));
+        return InstructorDto.fromEntity(instructor);
     }
 
     //강사페이지에서 정산금 띄우기
@@ -104,8 +110,59 @@ public class InstructorService {
         }
     }
 
+    //강사 리뷰 확인 페이지
+    @Transactional(readOnly = true)
+    public Page<InstructorReviewDto> findReviewsByInstructorId(Long instructorId, Pageable pageable) {
+        //강사 id로 리뷰들을 페이지 단위로 가져오기
+        Page<Review> reviews = reviewRepository.findByInstructorId(instructorId, pageable);
+        //리뷰 id List로 가져오기
+        List<Long> reviewIds = reviews.getContent().stream().map(Review::getId).collect(Collectors.toList());
+        //답글 조회
+        List<Comment> comments = commentRepository.findByReviewIdIn(reviewIds);
+        Map<Long, String> commentMap = comments.stream()
+                .collect(Collectors.toMap(Comment::getReviewId, Comment::getContent));
+        //리뷰 페이지 스트림으로 변환, 각 리뷰는 InstructorReviewDto로 변환
+        return reviews.map(review -> convertToDto(review, commentMap.get(review.getId())));
+    }
+
+    //Dto 생성 메소드
+    private InstructorReviewDto convertToDto(Review review, String commentContent) {
+        User user = userRepository.findById(review.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        return new InstructorReviewDto(
+                review.getId(),
+                user.getName(),
+                review.getMemo(),
+                review.getStars(),
+                review.getCreatedAt(),
+                commentContent,
+                review.getImageUrl()  // Assume this is properly handled
+        );
+    }
 
 
+    //프로그램 상태에 따라 분리해서 보여주기
+    public Map<String, List<ProgramDto>> findProgramsByInstructorIdSeparatedByState(Long instructorId) {
+        List<Program> programs = programRepository.findByInstructorId(instructorId);
+        Map<String, List<ProgramDto>> separatedPrograms = new HashMap<>();
+        List<ProgramDto> inProgressPrograms = programs.stream()
+                .filter(p -> p.getState() == Program.ProgramState.IN_PROGRESS)
+                .map(ProgramDto::fromEntity)
+                .collect(Collectors.toList());
+        List<ProgramDto> otherPrograms = programs.stream()
+                .filter(p -> p.getState() != Program.ProgramState.IN_PROGRESS)
+                .map(ProgramDto::fromEntity)
+                .collect(Collectors.toList());
+
+        separatedPrograms.put("inProgress", inProgressPrograms);
+        separatedPrograms.put("other", otherPrograms);
+        return separatedPrograms;
+    }
+
+
+
+
+
+//=============================   관리자    ==============================================================
 
     public void saveMedal(Long instructorId, String medal){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
@@ -182,7 +239,6 @@ public class InstructorService {
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
-
 
 
     @Transactional(readOnly = true)
