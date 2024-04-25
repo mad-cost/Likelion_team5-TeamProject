@@ -13,4 +13,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
     List<Instructor> findAllByOrderByName();
 
     Optional<Instructor> findByEmail(String email);
+
+
+
 }

@@ -10,6 +10,7 @@ import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.UserDto;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -46,8 +48,11 @@ public class InstructorController {
     }
 
     @PostMapping("/signin")
-    public String login() {
-        return "user/main";
+    public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
+//        Optional<Instructor> instructor = instructorRepository.findByEmail(signInDto.getEmail());
+//        log.info(instructor.toString());
+        instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+        return "redirect:/user/main";
     }
 
     // 강사 로그아웃

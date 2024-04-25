@@ -47,7 +47,7 @@ public class CustomInstructorDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return instructor.getEmail();
+        return this.getEmail();
     }
 
     @Override
