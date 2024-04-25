@@ -182,6 +182,41 @@ public class InstructorService {
                 review.getImageUrl()  // Assume this is properly handled
         );
     }
+//    여기부터 추가
+    public List<InstructorDto> findAllByStateIsRegistration(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors){
+            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+
+    public List<InstructorDto> findAllByStateIsWithdrawalComplete(){
+        List<InstructorDto> instructorDto = new ArrayList<>();
+        List<Instructor> instructors = instructorRepository.findAll();
+        for (Instructor instructor : instructors){
+            if (instructor.getState() == Instructor.InstructorState.WITHDRAWAL_COMPLETE){
+                instructorDto.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+        return instructorDto;
+    }
+
+    public void withdraw(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
+        instructorRepository.save(instructor);
+    }
+
+    public void withdrawCancel(Long instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        instructor.setState(Instructor.InstructorState.ACTIVE);
+        instructorRepository.save(instructor);
+    }
+//    여기가지
 
 
 
