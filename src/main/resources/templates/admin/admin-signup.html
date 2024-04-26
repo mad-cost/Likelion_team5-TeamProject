@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        /* 각 요소의 간격 조정 */
+        .form-group.d-flex {
+            flex-wrap: nowrap;
+            margin-bottom: 1rem; /* 아래쪽 간격 추가 */
+        }
+
+        .form-floating {
+            flex-grow: 1;
+            margin-bottom: 1rem; /* 아래쪽 간격 추가 */
+        }
+
+        .mx-2 {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+            margin-bottom: 1rem; /* 아래쪽 간격 추가 */
+        }
+
+        button {
+            margin-bottom: 1rem; /* 아래쪽 간격 추가 */
+        }
+
+        /* 폼 전체적인 간격 조정 */
+        #registrationForm {
+            margin-bottom: 2rem; /* 아래쪽 간격 추가 */
+        }
+    </style>
+</head>
+<body>
+<main class="flex-shrink-0">
+    <section class="py-5">
+        <div class="container px-5">
+            <!-- login form-->
+            <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6">
+                        <h1 class="text-center mb-5">관리자 회원가입</h1>
+                        <form action="/admin/signup" th:method="post" id="registrationForm">
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name...">
+                                <label for="name">이름</label>
+                            </div>
+                            <!-- 이메일 입력 필드 및 중복 확인 버튼 -->
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="text" class="form-control" id="emailUser" name="emailUser" placeholder="이메일 사용자 이름">
+                                    <label for="emailUser">이메일</label>
+                                </div>
+                                <span class="mx-2">@</span>
+                                <div class="form-floating flex-grow-1">
+                                    <select class="form-control" id="emailDomain" name="emailDomain" onchange="showCustomDomainInput()">
+                                        <option value="naver.com">naver.com</option>
+                                        <option value="gmail.com">gmail.com</option>
+                                        <option value="daum.net">daum.net</option>
+                                        <option value="other">기타(직접 입력)</option>
+                                    </select>
+                                    <label for="emailDomain">도메인</label>
+                                </div>
+
+
+                                <input type="text" class="form-control mx-2" id="customDomain" name="customDomain" style="display: none;" placeholder="직접 입력">
+
+                                <button type="button" class="btn btn-outline-primary ms-2" onclick="showVerification()">
+                                    <span>인증번호</span>
+                                    <span>발송</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <input type="text" class="form-control" id="authNum" name="authNum" placeholder="인증번호 입력">
+                                <br>
+                                <button type="button" class="btn btn-outline-primary ms-2" onclick="checkEmail()">
+                                    <span>인증번호</span>
+                                    <span>확인</span>
+                                </button>
+                            </div>
+
+                    <input type="hidden" id="email" name="email">
+                            <br>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="password" name="password" type="password" placeholder="Enter your password...">
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="passwordCheck" name="passwordCheck" type="password" placeholder="Re-enter your password...">
+                        <label for="passwordCheck">Password Check</label>
+                    </div>
+
+
+                    <div class="form-floating mb-3">
+                        <select class="form-control" id="gender" name="gender">
+                            <option selected>성별을 선택하세요</option>
+                            <option value="FEMALE">여성</option>
+                            <option value="MALE">남성</option>
+                        </select>
+                        <label for="gender">성별</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="birthdate" type="date" placeholder="YYYY-MM-DD">
+                        <label for="birthdate">생년월일</label>
+                    </div>
+
+
+
+                    <!-- 전화번호 입력 필드 -->
+                    <div class="form-group d-flex mb-3">
+                        <div class="form-floating flex-grow-1 me-1">
+                            <input type="text" class="form-control" id="phonePart1" name="phonePart1" placeholder="010" maxlength="3">
+                            <label for="phonePart1">전화번호 앞자리</label>
+                        </div>
+                        <div class="form-floating flex-grow-1 mx-1">
+                            <input type="text" class="form-control" id="phonePart2" name="phonePart2" placeholder="1234" maxlength="4">
+                            <label for="phonePart2">중간</label>
+                        </div>
+                        <div class="form-floating flex-grow-1 ms-1">
+                            <input type="text" class="form-control" id="phonePart3" name="phonePart3" placeholder="5678" maxlength="4">
+                            <label for="phonePart3">끝자리</label>
+                        </div>
+                    </div>
+
+
+                    <div class="d-grid"><button class="btn btn-primary btn-lg" id="sign-in-button" type="submit">Submit</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</main>
+
+<script>
+
+        async function showVerification() {
+            const emailUser = document.getElementById('emailUser').value;
+            const emailDomain = document.getElementById('emailDomain').value;
+            const customDomain = document.getElementById('customDomain').value;
+            const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+            try {
+                const result = await fetch('http://localhost:8080/auth/mailSend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email
+                    })
+                });
+            } catch (error) {
+            }
+        }
+
+
+        let isEmailAvailable = false; // 이메일 중복 상태를 추적합니다.
+        let isEmailChecked = false;
+        document.getElementById('emailUser').addEventListener('input', function () {
+            // 이메일 사용자 이름을 변경할 때마다 중복 검사 상태를 초기화합니다.
+            isEmailAvailable = false;
+            isEmailChecked = false;
+        });
+
+        let isLoginIdAvailable = false; // 중복 상태를 추적합니다.
+        let isLoginIdChecked = false; // 중복 검사가 수행되었는지 여부를 추적합니다.
+
+        document.getElementById('loginId').addEventListener('input', function () {
+            // 사용자가 아이디 필드를 변경할 때마다 중복 검사 상태를 초기화합니다.
+            isLoginIdChecked = false;
+            isLoginIdAvailable = false; // 선택적: 중복 가능 상태도 리셋
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 폼의 기본 제출을 방지
+
+
+            // 필수 필드 검사
+            let name = document.getElementById('name').value.trim();
+            let gender = document.getElementById('gender').value;
+            let birthdate = document.getElementById('birthdate').value.trim();
+            let loginId = document.getElementById('loginId').value.trim();
+            let password = document.getElementById('password').value.trim();
+            let passwordCheck = document.getElementById('passwordCheck').value.trim();
+            let emailUser = document.getElementById('emailUser').value.trim();
+            let emailDomain = document.getElementById('emailDomain').value;
+            let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+            let phonePart1 = document.getElementById('phonePart1').value.trim();
+            let phonePart2 = document.getElementById('phonePart2').value.trim();
+            let phonePart3 = document.getElementById('phonePart3').value.trim();
+            let career = document.getElementById('career').value.trim();
+            let certificate = document.getElementById('certificate').value.trim();
+
+            let email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+            // 모든 필수 필드가 채워졌는지 확인
+            if (!name || !gender || !birthdate || !loginId || !password || !passwordCheck || !emailUser || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+                alert('모든 내용을 작성해 주세요.');
+                return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
+            }
+
+            if (!isLoginIdChecked) {
+                alert('아이디 중복 확인을 해주세요.');
+                return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
+            }
+            // 아이디 중복 상태 검사
+            if (!isLoginIdAvailable) {
+                alert('사용할 수 없는 아이디입니다. 다른 아이디를 입력해주세요.');
+                return; // 중복된 아이디가 있으면 폼 제출을 중단
+            }
+            if (!isEmailChecked) {
+                alert('이메일 중복 확인을 해주세요.');
+                return; // 중복 검사를 수행하지 않았으면 폼 제출을 중단
+            }
+            // // 이메일 중복 상태 검사
+            // if (!isEmailAvailable) {
+            //     alert('이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.');
+            //     return; // 중복된 이메일이 있으면 폼 제출을 중단합니다.
+            // }
+
+            // 비밀번호 일치 검사
+            password = document.getElementById('password').value;
+            passwordCheck = document.getElementById('passwordCheck').value;
+            if (password !== passwordCheck) {
+                alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
+                return; // 비밀번호가 일치하지 않으면 폼 제출을 중단
+            }
+
+            // 이메일 조합
+            emailUser = document.getElementById('emailUser').value;
+            emailDomain = document.getElementById('emailDomain').value;
+            customDomain = document.getElementById('customDomain').value;
+            email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+            // 이메일 숨겨진 필드 업데이트 또는 추가
+            let emailInput = document.getElementById('email');
+            if (!emailInput) {
+                emailInput = document.createElement('input');
+                emailInput.type = 'hidden';
+                emailInput.id = 'email'; // id 속성 추가
+                emailInput.name = 'email';
+                this.appendChild(emailInput);
+            }
+            emailInput.value = email;
+
+            // 전화번호 조합
+            phonePart1 = document.getElementById('phonePart1').value;
+            phonePart2 = document.getElementById('phonePart2').value;
+            phonePart3 = document.getElementById('phonePart3').value;
+            let phone = phonePart1 + '-' + phonePart2 + '-' + phonePart3; // 하이픈 추가
+            this.appendChild(createHiddenInput('phone', phone)); // 전화번호 숨겨진 필드에 추가
+
+            // 생년월일 분리
+            let birthdateInput = document.getElementById('birthdate');
+            let birthdateValue = birthdateInput.value;
+            if (birthdateValue) {
+                const [year, month, day] = birthdateValue.split('-');
+                this.appendChild(createHiddenInput('birthyear', year));
+                this.appendChild(createHiddenInput('birthday', `${month}-${day}`));
+            }
+
+            // 폼을 프로그래밍 방식으로 제출
+            this.submit();
+        });
+
+        function createHiddenInput(name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            return input;
+        }
+
+        function toggleBankInput() {
+            const bankSelect = document.getElementById('bank');
+            const otherBankContainer = document.getElementById('otherBankContainer');
+            if (bankSelect.value === 'other') {
+                otherBankContainer.style.display = 'block';
+            } else {
+                otherBankContainer.style.display = 'none';
+            }
+        }
+
+        function showCustomDomainInput() {
+            const emailDomainSelect = document.getElementById('emailDomain');
+            const customDomainInput = document.getElementById('customDomain');
+            if (emailDomainSelect.value === 'other') {
+                customDomainInput.style.display = '';
+                customDomainInput.classList.add('form-control');
+            } else {
+                customDomainInput.style.display = 'none';
+                customDomainInput.value = ''; // 입력 필드를 비움
+            }
+        }
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+</html>
