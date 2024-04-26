@@ -12,9 +12,9 @@ spring:
         registration:
           kakao:
             # REST API키
-            client-id: a3e2a31bbb751580cb4c296e8a85df6b
-            client-secret: QEGb6X6RrUkcD7T6zOMVqAFn0Mi0S9bN
-            redirect-uri: http://localhost:8080/main
+           client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             client-name: Kakao
