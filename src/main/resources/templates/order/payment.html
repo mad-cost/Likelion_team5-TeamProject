@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>결제하기</title>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+</head>
+<body>
+<script>
+    var clientKey = 'test_ck_jExPeJWYVQRJaBZ76ggor49R5gvN'
+    var tossPayments = TossPayments(clientKey)
+
+    // ------ 결제창 띄우기 ------
+    tossPayments
+        .requestPayment('카드', {
+            amount: 100, // 결제 금액
+            orderId: '_LYzpFGQBRaLd4cFEs2cr', // 주문번호
+            orderName: '테스트 결제', // 구매 상품
+            customerName: '김결제', // 구매자 이름
+            successUrl: 'https://localhost:8080/payment/success', // 결제 성공 시 이동할 페이지
+            failUrl: 'https://localhost:8080/payment/fail', // 결제 실패 시 이동할 페이지
+        })
+        // ------결제창을 띄울 수 없는 에러 처리 ------
+        .catch(function (error) {
+            if (error.code === 'USER_CANCEL') {
+                // 결제 고객이 결제창을 닫았을 때 에러 처리
+            } else if (error.code === 'INVALID_CARD_COMPANY') {
+                // 유효하지 않은 카드 코드에 대한 에러 처리
+            }
+        })
+</script>
+</body>
+</html>

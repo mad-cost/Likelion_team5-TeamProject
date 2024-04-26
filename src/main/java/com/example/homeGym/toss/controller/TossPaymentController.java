@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Validated
-@RequestMapping("/payments")
+@RequestMapping("/toss")
 @RequiredArgsConstructor
 public class TossPaymentController {
     private final OrderService service;

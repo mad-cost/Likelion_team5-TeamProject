@@ -1,6 +1,7 @@
 package com.example.homeGym.order.controller;
 
 
+import com.example.homeGym.order.dto.ProgramOrderDto;
 import com.example.homeGym.order.service.OrderService;
 import com.example.homeGym.toss.dto.PaymentCancelDto;
 import com.example.homeGym.toss.entity.Payment;
@@ -8,19 +9,36 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping
+@RequestMapping("orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService service;
-
-    @GetMapping("/orders/schedule")
+  
+    @GetMapping("/schedule")
     public String selectSchedulePage(){
         return "order/select-schedule";
+
     }
 
+    @GetMapping
+    public List<ProgramOrderDto> readAll() {
+        return service.readAll();
+    }
 
-    @GetMapping("/orders/{id}/payment")
+    @GetMapping("{id}")
+    public ProgramOrderDto readOne(
+            @PathVariable("id")
+            Long id
+    ) {
+        return service.readOne(id);
+
+   
+
+
+    @GetMapping("{id}/payment")
     public Object readTossPayment(
             @PathVariable("id")
             Long id
@@ -28,7 +46,7 @@ public class OrderController {
         return service.readTossPayment(id);
     }
 
-    @PostMapping("/orders/{id}/cancel")
+    @PostMapping("{id}/cancel")
     public Object cancelPayment(
             @PathVariable("id")
             Long id,
