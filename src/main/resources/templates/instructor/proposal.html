@@ -71,10 +71,22 @@
                                 <!-- 사용자 정의 도메인 입력 필드 -->
                                 <input type="text" class="form-control mx-2" id="customDomain" name="customDomain" style="display: none;" placeholder="직접 입력">
                                 <!-- 중복 확인 버튼, 텍스트를 두 줄로 나눔 -->
-                                <button type="button" class="btn btn-outline-primary ms-2" onclick="checkEmail()">
+                                <button type="button" class="btn btn-outline-primary ms-2" id="emailDuplicationCheck" onclick="checkEmail()">
                                     <span>중복</span>
                                     <span>확인</span>
                                 </button>
+                            </div>
+                            <div id="isCheckEmail" style="display: none;">
+                                <p>이메일 인증 완료</p>
+                            </div>
+                            <div id="verificationForm" style="display: none;">
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="verificationCode" name="verificationCode" type="text" placeholder="Enter verification code">
+                                    <label for="verificationCode">인증번호</label>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary" id="sendCode" onclick="sendVerificationCode()">인증번호 보내기</button>
+                                <button type="button" class="btn btn-outline-primary" id="resendCode" onclick="sendVerificationCode()" style="display: none">인증번호 다시 보내기</button>
+                                <button type="button" class="btn btn-outline-primary" id="checkCode" onclick="submitVerification()" style="display:none;">인증번호 확인</button>
                             </div>
                             <input type="hidden" id="email" name="email">
 
@@ -160,10 +172,18 @@
 <script>
     let isEmailAvailable = false; // 이메일 중복 상태를 추적합니다.
     let isEmailChecked = false;
+    let isCodeChecked = false;  // 인증번호 확인을 했는지
+    let isSendCode = false;     // 인증번호를 보냈는지
     document.getElementById('emailUser').addEventListener('input', function() {
         // 이메일 사용자 이름을 변경할 때마다 중복 검사 상태를 초기화합니다.
         isEmailAvailable = false;
         isEmailChecked = false;
+        isCodeChecked = false;
+        isSendCode = false;
+
+        // 이메일 인증과 관련된 div를 숨깁니다.
+        document.getElementById('verificationForm').style.display = 'none';
+        document.getElementById('isCheckEmail').style.display = 'none';
     });
 
 
@@ -180,6 +200,7 @@
         let emailUser = document.getElementById('emailUser').value.trim();
         let emailDomain = document.getElementById('emailDomain').value;
         let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+        let verificationCode = document.getElementById('verificationCode').value.trim();
         let phonePart1 = document.getElementById('phonePart1').value.trim();
         let phonePart2 = document.getElementById('phonePart2').value.trim();
         let phonePart3 = document.getElementById('phonePart3').value.trim();
@@ -189,7 +210,7 @@
         let email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
 
         // 모든 필수 필드가 채워졌는지 확인
-        if (!name || !gender || !birthdate || !password || !passwordCheck || !emailUser || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+        if (!name || !gender || !birthdate || !password || !passwordCheck || !emailUser || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate || !verificationCode) {
             alert('모든 내용을 작성해 주세요.');
             return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
         }
@@ -202,6 +223,11 @@
         if (!isEmailAvailable) {
             alert('이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.');
             return; // 중복된 이메일이 있으면 폼 제출을 중단합니다.
+        }
+        // 이메일 인증 상태 검사
+        if (!isCodeChecked){
+            alert('이메일 인증을 해주세요.');
+            return;
         }
 
         // 비밀번호 일치 검사
@@ -278,7 +304,87 @@
             customDomainInput.value = ''; // 입력 필드를 비움
         }
     }
+    //인증번호 창 보이게 하기
+    function showVerificationForm() {
+        const verificationForm = document.getElementById('verificationForm');
+        verificationForm.style.display = 'block';
+    }
 
+    //인증번호 보내기
+    function sendVerificationCode(){
+        const resendCode = document.getElementById('resendCode');
+        const sendCode = document.getElementById('sendCode');
+        const checkCode = document.getElementById('checkCode');
+
+        const emailUser = document.getElementById('emailUser').value;
+        const emailDomain = document.getElementById('emailDomain').value;
+        const customDomain = document.getElementById('customDomain').value;
+        const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+
+
+        sendCode.style.display = 'none';
+        resendCode.style.display = 'block';
+        checkCode.style.display = 'block';
+
+        fetch('/email/send',{
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: email})
+        })
+            .then(response => response.json())
+            .then(data => {
+                isSendCode = data.isSend;
+                if (isSendCode){
+                    alert('인증번호가 발송되었습니다. 이메일을 확인해 주세요')
+                }
+            })
+            .catch(error =>{
+                console.error('Error:', error);
+                alert('인증번호 전송 중 오류가 발생했습니다.');
+            })
+    }
+
+    function submitVerification(){
+        const emailUser = document.getElementById('emailUser').value;
+        const emailDomain = document.getElementById('emailDomain').value;
+        const customDomain = document.getElementById('customDomain').value;
+        const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
+        const code = document.getElementById('verificationCode').value.trim();
+
+        const verificationCode = document.getElementById('verificationCode');
+        const resendCode = document.getElementById('resendCode');
+        const checkCode = document.getElementById('checkCode');
+        const isCheckEmail = document.getElementById('isCheckEmail');
+
+
+        fetch('/email/check',{
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: email, code: code})
+        })
+            .then(response => response.json())
+            .then(data => {
+                isCodeChecked = data.isCheck;
+                if (isSendCode){
+                    verificationCode.style.display = 'none';
+                    checkCode.style.display = 'none';
+                    resendCode.style.display = 'none';
+                    isCheckEmail.style.display = 'block';
+                    document.getElementById('emailDuplicationCheck').style.display = 'none';
+                    document.getElementById('emailUser').setAttribute('readonly', true);
+                    document.getElementById('emailDomain').disabled = true;
+
+                }
+            })
+            .catch(error =>{
+                console.error('Error:', error);
+                alert('인증번호를 다시 확인해 주세요.');
+            })
+    }
 
     function checkEmail() {
         const emailUser = document.getElementById('emailUser').value;
@@ -304,6 +410,7 @@
                 isEmailChecked = true; // 중복 검사를 수행했음을 표시
                 if (isEmailAvailable) {
                     alert('이메일이 사용 가능합니다.');
+                    showVerificationForm(); // 사용 가능한 경우에 인증번호 입력 폼을 표시
                 } else {
                     alert('이미 사용 중인 이메일입니다.');
                 }
