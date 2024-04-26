@@ -13,7 +13,6 @@ import lombok.*;
 public class InstructorDto {
     private Long id;
     private String name;
-    private String loginId;
     private String password;
     private Gender gender;
     private String birthyear;
@@ -36,7 +35,6 @@ public class InstructorDto {
         return InstructorDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .loginId(entity.getLoginId())
                 .password(entity.getPassword())
                 .gender(entity.getGender())
                 .birthyear(entity.getBirthyear())

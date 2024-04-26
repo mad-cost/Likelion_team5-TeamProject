@@ -25,9 +25,9 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public List<ScheduleDto> readSchedules() {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
-        List<Schedule> schedules = scheduleRepository.findByInstructorId(1L);
+        List<Schedule> schedules = scheduleRepository.findByInstructorId(currentInstructor.getId());
 
         return schedules.stream()
                 .map(ScheduleDto::fromEntity)
@@ -51,15 +51,15 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto createSchedule(String week, String time) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
+        Instructor currentInstructor = facade.getCurrentInstructor();
 
         Schedule schedule = Schedule.builder()
                 .week(week)
                 .time(time)
-                .instructorId(1L)  // 주석 해제
+                .instructorId(currentInstructor.getId())
                 .build();
 
-//        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
+        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
 
         return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
     }

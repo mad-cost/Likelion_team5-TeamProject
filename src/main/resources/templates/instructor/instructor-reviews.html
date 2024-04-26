@@ -72,7 +72,7 @@
         .reply-header {
             font-weight: bold;
         }
-        .btn-group-vertical > button {
+        .btn-group-vertical > a, .btn-group-vertical > button{
             display: block; /* 각 버튼을 블록 요소로 만들어 줄바꿈 */
             margin-bottom: 5px; /* 버튼 사이의 간격 조정 */
             border-radius: 0.25rem !important; /* 모든 버튼의 모서리를 둥글게 */
@@ -118,9 +118,10 @@
                             <p th:if="${review.comment == null}">No reply yet.</p>
                             <div class="reply-actions">
                                 <div class="btn-group-vertical">
-                                    <button type="button" class="btn btn-primary" th:if="${review.comment != null}" th:text="'Edit'">Edit</button>
-                                    <button type="button" class="btn btn-danger" th:if="${review.comment != null}" th:text="'Delete'">Delete</button>
-                                    <button type="button" class="btn btn-secondary" th:if="${review.comment == null}" th:text="'Write Reply'">Write Reply</button>
+                                    <a th:href="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" class="btn btn-primary" th:if="${review.comment != null}" th:text="'Edit'">Edit</a>
+                                    <a th:href="@{/instructor/review/{reviewId}/comment(reviewId=${review.id})}" class="btn btn-secondary" th:if="${review.comment == null}" th:text="'Write Reply'">Write Reply</a>
+
+                                    <button class="btn btn-danger" th:if="${review.comment != null}" th:data-url="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" onclick="deleteComment(this.getAttribute('data-url'))">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -142,5 +143,22 @@
 </div>
 <!-- 부트스트랩 5.3.3 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function deleteComment(url) {
+        fetch(url, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                alert('댓글 삭제 성공');
+                location.reload(); // 페이지 리로드 또는 적절한 처리
+            } else {
+                alert('댓글 삭제 실패');
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+
+</script>
+
 </body>
 </html>

@@ -5,8 +5,10 @@ import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
+import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ import static com.example.homeGym.instructor.entity.Program.*;
 @RequiredArgsConstructor
 public class ProgramService {
     private final ProgramRepository programRepository;
+    private final UserProgramService userProgramService;
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
 
@@ -82,9 +85,10 @@ public class ProgramService {
                 .price1(programDto.getPrice1())
                 .price10(programDto.getPrice10())
                 .price20(programDto.getPrice20())
+                .state(ProgramState.CREATION_PENDING)
                 .build();
-
-        Program savedProgram = programRepository.save(program);
+        log.info("program getDescription:{}", programDto.getDescription());
+        programRepository.save(program);
     }
 
     // 프로그램 수정
@@ -106,7 +110,10 @@ public class ProgramService {
         program.setDescription(programDto.getDescription());
         program.setSupplies(programDto.getSupplies());
         program.setCurriculum(programDto.getCurriculum());
-
+        program.setPrice1(programDto.getPrice1());
+        program.setPrice10(programDto.getPrice10());
+        program.setPrice20(programDto.getPrice20());
+        program.setState(ProgramState.MODIFICATION_PENDING);
         programRepository.save(program);
     }
 
@@ -183,6 +190,12 @@ public class ProgramService {
         if (!program.getInstructorId().equals(currentInstructor.getId())) {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
+
+        // 수강생 확인
+        if (userProgramService.hasEnrolledUsers(programId)) {
+            throw new RuntimeException("Cannot delete program with enrolled users");
+        }
+
 
         programRepository.deleteById(programId);
     }
