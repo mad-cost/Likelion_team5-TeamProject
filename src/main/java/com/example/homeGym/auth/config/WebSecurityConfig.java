@@ -43,15 +43,16 @@ public class WebSecurityConfig {
                                 "/token/validate",
                                 "/instructor",
                                 "/instructor/**",
-                                "/program/**"
+                                "/program/**",
+                                "/auth/admin/signin"
                         )
                         .permitAll()
 
                         .requestMatchers(
                                 "/user/signup",
                                 "/user/signin",
-                                "/instructor/signup",
-                                "/instructor/signin"
+
+                                "/instructor/signup"
 
                         )
                         .anonymous()
@@ -81,7 +82,7 @@ public class WebSecurityConfig {
                 )
 
                 .logout(logout -> logout
-                        .logoutUrl("/user/logout") // 로그아웃 URL 설정
+                        .logoutUrl("/logout") // 로그아웃 URL 설정
                         .logoutSuccessUrl("/user/main") // 로그아웃 성공 후 리다이렉트될 URL
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .submit-btn {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>관리자 로그인</h2>
+        <div class="form-group">
+            <label for="email">ID:</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button class="submit-btn" onclick="signin()">Login</button>
+    </form>
+</div>
+
+<script>
+    async function signin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const result = await fetch('http://localhost:8080/auth/admin/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+
+            if (result.status === 200) {
+
+                alert('로그인에 성공하셨습니다.');
+                location.href = "http://localhost:8080/user/main";
+                return;
+            }
+
+            if (result.status === 401) {
+                alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            console.log('서버에 문제가 생겼습니다.');
+
+        } catch (error) {
+            console.log('error');
+        }
+    }
+
+</script>
+</body>
+</html>

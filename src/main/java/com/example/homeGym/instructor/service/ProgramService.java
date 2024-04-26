@@ -1,6 +1,9 @@
 package com.example.homeGym.instructor.service;
 
 
+import com.example.homeGym.admin.entity.Settlement;
+import com.example.homeGym.admin.entity.SettlementFee;
+import com.example.homeGym.admin.repository.SettlementFeeRepository;
 import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
@@ -31,6 +34,7 @@ public class ProgramService {
     private final UserProgramService userProgramService;
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
+    private final SettlementFeeRepository settlementFeeRepository;
 
     // 프로그램 목록
     public ProgramDto findByProgramId(Long id) {
@@ -71,6 +75,7 @@ public class ProgramService {
 //  }
 
     // 프로그램 생성
+    // 프로그램 첫 생성시 settlement_Fee가 없으면 생성
     @Transactional
     public void createProgram(ProgramDto programDto) {
         Instructor currentInstructor = facade.getCurrentInstructor();
@@ -89,6 +94,8 @@ public class ProgramService {
                 .build();
         log.info("program getDescription:{}", programDto.getDescription());
         programRepository.save(program);
+
+
     }
 
     // 프로그램 수정
@@ -199,4 +206,11 @@ public class ProgramService {
 
         programRepository.deleteById(programId);
     }
+
+//    MainController에서 사용
+    public Program findById(Long programId){
+        return programRepository.findById(programId).orElseThrow();
+    }
+
+
 }

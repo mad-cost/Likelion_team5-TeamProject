@@ -1,6 +1,8 @@
 package com.example.homeGym.user.dto;
 
+import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.user.entity.Review;
+import com.example.homeGym.user.entity.User;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +27,12 @@ public class ReviewDto {
     private List<String> imageUrl;
     private String memo;
     private LocalDateTime createdAt;
+    @Setter
+    private User user;
+    @Setter
+    private Comment comment;
+    @Setter
+    private String dateCreatedAt; // yyyy년MM월dd일
 
     public static ReviewDto fromEntity(Review entity){
         ReviewDto.ReviewDtoBuilder builder = ReviewDto.builder()
@@ -34,7 +42,8 @@ public class ReviewDto {
                 .stars(entity.getStars())
                 .imageUrl(entity.getImageUrl())
                 .memo(entity.getMemo())
-                .createdAt(entity.getCreatedAt());
+                .createdAt(entity.getCreatedAt())
+                .dateCreatedAt(entity.getDateCreatedAt());
         return builder.build();
     }
 
