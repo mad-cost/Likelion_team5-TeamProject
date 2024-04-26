@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("instructor/schedule")
+@RequestMapping("/instructor/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -25,6 +25,7 @@ public class ScheduleController {
 
     @GetMapping()
     public String readSchedule(
+            @RequestParam(value = "orderBy", defaultValue = "week") String orderBy,
             Model model
     ) {
         Instructor currentInstructor = facade.getCurrentInstructor();
@@ -32,9 +33,19 @@ public class ScheduleController {
             throw new IllegalArgumentException("Authentication failed");
         }
 
-        List<ScheduleDto> scheduleDtos = scheduleService.readSchedules();
+        // 현재 강사의 이름을 모델에 추가
+        model.addAttribute("instructorName", currentInstructor.getName());
+
+        List<ScheduleDto> scheduleDtos;
+        if ("time".equals(orderBy)) {
+            scheduleDtos = scheduleService.findAllByOrderByTime();
+        } else { // Default to orderBy week
+            scheduleDtos = scheduleService.findAllByOrderByWeek();
+        }
+
         model.addAttribute("scheduleDtos", scheduleDtos);
-        return "/instructor/schedule/instructor-schedule";
+        model.addAttribute("orderBy", orderBy); // Add orderBy to model for template
+        return "instructor/schedule/instructor-schedule";
     }
 
     @PostMapping()
@@ -70,7 +81,7 @@ public class ScheduleController {
         return "redirect:/instructor/schedule";
     }
 
-    @DeleteMapping("{scheduleId}")
+    @DeleteMapping("/{scheduleId}")
     public String deleteSchedule(
             @PathVariable("scheduleId") Long scheduleId
     ) {
