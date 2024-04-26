@@ -3,6 +3,7 @@ package com.example.homeGym.auth.dto;
 import com.example.homeGym.user.entity.User;
 import jakarta.persistence.metamodel.Metamodel;
 import lombok.*;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Builder
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,23 +23,14 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     private Long id;
-    @Setter
     private String name;
-    @Setter
     private String password;
-    @Setter
     private String profileImageUrl;
-    @Setter
     private String gender;
-    @Setter
     private String email;
-    @Setter
     private String birthyear;
-    @Setter
     private String birthday;
-    @Setter
     private String roles;
-    @Setter
     private String state;
 
     @Override
@@ -69,7 +62,7 @@ public class CustomUserDetails implements UserDetails {
     public String getPassword() {return this.password;}
 
     @Override
-    public String getUsername() {return this.name;}
+    public String getUsername() {return this.email;}
 
     @Override
     public boolean isAccountNonExpired() {return true;}
@@ -82,4 +75,5 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {return true;}
+
 }

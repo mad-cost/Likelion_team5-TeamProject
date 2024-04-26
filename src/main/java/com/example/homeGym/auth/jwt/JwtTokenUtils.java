@@ -1,11 +1,15 @@
 package com.example.homeGym.auth.jwt;
 
+import com.example.homeGym.auth.dto.CustomUserDetails;
+import com.example.homeGym.auth.dto.CustomInstructorDetails;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -45,13 +49,17 @@ public class JwtTokenUtils {
 
                 .setExpiration(Date.from(now.plusSeconds(60 * 60 * 24 * 30)));
 
+        if (userDetails instanceof CustomInstructorDetails) {
+            jwtClaims.put("userType", "instructor");
+        } else if (userDetails instanceof CustomUserDetails) {
+            jwtClaims.put("userType", "user");
+        }
 
         return Jwts.builder()
                 .setClaims(jwtClaims)
                 .signWith(this.signingKey)
                 .compact();
     }
-
 
     public boolean validate(String token) {
         try {

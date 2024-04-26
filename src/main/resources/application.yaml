@@ -30,10 +30,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://database1.cvqi4qeimxir.us-east-1.rds.amazonaws.com:3306/homeGym
-    username: admin
-    password: lolpop12
-
+    url: ${DB_URL}
+    username: ${MYSQL_ID}
+    password: ${MYSQL_PASSWORD}
 
   jpa:
     hibernate:
@@ -41,14 +40,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-      dialect: org.hibernate.dialect.MySQLDialect
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
   mvc:
     static-path-pattern: /static/**
   web:
     resources:
       static-locations: file:media/,classpath:/static
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PW}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 logging:
   level:
@@ -58,8 +63,7 @@ logging:
     root: info
 
 jwt:
-  secret: fdsafasgwagrag4554sdfeshrthdrhrdthrdttrhaf
-
+  secret: ${JWT_SECRET}
 
 payment:
   toss:
@@ -67,5 +71,3 @@ payment:
     test_secret_api_key: ${TOSS_SECRET_API_KEY}
     success_url: "http://localhost"
     fail_url: "http://localhost"
-
-

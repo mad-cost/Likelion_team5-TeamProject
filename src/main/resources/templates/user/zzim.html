@@ -67,7 +67,12 @@
                     <h2 class="card-title">찜 목록</h2>
                     <div th:unless="${zzims.isEmpty()}" th:each="zzim : ${zzims}">
                         <div class="card inner-card">
-                            <p>찜찜</p>
+                            <p th:text="${zzim.program.title}"></p>
+                            <form action="/user/zzim" method="post">
+                                <input type="hidden" name="_method" value="delete">
+                                <input type="hidden" name="zzimId" th:value="${zzim.id}">
+                                <input type="submit" value="삭제">
+                            </form>
                         </div>
                     </div>
                     <div th:if="${zzims.isEmpty()}">

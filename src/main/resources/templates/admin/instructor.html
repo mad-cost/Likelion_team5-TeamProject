@@ -50,14 +50,25 @@
           <div class="sb-sidenav-menu-heading">Interface</div>
           <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-            승인 목록
+            강사 목록
             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
           </a>
           <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
             <nav class="sb-sidenav-menu-nested nav">
-              <a class="nav-link" href="layout-static.html">승인 대기자</a>
-              <a class="nav-link" href="layout-sidenav-light.html">강사 회원 탈퇴</a>
-              <a class="nav-link" href="layout-sidenav-light.html">프로그램 관리</a>
+              <a class="nav-link" href="/admin/instructor/accept">강사 승인 대기</a>
+              <a class="nav-link" href="/admin/instructor/withdraw">강사 회원 탈퇴</a>
+            </nav>
+          </div>
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+            프로그램 목록
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+          </a>
+          <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <a class="nav-link" href="/admin/program/creation">신청 등록 프로그램</a>
+              <a class="nav-link" href="/admin/program/modification">수정 등록 프로그램</a>
+              <a class="nav-link" href="/admin/program/deletion">삭제 등록 프로그램</a>
             </nav>
           </div>
 
@@ -99,6 +110,7 @@
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item active">[[${instructor.email}]]</li>
           <li class="breadcrumb-item active">[[${instructor.state}]]</li>
+          <li class="breadcrumb-item active">총 금액 : [[${settlementFee.getTotalFee()}]]</li>
         </ol>
   <!--메달 수여하기-->
         <div class="card mb-4">
@@ -115,18 +127,17 @@
           </div>
         </div>
 
-
-
         <tr th:each="program: ${programs}">
           <div class="card mb-4">
             <div class="card-body">
-                <td><h3 th:text="${program.title}"></h3></td>
+                <td><h3>[[${[program.category]}]][[${program.title}]]</h3></td>
               <hr>
               <td><h5 th:text="${program.description}"></h5></td>
               <td><h5 th:text="${program.curriculum}"></h5></td>
+              <td><h5>프로그램 상태 : [[${program.state}]]</h5></td>
               <div class="card mb-3">
                 <div class="card-body">
-                    <a>이번달 금액 : [[${program.getMonthAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
+                    <a>이번달 금액 : [[${program.getTotalAmount()}]]원 / 전체 금액 [[${program.getTotalAmount()}]]원 </a>
                 </div>
               </div>
             </div>

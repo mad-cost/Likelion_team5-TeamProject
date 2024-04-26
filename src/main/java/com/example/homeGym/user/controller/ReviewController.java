@@ -1,23 +1,19 @@
 package com.example.homeGym.user.controller;
 
+import com.example.homeGym.common.util.AuthenticationUtilService;
 import com.example.homeGym.user.dto.ReviewDto;
-import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @Controller
@@ -26,10 +22,11 @@ import java.util.Optional;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final AuthenticationUtilService authenticationUtilService;
 
-    @GetMapping("review")
+    @GetMapping("review/{userProgramId}")
     public String reviewPage(
-            @RequestParam("userProgramId")
+            @PathVariable("userProgramId")
             Long id,
             Model model
     ){
@@ -38,7 +35,6 @@ public class ReviewController {
     }
 
     @PostMapping("review")
-    @ResponseBody
     public String reviewWrite(
             @RequestParam(value = "images", required = false)
             List<MultipartFile> images,
@@ -47,29 +43,30 @@ public class ReviewController {
             @RequestParam("rating")
             Integer rating,
             @RequestParam("userProgramId")
-            Long userProgramId
+            Long userProgramId,
+            Authentication authentication
     ){
-        System.out.println("images = " + images);
-        System.out.println("memo = " + memo);
-        System.out.println("rating = " + rating);
-        System.out.println("userProgramId = " + userProgramId);
+        Long userId = authenticationUtilService.getId(authentication);
+
         try {
-            ReviewDto reviewDto = reviewService.createReview(1L, userProgramId, images, rating, memo);
-            return "good";
+            ReviewDto reviewDto = reviewService.createReview(userId, userProgramId, images, rating, memo);
+            return "redirect:/user/program/" + userProgramId ;
         }catch (IOException e){
-            return "error";
+            return "redirect:/user/program/" + userProgramId ;
         }
     }
 
     @DeleteMapping("review")
-    @ResponseBody
     public String deleteReview(
             @RequestParam("reviewId")
             Long reviewId
     ){
-//        reviewService.updateReview();
+
+        Long userProgramId = reviewService.getUserProgramId(reviewId);
         reviewService.deleteReview(reviewId);
-        return "delete";
+
+        return "redirect:/user/program/" + userProgramId ;
+
     }
 
     @PutMapping("review")
@@ -84,7 +81,6 @@ public class ReviewController {
     }
 
     @PostMapping("review/update")
-    @ResponseBody
     public String updateReview(
             @RequestParam(value = "images", required = false)
             List<MultipartFile> images,
@@ -93,19 +89,15 @@ public class ReviewController {
             @RequestParam("rating")
             Integer rating,
             @RequestParam("reviewId")
-            Long reviewId
+            Long reviewId,
+            Authentication authentication
 
     ){
-        System.out.println("images = " + images);
-        if (images != null){
-            for (MultipartFile image :
-                    images) {
-                System.out.println(image.getOriginalFilename());
-                System.out.println(image.getSize());
-            }
-        }
-        reviewService.updateReview(1L, reviewId, images, rating, memo);
+        Long userId = authenticationUtilService.getId(authentication);
 
-        return "test";
+        reviewService.updateReview(userId, reviewId, images, rating, memo);
+        Long userProgramId = reviewService.getUserProgramId(reviewId);
+
+        return "redirect:/user/program/" + userProgramId ;
     }
 }

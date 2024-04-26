@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>프로그램 생성</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2>프로그램 생성</h2>
+
+  <form th:action="@{/program}" th:object="${programDto}" method="post" class="mt-4">
+
+    <div class="form-group">
+      <label for="category">카테고리:</label>
+      <select class="form-control" id="category" th:field="*{category}" required>
+        <option value="">Select Category</option>
+        <option value="YOGA" data-subcategories="Mind Health Management">Yoga</option>
+        <option value="PRENATAL_POSTNATAL" data-subcategories="Prenatal/Postnatal Care">Prenatal/Postnatal</option>
+        <option value="EXERCISE" data-subcategories="Diet,Strength,Pain Management">Exercise</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="title">프로그램 제목:</label>
+      <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="Enter title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">프로그램 내용:</label>
+      <textarea class="form-control" id="description" th:field="*{description}" rows="4" placeholder="Enter description" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="supplies">사전 준비물:</label>
+      <textarea class="form-control" id="supplies" th:field="*{supplies}" rows="4" placeholder="Enter supplies" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="curriculum">커리큘럼:</label>
+      <textarea class="form-control" id="curriculum" th:field="*{curriculum}" rows="4" placeholder="Enter curriculum" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="price1">1회권:</label>
+      <input type="number" class="form-control" id="price1" th:field="*{price1}" placeholder="Enter price for 1 session" required>
+    </div>
+
+    <div class="form-group">
+      <label for="price10">10회권:</label>
+      <input type="number" class="form-control" id="price10" th:field="*{price10}" placeholder="Enter price for 10 sessions" required>
+    </div>
+
+    <div class="form-group">
+      <label for="price20">20회권:</label>
+      <input type="number" class="form-control" id="price20" th:field="*{price20}" placeholder="Enter price for 20 sessions" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">생성</button>
+  </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
