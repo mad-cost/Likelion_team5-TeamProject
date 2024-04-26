@@ -4,8 +4,10 @@ import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
 
+import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.InstructorRepository;
 import com.example.homeGym.instructor.service.InstructorService;
+import com.example.homeGym.instructor.service.ProgramCheckService;
 import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.UserDto;
@@ -38,8 +40,8 @@ public class InstructorController {
     private final InstructorRepository instructorRepository;
     private final AuthenticationFacade facade;
     private final ProgramService programService;
+    private final ProgramCheckService programCheckService;
 
-    // 성공 ㅠㅠ
     //인증쪽에서 작성
     // 강사 로그인
     @GetMapping("/signin")
@@ -196,25 +198,42 @@ public class InstructorController {
 
     // 강사 프로그램 회원 상세
     @GetMapping("/program/{programId}/user/{userId}")
-    public String userProgramList() {
+    public String userProgramList(@PathVariable Long programId, @PathVariable Long userId, Model model) {
 
-        /* //강사 id 와 프로그램의 주인 여부 검증
+         //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
             return "redirect:/user/main";
-        }*/
+        }
+        UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
+        List<ProgramCheckDto> programCheckDtoList = programCheckService.getAllProgramChecksByUserProgramId(userProgram.getId());
 
+        model.addAttribute("programChecks", programCheckDtoList);
+        model.addAttribute("userProgramId", userProgram.getId());
         return "instructor/program-detail-user";
     }
 
     // 강사 일지 작성
     @PostMapping("/program/{programId}/user/{userId}")
-    public void createDaily() {
+    public String createDaily(
+            @ModelAttribute ProgramCheckDto programCheckDto,
+            @PathVariable Long programId,
+            @PathVariable Long userId) {
+        UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
+        programCheckDto.setUserProgramId(userProgram.getId());
+        programCheckService.createProgramCheck(programCheckDto);
+        return "redirect:/instructor/program/" + programId + "/user/" + userId;
 
     }
 
     // 강사 일지 수정
-    @PutMapping("/program/{programId}/user/{userId}")
-    public void pathDaily() {
-
+    @PutMapping("/program/{programId}/user/{userId}/{programCheckId}")
+    public String pathDaily(
+            @ModelAttribute ProgramCheckDto programCheckDto,
+            @PathVariable Long programId,
+            @PathVariable Long userId,
+            @PathVariable Long programCheckId
+    ) {
+        programCheckService.updateProgramCheck(programCheckId, programCheckDto);
+        return "redirect:/instructor/program/" + programId + "/user/" + userId;
     }
 }

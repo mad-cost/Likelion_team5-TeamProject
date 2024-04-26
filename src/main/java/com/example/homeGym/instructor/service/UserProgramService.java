@@ -164,4 +164,8 @@ public class UserProgramService {
         UserProgramDto.fromEntity(userProgram);
     }
 
+
+    public UserProgram findByUserIdAndProgramId(Long userId, Long programId){
+        return userProgramRepository.findByUserIdAndProgramId(userId, programId);
+    }
 }
