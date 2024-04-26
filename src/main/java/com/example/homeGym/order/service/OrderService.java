@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.LinkedHashMap;
-
+import java.util.List;
 
 
 @Service
@@ -47,6 +47,19 @@ public class OrderService {
                 .tossOrderId(dto.getOrderId())
                 .build()));
 
+    }
+
+    public List<ProgramOrderDto> readAll() {
+        return orderRepository.findAll().stream()
+                .map(ProgramOrderDto::fromEntity)
+                .toList();
+    }
+
+    public ProgramOrderDto readOne(Long id) {
+        return orderRepository.findById(id)
+                .map(ProgramOrderDto::fromEntity)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public Object readTossPayment(Long id) {
