@@ -25,18 +25,6 @@ public enum Week {
         this.order = order;
     }
 
-    public String getEnglishName() {
-        return englishName;
-    }
-
-    public String getKoreanName() {
-        return koreanName;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
     public static Week[] getOrderedValues() {
         return Arrays.stream(values())
                 .sorted(Comparator.comparingInt(Week::getOrder))

@@ -26,12 +26,12 @@
         <tr th:each="apply : ${applyDtos}">
             <td th:text="${apply.name}"></td>
             <td th:text="${apply.programTitle}"></td>
-            <td th:text="${apply.count}"></td>
+            <td th:text="${apply.count}+회"></td>
             <td th:text="${apply.able_week.getKoreanName()}"></td>
             <td th:text="${apply.able_time.getDescription()}"></td>
             <td th:text="${apply.applyState}"></td>
             <td th:text="${apply.email}"></td>
-            <td th:text="${apply.createdAt}"></td>
+            <td th:text="${#temporals.format(apply.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
             <td>
                 <form th:action="@{/instructor/accept/{applyId}(applyId=${apply.id})}" method="post">
                     <button type="submit" class="btn btn-success btn-sm">수락</button>
