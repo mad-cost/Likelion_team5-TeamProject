@@ -30,11 +30,27 @@ public class ScheduleService {
         Instructor currentInstructor = facade.getCurrentInstructor();
         List<ScheduleDto> scheduleDtos = scheduleRepository.findWeekAndTimeAndCreateAtOrderByInstructorId(currentInstructor.getId())
                 .stream()
-                .sorted(Comparator.comparing(schedule -> Week.valueOf(schedule.getWeek()).ordinal()))
+                .sorted(Comparator.comparing(schedule -> {
+                    Week weekEnum = Week.valueOf(schedule.getWeek());
+                    return weekEnum.getOrder();
+                }))
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
         return scheduleDtos;
     }
+
+    @Transactional
+    public List<ScheduleDto> findAllByOrderByTime() {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        List<ScheduleDto> scheduleDtos = scheduleRepository.findWeekAndTimeAndCreateAtOrderByInstructorId(currentInstructor.getId())
+                .stream()
+                .sorted(Comparator.comparing(Schedule::getTime))
+                .map(ScheduleDto::fromEntity)
+                .collect(Collectors.toList());
+        return scheduleDtos;
+    }
+
+
 
     @Transactional
     public ScheduleDto createSchedule(String week, String time) {

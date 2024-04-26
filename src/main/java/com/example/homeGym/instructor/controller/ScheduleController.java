@@ -25,6 +25,7 @@ public class ScheduleController {
 
     @GetMapping()
     public String readSchedule(
+            @RequestParam(value = "orderBy", defaultValue = "week") String orderBy,
             Model model
     ) {
         Instructor currentInstructor = facade.getCurrentInstructor();
@@ -32,8 +33,15 @@ public class ScheduleController {
             throw new IllegalArgumentException("Authentication failed");
         }
 
-        List<ScheduleDto> scheduleDtos = scheduleService.findAllByOrderByWeek();
+        List<ScheduleDto> scheduleDtos;
+        if ("time".equals(orderBy)) {
+            scheduleDtos = scheduleService.findAllByOrderByTime();
+        } else { // Default to orderBy week
+            scheduleDtos = scheduleService.findAllByOrderByWeek();
+        }
+
         model.addAttribute("scheduleDtos", scheduleDtos);
+        model.addAttribute("orderBy", orderBy); // Add orderBy to model for template
         return "instructor/schedule/instructor-schedule";
     }
 

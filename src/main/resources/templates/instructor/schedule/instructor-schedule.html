@@ -13,6 +13,16 @@
 
   <!-- 스케줄 조회 -->
   <h4>Current Schedule</h4>
+
+  <!-- 정렬 옵션 -->
+  <div class="mb-3">
+    <label for="orderBy" class="form-label">정렬:</label>
+    <select id="orderBy" name="orderBy" class="form-select" onchange="handleOrderBySelection(this)">
+      <option value="/instructor/schedule?orderBy=week" th:selected="${orderBy == 'week'}">요일순</option>
+      <option value="/instructor/schedule?orderBy=time" th:selected="${orderBy == 'time'}">시간순</option>
+    </select>
+  </div>
+
   <table class="table">
     <thead>
     <tr>
@@ -23,10 +33,8 @@
     </tr>
     </thead>
     <tbody th:each="scheduleDto : ${scheduleDtos}">
-    <!-- 여러 스케줄을 출력 -->
     <tr>
-      <form th:action="@{/instructor/schedule/{scheduleId}(scheduleId=${scheduleDto.id})}" method="post" onsubmit="return confirm('프로그램을 수정하시겠습니까?');">>
-
+      <form th:action="@{/instructor/schedule/{scheduleId}(scheduleId=${scheduleDto.id})}" method="post" onsubmit="return confirm('프로그램을 수정하시겠습니까?');">
         <td>
           <!-- 요일 선택 -->
           <select name="week" class="form-select">
@@ -46,16 +54,16 @@
         <td th:text="${#temporals.format(scheduleDto.createAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
         <td>
           <table>
-          <!-- 스케줄 수정 폼 -->
-          <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post" onsubmit="return confirm('스케줄을 수정하시겠습니까?');">
-            <input type="hidden" name="_method" value="put"/>
-            <button type="submit" class="btn btn-outline-warning">수정</button>
-          </form>
-          <!-- 스케줄 삭제 폼 -->
-          <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post" onsubmit="return confirm('스케줄을 삭제하시겠습니까?');">
-            <input type="hidden" name="_method" value="delete"/>
-            <button type="submit" class="btn btn-outline-danger">삭제</button>
-          </form>
+            <!-- 스케줄 수정 폼 -->
+            <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post" onsubmit="return confirm('스케줄을 수정하시겠습니까?');">
+              <input type="hidden" name="_method" value="put"/>
+              <button type="submit" class="btn btn-outline-warning">수정</button>
+            </form>
+            <!-- 스케줄 삭제 폼 -->
+            <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post" onsubmit="return confirm('스케줄을 삭제하시겠습니까?');">
+              <input type="hidden" name="_method" value="delete"/>
+              <button type="submit" class="btn btn-outline-danger">삭제</button>
+            </form>
           </table>
         </td>
       </form>
@@ -93,3 +101,14 @@
 
 </body>
 </html>
+
+<script th:inline="javascript">
+    // JavaScript function to handle selection of orderBy option
+    function handleOrderBySelection(selectElement) {
+        // Get the selected value
+        var selectedValue = selectElement.value;
+        // Redirect to the selected URL
+        window.location.href = selectedValue;
+    }
+</script>
+
