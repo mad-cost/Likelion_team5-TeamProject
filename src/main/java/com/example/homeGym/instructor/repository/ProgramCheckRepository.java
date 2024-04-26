@@ -6,6 +6,7 @@ import java.util.List;
 
 import java.util.List;
 
+
 public interface ProgramCheckRepository extends JpaRepository<ProgramCheck, Long> {
     List<ProgramCheck> findByUserProgramId(Long userProgramId);
 }

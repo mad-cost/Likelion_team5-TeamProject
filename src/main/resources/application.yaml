@@ -70,4 +70,3 @@ payment:
     test_secret_api_key: ${TOSS_SECRET_API_KEY}
     success_url: "http://localhost"
     fail_url: "http://localhost"
-
