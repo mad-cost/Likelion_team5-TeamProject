@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>강사 탈퇴 요청</title>
+</head>
+<body>
+<h1>강사 탈퇴 요청</h1>
+<form th:action="@{/instructor/withdraw}" th:object="${withdrawal}" method="post">
+    <textarea th:field="*{withdrawalReason}" placeholder="탈퇴 사유를 입력하세요."></textarea>
+    <button type="submit">탈퇴 신청</button>
+</form>
+</body>
+</html>

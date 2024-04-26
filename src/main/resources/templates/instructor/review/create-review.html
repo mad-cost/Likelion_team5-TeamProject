@@ -1,0 +1,30 @@
+<!-- review-create.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Review</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+
+  <h2>답글 작성</h2>
+  <form th:action="@{/instructor/review/{reviewId}/comment(reviewId=${reviewId})}" method="post">
+    <div class="form-group">
+      <label for="content">Content:</label>
+      <textarea class="form-control" id="content" th:field="*{commentDto.content}" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">답글</button>
+  </form>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

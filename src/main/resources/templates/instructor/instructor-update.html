@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>강사 정보 수정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        .form-group.d-flex {
+            flex-wrap: nowrap;
+        }
+
+        .form-floating {
+            flex-grow: 1;
+        }
+
+        .mx-2 {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<main class="flex-shrink-0">
+    <section class="py-5">
+        <div class="container px-5">
+            <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6">
+                        <h1 class="text-center mb-5">강사 정보 수정</h1>
+                        <form action="/instructor/profile" th:action="@{/instructor/profile}" method="post" id="updateForm">
+                            <!-- 숨겨진 필드로 PUT 메소드 지정 -->
+                            <input type="hidden" name="_method" value="PUT" />
+                            <!-- ID 값을 숨겨진 필드로 전송 -->
+                            <input type="hidden" name="id" th:value="${instructorDto.id}">
+                            <!-- 기존 정보를 불러와서 표시 -->
+                            <div class="form-group d-flex mb-3">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="text" class="form-control" id="email" th:value="*{instructorDto.email}" disabled>
+                                    <label for="email">아이디 (수정 불가)</label>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" th:field="*{instructorDto.name}" type="text" placeholder="이름">
+                                <label for="name">이름</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">성별을 선택하세요</option>
+                                    <option value="FEMALE" th:selected="${instructorDto.gender.name() == 'FEMALE'}">여성</option>
+                                    <option value="MALE" th:selected="${instructorDto.gender.name() == 'MALE'}">남성</option>
+                                </select>
+                                <label for="gender">성별</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="birthdate" type="date" th:value="${instructorDto.birthyear + '-' + instructorDto.birthday}" placeholder="YYYY-MM-DD">
+                                <label for="birthdate">생년월일</label>
+                            </div>
+
+
+                            <!-- 전화번호 입력 필드 -->
+                            <div class="form-group d-flex mb-3">
+                                <div class="form-floating flex-grow-1 me-1">
+                                    <input type="text" class="form-control" id="phonePart1" name="phonePart1"
+                                           placeholder="010"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[0]}" maxlength="3">
+                                    <label for="phonePart1">전화번호 앞자리</label>
+                                </div>
+                                <div class="form-floating flex-grow-1 mx-1">
+                                    <input type="text" class="form-control" id="phonePart2" name="phonePart2"
+                                           placeholder="1111"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[1]}" maxlength="4">
+                                    <label for="phonePart2">중간</label>
+                                </div>
+                                <div class="form-floating flex-grow-1 ms-1">
+                                    <input type="text" class="form-control" id="phonePart3" name="phonePart3"
+                                           placeholder="1234"
+                                           th:value="${#strings.arraySplit(instructorDto.phone, '-')[2]}" maxlength="4">
+                                    <label for="phonePart3">끝</label>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="career" name="career" placeholder="Enter your career and activities here..." style="height: 150px;">[[${instructorDto.career}]]</textarea>
+                                <label for="career">경력사항 및 활동내역</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="certificate" name="certificate" placeholder="Enter your certificates here..." style="height: 100px;">[[${instructorDto.certificate}]]</textarea>
+                                <label for="certificate">자격증</label>
+                            </div>
+
+
+                            <!-- 은행 선택 드롭다운 -->
+                            <div class="form-floating mb-3">
+                                <select class="form-control" id="bank" name="bank" onchange="toggleBankInput()">
+                                    <option value="">은행을 선택하세요</option>
+                                    <option value="KB국민은행" th:selected="${instructorDto.bank == 'KB국민은행'}">KB국민은행</option>
+                                    <option value="신한은행" th:selected="${instructorDto.bank == '신한은행'}">신한은행</option>
+                                    <option value="하나은행" th:selected="${instructorDto.bank == '하나은행'}">하나은행</option>
+                                    <option value="우리은행" th:selected="${instructorDto.bank == '우리은행'}">우리은행</option>
+                                    <option value="NH농협은행" th:selected="${instructorDto.bank == 'NH농협은행'}">NH농협은행</option>
+                                    <option value="기업은행" th:selected="${instructorDto.bank == '기업은행'}">기업은행</option>
+                                    <option value="씨티은행" th:selected="${instructorDto.bank == '씨티은행'}">씨티은행</option>
+                                    <option value="카카오뱅크" th:selected="${instructorDto.bank == '카카오뱅크'}">카카오뱅크</option>
+                                    <option value="케이뱅크" th:selected="${instructorDto.bank == '케이뱅크'}">케이뱅크</option>
+                                    <!-- 추가 은행 옵션 -->
+                                    <option value="other" th:selected="${instructorDto.bank != null and
+                                          !(instructorDto.bank == 'KB국민은행' or
+                                            instructorDto.bank == '신한은행' or
+                                            instructorDto.bank == '하나은행' or
+                                            instructorDto.bank == '우리은행' or
+                                            instructorDto.bank == 'NH농협은행' or
+                                            instructorDto.bank == '기업은행' or
+                                            instructorDto.bank == '씨티은행' or
+                                            instructorDto.bank == '카카오뱅크' or
+                                            instructorDto.bank == '케이뱅크')}">기타</option>
+                                </select>
+                                <label for="bank">은행 선택</label>
+                            </div>
+
+                            <!-- 사용자 정의 은행 이름 입력 필드 -->
+                            <div class="form-floating mb-3" id="otherBankContainer" style="display:none;">
+                                <input class="form-control" id="otherBank" name="otherBank" type="text" placeholder="Enter your bank name" th:value="${instructorDto.bank}">
+                                <label for="otherBank">은행 이름 입력</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="bankName" name="bankName" type="text" placeholder="Enter account holder's name" th:value="${instructorDto.bankName}">
+                                <label for="bankName">예금주명</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="account" name="account" type="text" placeholder="Enter account number" th:value="${instructorDto.account}">
+                                <label for="account">계좌번호</label>
+                            </div>
+
+
+                            <!-- 변경사항 저장 버튼 -->
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-lg" type="submit">정보 수정</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleBankInput(); // 페이지 로드 시 상태 확인
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 폼의 기본 제출을 방지
+
+        // 필수 필드 검사
+        let name = document.getElementById('name').value.trim();
+        let gender = document.getElementById('gender').value;
+        let birthdate = document.getElementById('birthdate').value.trim();
+        let emailDomain = document.getElementById('emailDomain').value;
+        let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+        let phonePart1 = document.getElementById('phonePart1').value.trim();
+        let phonePart2 = document.getElementById('phonePart2').value.trim();
+        let phonePart3 = document.getElementById('phonePart3').value.trim();
+        let career = document.getElementById('career').value.trim();
+        let certificate = document.getElementById('certificate').value.trim();
+
+
+        // 모든 필수 필드가 채워졌는지 확인
+        if (!name || !gender || !birthdate || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+            alert('모든 내용을 작성해 주세요.');
+            return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
+        }
+
+        // 전화번호 조합
+        phonePart1 = document.getElementById('phonePart1').value;
+        phonePart2 = document.getElementById('phonePart2').value;
+        phonePart3 = document.getElementById('phonePart3').value;
+        let phone = phonePart1 + '-' + phonePart2 + '-' + phonePart3; // 하이픈 추가
+        this.appendChild(createHiddenInput('phone', phone)); // 전화번호 숨겨진 필드에 추가
+
+        // 생년월일 분리
+        let birthdateInput = document.getElementById('birthdate');
+        let birthdateValue = birthdateInput.value;
+        if (birthdateValue) {
+            const [year, month, day] = birthdateValue.split('-');
+            this.appendChild(createHiddenInput('birthyear', year));
+            this.appendChild(createHiddenInput('birthday', `${month}-${day}`));
+        }
+
+        // 폼을 프로그래밍 방식으로 제출
+        this.submit();
+    });
+
+    function createHiddenInput(name, value) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        return input;
+    }
+
+    function toggleBankInput() {
+        var bankSelect = document.getElementById('bank');
+        var otherBankContainer = document.getElementById('otherBankContainer');
+        var otherBankInput = document.getElementById('otherBank');
+
+        // "기타" 선택 시 은행 이름 입력 필드 표시
+        if (bankSelect.value === 'other') {
+            otherBankContainer.style.display = 'block';
+        } else {
+            otherBankContainer.style.display = 'none';
+            otherBankInput.value = ''; // 기타가 아닐 때 입력 필드를 비웁니다.
+        }
+    }
+
+</script>
+
+
+</body>
+</html>

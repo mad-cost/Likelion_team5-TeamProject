@@ -1,0 +1,164 @@
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructor Reviews</title>
+</head>
+<body>
+<h1>Instructor Reviews</h1>
+<div th:if="${reviews.isEmpty()}">
+    <p>No reviews available.</p>
+</div>
+<div th:unless="${reviews.isEmpty()}">
+    <table>
+        <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Review</th>
+            <th>Stars</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="review : ${reviews}">
+            <td th:text="${review.userName}">User Name</td>
+            <td th:text="${review.memo}">Review text here</td>
+            <td th:text="${review.stars}">5</td>
+            <td th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">Date</td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <ul class="pagination">
+            <li th:if="${reviews.hasPrevious()}"><a th:href="@{${'/instructor/reviews?page=' + (reviews.number - 1)}}">Previous</a></li>
+            <li th:each="i : ${#numbers.sequence(0, reviews.totalPages - 1)}">
+                <a th:href="@{${'/instructor/reviews?page=' + i}}" th:text="${i + 1}" th:classappend="${i == reviews.number} ? 'active'"></a>
+            </li>
+            <li th:if="${reviews.hasNext()}"><a th:href="@{${'/instructor/reviews?page=' + (reviews.number + 1)}}">Next</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>-->
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructor Reviews</title>
+    <!-- 부트스트랩 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .review-image img {
+            max-width: 100px;  /* 이미지 최대 너비 조절 */
+            max-height: 100px; /* 이미지 최대 높이 조절 */
+            height: auto;      /* 이미지 비율 유지 */
+            display: block;    /* 불필요한 공간 제거 */
+        }
+        .star-icon img {
+            width: 20px;   /* 별 아이콘 크기 조절 */
+            height: 20px;  /* 별 아이콘 크기 조절 */
+            vertical-align: middle; /* 별 아이콘을 텍스트 중간 높이에 맞춤 */
+        }
+        .review-image {
+            margin-right: 15px; /* 이미지와 리뷰 정보 사이의 간격 조절 */
+        }
+        .reply-card {
+            margin-top: 10px;
+        }
+        .reply-header {
+            font-weight: bold;
+        }
+        .btn-group-vertical > a, .btn-group-vertical > button{
+            display: block; /* 각 버튼을 블록 요소로 만들어 줄바꿈 */
+            margin-bottom: 5px; /* 버튼 사이의 간격 조정 */
+            border-radius: 0.25rem !important; /* 모든 버튼의 모서리를 둥글게 */
+        }
+        .btn-group-vertical > button:last-child {
+            margin-bottom: 0; /* 마지막 버튼의 하단 간격 제거 */
+        }
+        .reply-actions {
+            text-align: right; /* 버튼들을 오른쪽으로 정렬 */
+        }
+        .review-info .card-subtitle {
+            display: flex; /* Flexbox를 사용하여 아이템들을 한 줄에 나열 */
+            align-items: center; /* 세로 중앙 정렬 */
+            gap: 5px; /* 요소들 사이의 간격 */
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Instructor Reviews</h1>
+    <div th:each="review : ${reviews}" class="mb-4">
+        <div class="card">
+            <div class="card-body d-flex">
+                <div class="review-image">
+                    <img th:src="${review.imageUrls != null and not #lists.isEmpty(review.imageUrls) ? review.imageUrls[0] : '/static/assets/img/free-icon-lion-512px.png'}"
+                         alt="User image" class="img-fluid"/>
+                </div>
+                <div class="review-info w-100">
+                    <h5 class="card-title" th:text="${review.userName}">User Name</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <span th:text="${review.stars}">5</span>
+                        <div class="star-icon">
+                            <img src="/static/assets/icon/star.png" alt="Star rating" />
+                        </div>
+                        <span th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">Date</span>
+                    </h6>
+                    <p class="card-text" th:text="${review.memo}">Review text here</p>
+                    <!-- 답글 부분을 별도의 카드로 구분 -->
+                    <div class="reply-card card">
+                        <div class="card-body">
+                            <h6 class="reply-header">내 답글</h6>
+                            <p th:if="${review.comment != null}" th:text="${review.comment}">Reply content here</p>
+                            <p th:if="${review.comment == null}">No reply yet.</p>
+                            <div class="reply-actions">
+                                <div class="btn-group-vertical">
+                                    <a th:href="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" class="btn btn-primary" th:if="${review.comment != null}" th:text="'Edit'">Edit</a>
+                                    <a th:href="@{/instructor/review/{reviewId}/comment(reviewId=${review.id})}" class="btn btn-secondary" th:if="${review.comment == null}" th:text="'Write Reply'">Write Reply</a>
+
+                                    <button class="btn btn-danger" th:if="${review.comment != null}" th:data-url="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" onclick="deleteComment(this.getAttribute('data-url'))">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 페이지네이션 -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:if="${reviews.hasPrevious()}"><a class="page-link" th:href="@{/instructor/reviews(page=${reviews.number - 1})}">Previous</a></li>
+            <li th:each="i : ${#numbers.sequence(0, reviews.totalPages - 1)}" class="page-item" th:classappend="${i == reviews.number} ? 'active'">
+                <a class="page-link" th:href="@{${'/instructor/reviews?page=' + i}}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:if="${reviews.hasNext()}"><a class="page-link" th:href="@{${'/instructor/reviews?page=' + (reviews.number + 1)}}">Next</a></li>
+        </ul>
+    </nav>
+</div>
+<!-- 부트스트랩 5.3.3 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function deleteComment(url) {
+        fetch(url, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                alert('댓글 삭제 성공');
+                location.reload(); // 페이지 리로드 또는 적절한 처리
+            } else {
+                alert('댓글 삭제 실패');
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+
+</script>
+
+</body>
+</html>

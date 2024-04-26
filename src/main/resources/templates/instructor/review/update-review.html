@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Review</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <h2>답글 수정</h2>
+    <form th:action="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${reviewId}, commentId=${commentId})}" method="post">
+        <input type="hidden" name="_method" value="put" />
+        <input type="hidden" name="id" th:value="${commentDto.id}" /> <!-- ID를 숨김 필드로 추가 -->
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" th:field="*{commentDto.content}" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">수정</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
