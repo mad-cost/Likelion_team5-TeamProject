@@ -8,13 +8,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserProgramRepository extends JpaRepository<UserProgram, Long> {
     List<UserProgram> findByUserIdAndState(Long userId, UserProgram.UserProgramState state);
     List<UserProgram> findByProgramIdAndState(Long programId, UserProgram.UserProgramState state);
     List<UserProgram> findAllByUserId(Long userId);
     List<UserProgram> findAllByProgramId(Long programLongId);
+    List<UserProgram> findByProgramId(Long programId);
 
     UserProgram findByUserIdAndProgramId(Long userId, Long programId);
+
 
 }

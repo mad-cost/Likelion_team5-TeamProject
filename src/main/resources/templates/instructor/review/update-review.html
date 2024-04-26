@@ -9,6 +9,7 @@
 <body>
 
 <div class="container mt-5">
+
     <h2>답글 수정</h2>
     <form th:action="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${reviewId}, commentId=${commentId})}" method="post">
         <input type="hidden" name="_method" value="put" />

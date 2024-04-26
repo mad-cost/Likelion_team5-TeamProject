@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum Time {
+
     SIX_TO_NINE("6시~9시", 6, 9),
     NINE_TO_TWELVE("9시~12시", 9, 12),
     TWELVE_TO_FIFTEEN("12시~15시", 12, 15),

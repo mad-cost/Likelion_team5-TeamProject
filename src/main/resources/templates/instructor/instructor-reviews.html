@@ -120,6 +120,7 @@
                                 <div class="btn-group-vertical">
                                     <a th:href="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" class="btn btn-primary" th:if="${review.comment != null}" th:text="'Edit'">Edit</a>
                                     <a th:href="@{/instructor/review/{reviewId}/comment(reviewId=${review.id})}" class="btn btn-secondary" th:if="${review.comment == null}" th:text="'Write Reply'">Write Reply</a>
+
                                     <button class="btn btn-danger" th:if="${review.comment != null}" th:data-url="@{/instructor/review/{reviewId}/comment/{commentId}(reviewId=${review.id}, commentId=${review.commentId})}" onclick="deleteComment(this.getAttribute('data-url'))">Delete</button>
                                 </div>
                             </div>

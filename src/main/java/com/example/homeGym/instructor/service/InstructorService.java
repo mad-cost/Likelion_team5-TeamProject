@@ -116,7 +116,6 @@ public class InstructorService {
         return InstructorDto.fromEntity(instructor);
     }
 
-    //강사페이지에서 정산금 띄우기
 
 
     //강사 정보 수정
@@ -186,7 +185,6 @@ public class InstructorService {
         separatedPrograms.put("other", otherPrograms);
         return separatedPrograms;
     }
-
 
 
 

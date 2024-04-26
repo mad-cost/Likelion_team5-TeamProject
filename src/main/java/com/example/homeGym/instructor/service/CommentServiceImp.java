@@ -53,6 +53,7 @@ public class CommentServiceImp implements CommentService {
 
         Instructor instructor = optionalInstructor.get();
         Optional<Comment> optionalComment = commentRepository.findById(commentDto.getId());
+
         // review가 존재하지 않을 경우
         if (optionalComment.isEmpty())
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.COMMENT_NOT_EXISTS);
@@ -65,6 +66,7 @@ public class CommentServiceImp implements CommentService {
         log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
 
         comment.setContent(commentDto.getContent());
+
         log.info("Updating comment with ID: {}, Instructor ID: {}, Review ID: {}", commentDto.getId(), instructorId, reviewId);
 
         return CommentDto.fromEntity(commentRepository.save(comment));
