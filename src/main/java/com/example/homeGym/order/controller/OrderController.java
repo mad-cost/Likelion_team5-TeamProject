@@ -22,7 +22,7 @@ public class OrderController {
         return service.readAll();
     }
 
-    @GetMapping
+    @GetMapping("{id}")
     public ProgramOrderDto readOne(
             @PathVariable("id")
             Long id

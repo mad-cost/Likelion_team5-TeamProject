@@ -8,7 +8,13 @@ import com.example.homeGym.order.entity.ProgramOrder;
 import com.example.homeGym.order.repo.OrderRepository;
 import com.example.homeGym.toss.dto.PaymentCancelDto;
 import com.example.homeGym.toss.dto.PaymentConfirmDto;
+import com.example.homeGym.toss.entity.Payment;
+import com.example.homeGym.toss.repo.PaymentRepository;
 import com.example.homeGym.toss.service.TossHttpService;
+import com.example.homeGym.user.dto.UserDto;
+import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.repository.UserRepository;
+import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -27,6 +33,9 @@ public class OrderService {
     private final TossHttpService tossService;
     private final OrderRepository orderRepository;
     private final ProgramRepository programRepository;
+    private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
 
     public Object confirmPayment(PaymentConfirmDto dto) {
@@ -46,7 +55,14 @@ public class OrderService {
                 .tossPaymentKey(dto.getPaymentKey())
                 .tossOrderId(dto.getOrderId())
                 .build()));
+    }
 
+    public Payment requestTossPayment(Payment payment, Long id) {
+        UserDto user = userService.findById(id);
+
+        payment.setUserId(user.getId());
+
+        return paymentRepository.save(payment);
     }
 
     public List<ProgramOrderDto> readAll() {
