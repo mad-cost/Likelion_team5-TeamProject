@@ -1,12 +1,17 @@
 package com.example.homeGym.user.service;
 
 import com.example.homeGym.admin.dto.AdminDto;
+import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.dto.CustomUserDetails;
+import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.JpaUserDetailsManager;
+import com.example.homeGym.auth.utils.CookieUtil;
 import com.example.homeGym.auth.utils.PasswordEncodeConfig;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.user.dto.UserDto;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,22 +32,39 @@ public class UserService {
     private final UserRepository userRepository;
     private final JpaUserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final CookieUtil cookieUtil;
 
-    public void saveAdmin(AdminDto adminDto){
-        if (!userRepository.existsByEmail(adminDto.getEmail())){
-            // 새 계정을 만들어야 한다.
-            userDetailsManager.createUser(CustomUserDetails.builder()
-                    .name(adminDto.getName())
-                    .email(adminDto.getEmail())
-                    .password(passwordEncoder.encode(adminDto.getPassword()))
-                    .profileImageUrl(adminDto.getProfileImageUrl())
-                    .gender(String.valueOf(adminDto.getGender()))
-                    .birthyear(adminDto.getBirthyear())
-                    .birthday(adminDto.getBirthday())
-                    .roles("ROLE_ADMIN")
-                    .build());
+    public boolean signinAdmin(HttpServletResponse res, String email, String password){
+
+        Optional<User> nowUser= userRepository.findByEmail(email);
+        User user = nowUser.get();
+        Boolean pwCheck = passwordEncoder.matches(password, user.getPassword());
+        if(pwCheck){
+            CustomUserDetails customInstructorDetails = (CustomUserDetails) userDetailsManager.loadUserByUsername(email);
+            String jwtToken = jwtTokenUtils.generateToken(customInstructorDetails);
+
+            cookieUtil.createCookie(res,"Authorization", jwtToken);
+            return true;
         }
+        return false;
+
     }
+
+//    public void saveAdmin(AdminDto adminDto){
+//        if (!userRepository.existsByEmail(adminDto.getEmail())){
+//            userDetailsManager.createUser(CustomUserDetails.builder()
+//                    .name(adminDto.getName())
+//                    .email(adminDto.getEmail())
+//                    .password(passwordEncoder.encode(adminDto.getPassword()))
+//                    .profileImageUrl(adminDto.getProfileImageUrl())
+//                    .gender(String.valueOf(adminDto.getGender()))
+//                    .birthyear(adminDto.getBirthyear())
+//                    .birthday(adminDto.getBirthday())
+//                    .roles("ROLE_ADMIN")
+//                    .build());
+//        }
+//    }
 
     public List<UserDto> findAllByOrderByName(){
         List<UserDto> userDtos = new ArrayList<>();

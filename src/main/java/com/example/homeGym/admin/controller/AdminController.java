@@ -1,10 +1,13 @@
 package com.example.homeGym.admin.controller;
 
+import com.example.homeGym.auth.dto.SignInDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.user.repository.UserRepository;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,19 +25,13 @@ public class AdminController {
   private final UserProgramService userProgramService;
   private final ProgramServiceForUser programServiceForUser;
   private final InstructorService instructorService;
+  private final UserRepository userRepository;
 
   //회원가입 및 로그인
-  @GetMapping("/signup")
+  @GetMapping("/signin")
   public String signUpAdminPage(){
-    return "admin/admin-signup";
+    return "admin/admin-signin";
   }
-
-  @PostMapping("/signup")
-  public String signUpAdmin(){
- //회원가입성공시 메인으로보내기
-    return "";
-  }
-
 
 
   @GetMapping

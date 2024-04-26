@@ -43,7 +43,8 @@ public class WebSecurityConfig {
                                 "/token/validate",
                                 "/instructor",
                                 "/instructor/**",
-                                "/program/**"
+                                "/program/**",
+                                "/auth/admin/signin"
                         )
                         .permitAll()
 
@@ -51,7 +52,6 @@ public class WebSecurityConfig {
                                 "/user/signup",
                                 "/user/signin",
                                 "/instructor/signup"
-
                         )
                         .anonymous()
                         .anyRequest()
