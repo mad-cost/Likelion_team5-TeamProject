@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("instructor/schedule")
+@RequestMapping("/instructor/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -32,9 +32,9 @@ public class ScheduleController {
             throw new IllegalArgumentException("Authentication failed");
         }
 
-        List<ScheduleDto> scheduleDtos = scheduleService.readSchedules();
+        List<ScheduleDto> scheduleDtos = scheduleService.findAllByOrderByWeek();
         model.addAttribute("scheduleDtos", scheduleDtos);
-        return "/instructor/schedule/instructor-schedule";
+        return "instructor/schedule/instructor-schedule";
     }
 
     @PostMapping()
@@ -70,7 +70,7 @@ public class ScheduleController {
         return "redirect:/instructor/schedule";
     }
 
-    @DeleteMapping("{scheduleId}")
+    @DeleteMapping("/{scheduleId}")
     public String deleteSchedule(
             @PathVariable("scheduleId") Long scheduleId
     ) {
