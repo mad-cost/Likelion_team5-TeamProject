@@ -23,6 +23,20 @@ public class AdminController {
   private final ProgramServiceForUser programServiceForUser;
   private final InstructorService instructorService;
 
+  //회원가입 및 로그인
+  @GetMapping("/signup")
+  public String signUpAdminPage(){
+    return "admin/admin-signup";
+  }
+
+  @PostMapping("/signup")
+  public String signUpAdmin(){
+ //회원가입성공시 메인으로보내기
+    return "";
+  }
+
+
+
   @GetMapping
   public String admin(
           Model model

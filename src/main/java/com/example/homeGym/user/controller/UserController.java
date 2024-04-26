@@ -33,9 +33,10 @@ public class UserController {
 
     @GetMapping("/main")
     public String mainPage(){
-
         return "main";
     }
+
+    @PostMapping
 
     @GetMapping("/loginpage")
     public String loginPage(){

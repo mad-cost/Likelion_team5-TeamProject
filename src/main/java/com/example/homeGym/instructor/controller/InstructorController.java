@@ -50,7 +50,10 @@ public class InstructorController {
     @PostMapping("/signin")
     public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
 
-        instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+
+
+
         return "redirect:/user/main";
     }
 
