@@ -1,5 +1,7 @@
 package com.example.homeGym.user.service;
 
+import com.example.homeGym.admin.dto.SettlementDto;
+import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.dto.UserDto;
 import com.example.homeGym.user.entity.Review;
@@ -17,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -153,5 +156,26 @@ public class ReviewService {
                 .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return review.getUserProgramId();
+    }
+//    MainController에서 사용
+//    user_program의 id에 해당하는 모든 리뷰 가져오기
+    public List<ReviewDto> findAllByUserProgramIdConvertId(List<UserProgram> userPrograms){
+        List<ReviewDto> reviewDto = new ArrayList<>();
+        for (UserProgram userProgram : userPrograms){
+//            user_program의 id를 통해서 리뷰 id 가져오기
+            Review reviews = reviewRepository.findByUserProgramId(userProgram.getId());
+            if (reviews != null){
+                //        날짜를 yyyy-mm-dd 모습으로 바꿔주기
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년MM월dd일");
+                String changeDate = reviews.getCreatedAt().format(formatter);
+                reviews.setDateCreatedAt(changeDate);
+                reviewRepository.save(reviews);
+
+                reviewDto.add(ReviewDto.fromEntity(reviews));
+            }else {
+                log.info("[ReviewService]review is not found");
+            }
+        }
+        return reviewDto;
     }
 }

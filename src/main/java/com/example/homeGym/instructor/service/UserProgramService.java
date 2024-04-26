@@ -2,6 +2,7 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,12 @@ public class UserProgramService {
                 userProgramDtos.add(UserProgramDto.fromEntity(userProgram));
         }
         return userProgramDtos;
+    }
+
+    // 프로그램 삭제 시 관련 수강생 확인
+    public boolean hasEnrolledUsers(Long programId) {
+        List<UserProgram> userPrograms = userProgramRepository.findByProgramId(programId);
+        return !userPrograms.isEmpty();
     }
 
     public void userCountUpdate(List<Long> userProgramsId, Long programId, Integer count){ //1, 3 / 3/ 14
@@ -157,5 +164,16 @@ public class UserProgramService {
         userProgramRepository.save(userProgram);
         UserProgramDto.fromEntity(userProgram);
     }
+
+
+    public UserProgram findByUserIdAndProgramId(Long userId, Long programId){
+        return userProgramRepository.findByUserIdAndProgramId(userId, programId);
+    }
+    //      programId에 해당하는 모든 user_program의 id가져오기
+    public List<UserProgram> findAllByProgramIdConvertId(Long programId){
+        return userProgramRepository.findAllByProgramId(programId);
+    }
+
+
 
 }

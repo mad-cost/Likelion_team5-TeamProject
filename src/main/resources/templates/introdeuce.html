@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프로그램 소개 페이지</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+      .outer-card {
+          background-color: #f8f9fa; /* 밖의 카드 배경색 */
+          border: none;
+      }
+
+      .inner-card {
+          background-color: #ffffff; /* 안의 카드 배경색 */
+          border-radius: 20px;
+          border: 1px solid rgba(0, 0, 0, 0.125);
+      }
+
+      .card-title {
+          font-size: 1.5rem; /* 제목 크기 */
+          margin-bottom: 0.5rem;
+      }
+
+      .card-description {
+          font-size: 1rem; /* 설명 크기 */
+          color: #6c757d; /* 설명 색상 */
+      }
+
+      .card-count {
+          font-size: 1.2rem; /* 회차 크기 */
+          font-weight: bold; /* 회차 굵기 */
+      }
+
+      .card-countTwo {
+          font-size: 1.0rem; /* 회차 크기 */
+          font-weight: bold; /* 회차 굵기 */
+      }
+
+      .card-max-count {
+          font-size: 1.0rem; /* 총 회차 크기 */
+          font-weight: bold; /* 회차 굵기 */
+          color: #6c757d; /* 총 회차 색상 */
+      }
+      .card.inner-card a {
+          text-decoration: none;
+      }
+      .heart-icon {
+          font-size: 2rem; /* 아이콘 크기 */
+          color: red; /* 아이콘 색상 */
+      }
+
+      .heart-link {
+          position: absolute; /* 절대 위치 */
+          top: 50%; /* 중앙 정렬을 위해 상단 50%로 설정 */
+          right: 0; /* 오른쪽 정렬 */
+          transform: translateY(-50%); /* 수직으로 중앙 정렬 */
+          margin-right: 30px; /* 오른쪽으로부터 30px 간격 */
+      }
+      .card-body.position-relative.d-flex.align-items-center img.rounded-circle {
+          border-radius: 50%; /* 원형 모양으로 만듭니다. */
+      }
+
+      /* 이름과 성별을 나란히 정렬하는 CSS */
+      .card-body.position-relative.d-flex.align-items-center div {
+          margin-right: 30px; /* 이름과 성별 사이의 간격 조절 */
+          display: flex; /* 내부 요소들을 수평으로 정렬하기 위해 flex로 설정 */
+          align-items: center; /* 내부 요소들을 수직으로 중앙 정렬 */
+      }
+      .card-body.position-relative.d-flex.align-items-center p {
+          margin-right: 10px; /* 이름과 성별 사이의 간격 조절 */
+      }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-center mb-4">navbar 위치</h1>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card-body position-relative align-items-center text-center"> <!-- position-relative 클래스 추가 및 text-center 클래스 추가 -->
+          <img th:src="${instructor.profileImageUrl}" class="rounded-circle mr-3" style="width: 200px; height: 200px;"> <!-- 이미지를 동그랗게 만들고 사이즈 조절 -->
+          <div class="mt-4">
+            <h4 class="card-count">[[${instructor.name}]] 강사님</h4>
+            <div style="display: flex; align-items: center; justify-content: center;"> <!-- justify-content: center 추가 -->
+              <img class="ml-2" src="/static/assets/img/star.png" alt="star" style="width: 22px; height: 22px;">
+              <span style="font-size: 22px; margin-left: 10px;">[[${instructor.rating}]]</span>
+            </div>
+            <div style="text-align: center;"> <!-- text-align: center 추가 -->
+              <h4 class="card-count" style="margin-top: 20px">강사 경력</h4>
+              <p th:text="${instructor.career}"></p>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-4">
+      <div class="card outer-card">
+        <div class="card-body text-center">
+          <h2 class="card-title">프로그램 소개</h2>
+          <div th:each="program : ${program}">
+            <div class="card inner-card">
+                <div class="card-body">
+                  <h3 class="card-title">[[${[program.category]}]][[${program.title}]]</h3>
+                  <td><p th:text="${program.description}"></p></td>
+                  <div class="align-items-center mb-2">
+                    <p class="card-count">커리큘럼</p>
+                    <td><p th:text="${program.curriculum}"></p></td>
+                  </div>
+                  <div class="align-items-center mb-2">
+                    <p class="card-count">준비물</p>
+                    <td><p th:text="${program.supplies}"></p></td>
+                  </div>
+                  <div class="align-items-center mb-2">
+                    <p class="card-count">가격</p>
+                    <td><p>1회차 : [[${program.price1}]] / 10회차 : [[${program.price10}]] / 20회차 : [[${program.price20}]]</p></td>
+                  </div>
+                  <form th:action="@{'/#/'}" method="post">
+                    <input type="submit" class="btn btn-primary" value="프로그램 신청하기">
+                  </form>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 mb-4">
+      <div class="card outer-card">
+        <div class="card-body">
+          <h2 class="card-title">회원 후기</h2>
+          <div th:each="review : ${reviews}">
+            <div class="card inner-card">
+              <div class="card-body">
+                <div class="align-items-center mb-2">
+                  <span class="card-countTwo" th:text="${review.user.name}"></span>
+                  <span th:text="${review.dateCreatedAt}"></span>
+                </div>
+                <div class="align-items-center mb-2">
+                  <img class="ml-2" src="/static/assets/img/star.png" alt="star" style="width: 15px; height: 15px;">
+                  <span style="font-size: 15px; margin-left: 8px;"> <td th:text="${review.stars}"></td></span>
+                </div>
+                <div class="align-items-center mb-2">
+                  <td><p th:text="${review.memo}"></p></td>
+                </div>
+
+                <!--  전문가의 답글  -->
+                <div class="card inner-card">
+                  <div class="card-body">
+                    <div class="align-items-center mb-2">
+                      <span class="card-countTwo">전문가의 답글</span>
+                      <span th:text="${review.comment.dateCreatedAt}"></span>
+                    </div>
+                    <div class="align-items-center mb-2">
+                      <td><p th:text="${review.comment.content}"></p></td>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

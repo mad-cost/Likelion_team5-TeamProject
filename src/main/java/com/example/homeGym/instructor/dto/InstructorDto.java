@@ -13,7 +13,6 @@ import lombok.*;
 public class InstructorDto {
     private Long id;
     private String name;
-    private String loginId;
     private String password;
     private Gender gender;
     private String birthyear;
@@ -29,13 +28,13 @@ public class InstructorDto {
     private String bankName;
     private String account;
     private String withdrawalReason;
+    private Double rating;
 
     public static InstructorDto fromEntity(Instructor entity) {
 
         return InstructorDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .loginId(entity.getLoginId())
                 .password(entity.getPassword())
                 .gender(entity.getGender())
                 .birthyear(entity.getBirthyear())
@@ -51,6 +50,7 @@ public class InstructorDto {
                 .bankName(entity.getBankName())
                 .account(entity.getAccount())
                 .withdrawalReason(entity.getWithdrawalReason())
+                .rating(entity.getRating())
                 .build();
     }
 }

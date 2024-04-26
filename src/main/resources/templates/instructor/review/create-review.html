@@ -11,11 +11,12 @@
 <body>
 
 <div class="container mt-5">
-  <h2>리뷰 작성</h2>
-  <form action="/program/{instructorId}/review/{reviewId}/comment" method="post">
+
+  <h2>답글 작성</h2>
+  <form th:action="@{/instructor/review/{reviewId}/comment(reviewId=${reviewId})}" method="post">
     <div class="form-group">
       <label for="content">Content:</label>
-      <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+      <textarea class="form-control" id="content" th:field="*{commentDto.content}" rows="3" required></textarea>
     </div>
     <button type="submit" class="btn btn-primary">답글</button>
   </form>
