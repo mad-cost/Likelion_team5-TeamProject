@@ -16,6 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService service;
+  
+    @GetMapping("/schedule")
+    public String selectSchedulePage(){
+        return "order/select-schedule";
+
+    }
 
     @GetMapping
     public List<ProgramOrderDto> readAll() {
@@ -28,7 +34,8 @@ public class OrderController {
             Long id
     ) {
         return service.readOne(id);
-    }
+
+   
 
 
     @GetMapping("{id}/payment")

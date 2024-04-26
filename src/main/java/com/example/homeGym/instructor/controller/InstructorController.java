@@ -1,5 +1,6 @@
 package com.example.homeGym.instructor.controller;
 
+import com.example.homeGym.auth.dto.SignInDto;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
@@ -27,7 +28,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 
-
 @Controller
 @Slf4j
 @RequestMapping("instructor")
@@ -52,7 +52,8 @@ public class InstructorController {
     @PostMapping("/signin")
     public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
 
-        instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+
         return "redirect:/user/main";
     }
 
@@ -156,7 +157,7 @@ public class InstructorController {
         model.addAttribute("reviews", reviews);
         return "instructor/instructor-reviews"; // 타임리프 템플릿 파일 이름
     }
-
+             
     // 강사 수업 페이지
     @GetMapping("/program")
     public String instructorProgramList(Model model) {
@@ -221,7 +222,7 @@ public class InstructorController {
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         programCheckDto.setUserProgramId(userProgram.getId());
         programCheckService.createProgramCheck(programCheckDto);
-        return "redirect:/instructor/program/" + programId + "/user/" + userId;
+        return "redirect:/instructor/program/" + programId;
 
     }
 
