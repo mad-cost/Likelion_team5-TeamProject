@@ -15,6 +15,7 @@ public class ScheduleDto {
     private String week;
     private String time;
 
+    private String instructorName;
     private Long instructorId;
     private LocalDateTime createAt;
 
@@ -24,6 +25,7 @@ public class ScheduleDto {
                 .id(entity.getId())
                 .week(entity.getWeek())
                 .time(entity.getTime())
+                .instructorName(entity.getInstructorName())
                 .instructorId(entity.getInstructorId())
                 .createAt(entity.getCreateAt())
                 .build();

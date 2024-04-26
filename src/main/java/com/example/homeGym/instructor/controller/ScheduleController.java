@@ -33,6 +33,9 @@ public class ScheduleController {
             throw new IllegalArgumentException("Authentication failed");
         }
 
+        // 현재 강사의 이름을 모델에 추가
+        model.addAttribute("instructorName", currentInstructor.getName());
+
         List<ScheduleDto> scheduleDtos;
         if ("time".equals(orderBy)) {
             scheduleDtos = scheduleService.findAllByOrderByTime();

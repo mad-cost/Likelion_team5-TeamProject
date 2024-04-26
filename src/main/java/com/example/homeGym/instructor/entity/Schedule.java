@@ -20,6 +20,7 @@ public class Schedule {
     @Setter
     private String time;
 
+    private String instructorName;
     @Setter
     private Long instructorId;
     @CreationTimestamp

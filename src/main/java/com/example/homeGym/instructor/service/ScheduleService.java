@@ -3,6 +3,7 @@ package com.example.homeGym.instructor.service;
 import com.example.homeGym.instructor.dto.ScheduleDto;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Schedule;
+import com.example.homeGym.instructor.entity.Time;
 import com.example.homeGym.instructor.entity.Week;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.common.util.AuthenticationFacade;
@@ -44,7 +45,10 @@ public class ScheduleService {
         Instructor currentInstructor = facade.getCurrentInstructor();
         List<ScheduleDto> scheduleDtos = scheduleRepository.findWeekAndTimeAndCreateAtOrderByInstructorId(currentInstructor.getId())
                 .stream()
-                .sorted(Comparator.comparing(Schedule::getTime))
+                .sorted(Comparator.comparing(schedule -> {
+                    Time scheduleTime = Time.valueOf(schedule.getTime());
+                    return scheduleTime.getStartHour(); // 시작 시간을 기준으로 정렬
+                }))
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
         return scheduleDtos;
@@ -59,6 +63,7 @@ public class ScheduleService {
         Schedule schedule = Schedule.builder()
                 .week(week)
                 .time(time)
+                .instructorName(currentInstructor.getName())
                 .instructorId(currentInstructor.getId())
                 .build();
 

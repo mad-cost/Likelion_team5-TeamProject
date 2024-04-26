@@ -9,10 +9,7 @@
 <body>
 
 <div class="container mt-5">
-  <h2>강사 스케줄</h2>
-
-  <!-- 스케줄 조회 -->
-  <h4>Current Schedule</h4>
+  <h2 th:text="${instructorName} + '님의 스케줄'"></h2>
 
   <!-- 정렬 옵션 -->
   <div class="mb-3">
@@ -90,7 +87,9 @@
                 th:value="${time.name()}" th:text="${time.description}">Time slot</option>
       </select>
     </div>
-    <button type="submit" class="btn btn-success">스케줄 생성</button>
+    <button type="submit" class="btn btn-outline-success">스케줄 생성</button>
+    <!-- 페이지로 돌아가는 버튼 -->
+    <button type="button" class="btn btn-outline-primary" onclick="goToInstructorPage()">프로필로 돌아가기</button>
   </form>
 </div>
 
@@ -109,6 +108,10 @@
         var selectedValue = selectElement.value;
         // Redirect to the selected URL
         window.location.href = selectedValue;
+    }
+
+    function goToInstructorPage() {
+        window.location.href = "/instructor/";
     }
 </script>
 
