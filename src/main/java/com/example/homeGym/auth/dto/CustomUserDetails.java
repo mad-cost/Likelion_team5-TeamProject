@@ -24,10 +24,10 @@ public class CustomUserDetails implements UserDetails {
 
     private Long id;
     private String name;
+    private String email;
     private String password;
     private String profileImageUrl;
     private String gender;
-    private String email;
     private String birthyear;
     private String birthday;
     private String roles;
@@ -57,6 +57,7 @@ public class CustomUserDetails implements UserDetails {
         userDetails.setState(String.valueOf(entity.getState()));
         return userDetails;
     }
+
 
     @Override
     public String getPassword() {return this.password;}
