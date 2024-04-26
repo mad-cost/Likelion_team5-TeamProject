@@ -20,6 +20,17 @@ public class ProgramCheckDto {
     private Time time;
     private LocalDateTime createdAt;
 
+
+    public static ProgramCheckDto fromEntity(ProgramCheck entity) {
+        return ProgramCheckDto.builder()
+                .id(entity.getId())
+                .userProgramId(entity.getUserProgramId())
+                .memo(entity.getMemo())
+                .programDate(entity.getProgramDate())
+                .time(entity.getTime())
+                .build();
+    }
+
     public ProgramCheck toEntity(){
         return ProgramCheck.builder()
                 .id(this.id)
