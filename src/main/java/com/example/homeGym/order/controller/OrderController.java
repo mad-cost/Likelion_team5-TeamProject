@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService service;
 
+    @GetMapping("/orders/schedule")
+    public String selectSchedulePage(){
+        return "order/select-schedule";
+    }
+
 
     @GetMapping("/orders/{id}/payment")
     public Object readTossPayment(

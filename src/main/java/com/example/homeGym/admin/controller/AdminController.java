@@ -80,7 +80,7 @@ public class AdminController {
       return "redirect:/admin/user/" + userId;
 
   }
-//    유저 회차 수정
+  //    유저 회차 수정
   @PostMapping("/user/{userId}/userProgram/{userProgramId}/update")
   public String update(
           @PathVariable("userId")
@@ -101,7 +101,6 @@ public class AdminController {
       dto.setProgram(programServiceForUser.findById(programs));
     }
     log.info("####### : {}", userPrograms.get(0).getId());
-    log.info("####### : {}", userPrograms.get(1).getId());
     model.addAttribute("userPrograms", userPrograms);
 
       return "/admin/userUpdate";
