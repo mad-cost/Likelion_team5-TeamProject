@@ -2,6 +2,7 @@ package com.example.homeGym.instructor.service;
 
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
+import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import lombok.RequiredArgsConstructor;
@@ -168,4 +169,11 @@ public class UserProgramService {
     public UserProgram findByUserIdAndProgramId(Long userId, Long programId){
         return userProgramRepository.findByUserIdAndProgramId(userId, programId);
     }
+    //      programId에 해당하는 모든 user_program의 id가져오기
+    public List<UserProgram> findAllByProgramIdConvertId(Long programId){
+        return userProgramRepository.findAllByProgramId(programId);
+    }
+
+
+
 }

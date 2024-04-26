@@ -41,6 +41,9 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
+    public User findByLongId(Long userId){
+        return userRepository.findById(userId).orElseThrow();
+    }
 
 
 }
