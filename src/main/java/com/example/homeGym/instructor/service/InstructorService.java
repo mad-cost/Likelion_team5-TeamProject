@@ -1,6 +1,8 @@
 package com.example.homeGym.instructor.service;
 
 
+import com.example.homeGym.admin.entity.SettlementFee;
+import com.example.homeGym.admin.repository.SettlementFeeRepository;
 import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.InstructorDetailsManager;
@@ -53,6 +55,7 @@ public class InstructorService {
     private final CookieUtil cookieUtil;
     private final JwtTokenUtils jwtTokenUtils;
     private final InstructorDetailsManager instructorDetailsManager;
+    private final SettlementFeeRepository settlementFeeRepository;
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
@@ -61,6 +64,8 @@ public class InstructorService {
         Instructor instructor = dto.toEntity();
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
         instructorRepository.save(instructor);
+
+
     }
 
     public boolean signIn(HttpServletResponse res, String email, String password) throws Exception{
@@ -234,6 +239,18 @@ public class InstructorService {
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
+
+        //승인 시 강사에게 정산금 테이블 생성해줌
+        SettlementFee settlementFee = settlementFeeRepository.findByInstructorId(instructorId);
+        if (settlementFee == null) {
+            settlementFee = new SettlementFee();
+            settlementFee.setInstructorId(instructorId);
+            settlementFee.setCurrentFee(0);
+            settlementFee.setTotalFee(0);
+            settlementFeeRepository.save(settlementFee);
+            log.info("New SettlementFee created for instructorId: {}", instructorId);
+        }
+
     }
 //    강사 신청 거절
     public void delete(Long instructorId){

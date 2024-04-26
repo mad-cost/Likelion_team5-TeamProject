@@ -221,7 +221,7 @@ public class InstructorController {
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         programCheckDto.setUserProgramId(userProgram.getId());
         programCheckService.createProgramCheck(programCheckDto);
-        return "redirect:/instructor/program/" + programId + "/user/" + userId;
+        return "redirect:/instructor/program/" + programId;
 
     }
 
