@@ -20,6 +20,8 @@ public class CommentDto {
         return CommentDto.builder()
                 .id(entity.getId())
                 .content(entity.getContent())
+                .reviewId(entity.getReviewId())
+                .instructorId(entity.getInstructor().getId())
                 .build();
     }
 }

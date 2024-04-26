@@ -14,4 +14,7 @@ public interface UserProgramRepository extends JpaRepository<UserProgram, Long> 
     List<UserProgram> findByProgramIdAndState(Long programId, UserProgram.UserProgramState state);
     List<UserProgram> findAllByUserId(Long userId);
     List<UserProgram> findAllByProgramId(Long programLongId);
+
+    UserProgram findByUserIdAndProgramId(Long userId, Long programId);
+
 }
