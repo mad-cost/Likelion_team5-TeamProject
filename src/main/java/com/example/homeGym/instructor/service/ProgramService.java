@@ -9,10 +9,10 @@ import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
-import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.UserProgram;
+import com.example.homeGym.instructor.entity.*;
+import com.example.homeGym.instructor.repository.MainCategoryRepository;
 import com.example.homeGym.instructor.repository.ProgramRepository;
+import com.example.homeGym.instructor.repository.SubCategoryRepository;
 import com.example.homeGym.instructor.repository.UserProgramRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,8 @@ public class ProgramService {
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
     private final SettlementFeeRepository settlementFeeRepository;
+    private final MainCategoryRepository mainCategoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
     // 프로그램 목록
     public ProgramDto findByProgramId(Long id) {
@@ -79,10 +81,16 @@ public class ProgramService {
     @Transactional
     public void createProgram(ProgramDto programDto) {
         Instructor currentInstructor = facade.getCurrentInstructor();
+        // ID를 사용하여 카테고리 객체를 조회
+        MainCategory mainCategory = mainCategoryRepository.findById(programDto.getMainCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid main category ID"));
+        SubCategory subCategory = subCategoryRepository.findById(programDto.getSubCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid sub category ID"));
 
         Program program = builder()
                 .instructorId(currentInstructor.getId())
-                .category(programDto.getCategory())
+                .mainCategory(mainCategory)
+                .subCategory(subCategory)
                 .title(programDto.getTitle())
                 .description(programDto.getDescription())
                 .supplies(programDto.getSupplies())
@@ -113,8 +121,15 @@ public class ProgramService {
             throw new GlobalExceptionHandler(CustomGlobalErrorCode.PROGRAM_FORBIDDEN);
         }
 
+        MainCategory mainCategory = mainCategoryRepository.findById(programDto.getMainCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid main category ID"));
+        SubCategory subCategory = subCategoryRepository.findById(programDto.getSubCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid sub category ID"));
+
         program.setTitle(programDto.getTitle());
         program.setDescription(programDto.getDescription());
+        program.setMainCategory(mainCategory);
+        program.setSubCategory(subCategory);
         program.setSupplies(programDto.getSupplies());
         program.setCurriculum(programDto.getCurriculum());
         program.setPrice1(programDto.getPrice1());

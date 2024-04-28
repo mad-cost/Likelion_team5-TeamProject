@@ -1,8 +1,6 @@
 package com.example.homeGym.instructor.dto;
 
-import com.example.homeGym.instructor.entity.Category;
-import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.entity.Program;
+import com.example.homeGym.instructor.entity.*;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -21,7 +19,9 @@ public class ProgramDto {
   private Long instructorId;
 
   @NotNull(message = "Category cannot be null")
-  private Category category;
+  private Long mainCategoryId;
+
+  private Long subCategoryId;
 
   @NotBlank(message = "Title cannot be empty")
   @Size(max = 255, message = "Title cannot be longer than 255 characters")
@@ -50,7 +50,8 @@ public class ProgramDto {
     return ProgramDto.builder()
             .id(entity.getId())
             .instructorId(entity.getInstructorId())
-            .category(entity.getCategory())
+            .mainCategoryId(entity.getMainCategory().getId())
+            .subCategoryId(entity.getSubCategory().getId())
             .title(entity.getTitle())
             .description(entity.getDescription())
             .supplies(entity.getSupplies())
