@@ -15,6 +15,7 @@ public class ScheduleDto {
     private String week;
     private String time;
 
+    private boolean selected;
     private String instructorName;
     private Long instructorId;
     private LocalDateTime createAt;
@@ -25,6 +26,7 @@ public class ScheduleDto {
                 .id(entity.getId())
                 .week(entity.getWeek())
                 .time(entity.getTime())
+                .selected(entity.isSelected())
                 .instructorName(entity.getInstructorName())
                 .instructorId(entity.getInstructorId())
                 .createAt(entity.getCreateAt())

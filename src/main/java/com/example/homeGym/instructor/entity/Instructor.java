@@ -40,7 +40,8 @@ public class Instructor {
     @Setter
     private String career;
     @Setter
-    private String profileImageUrl;
+    @ElementCollection
+    private List<String> profileImageUrl;
     @Setter
     private String certificate;
     @Setter
