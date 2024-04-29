@@ -68,6 +68,7 @@ public class ProgramCheckService {
     public ProgramCheckDto updateProgramCheck(Long id, ProgramCheckDto programCheckDto) {
         ProgramCheck existingProgramCheck = programCheckRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("ProgramCheck with id " + id + " not found"));
+        log.info("programCheck Id: {}", existingProgramCheck.getId());
         existingProgramCheck.setMemo(programCheckDto.getMemo());
         existingProgramCheck.setProgramDate(programCheckDto.getProgramDate());
         existingProgramCheck.setTime(programCheckDto.getTime());
