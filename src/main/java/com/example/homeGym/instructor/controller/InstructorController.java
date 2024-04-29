@@ -184,8 +184,15 @@ public class InstructorController {
         }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
-        // 각 사용자에 대한 정보 조회
+        List<UserProgramDto> finishUserPrograms = userProgramService.findByProgramIdAndStateFINISH(programId);
+        // 각 사용자에 대한 정보 조회 (진행중 유저, 종료된 유저)
         List<UserProgramDetailDto> userDetails = userPrograms.stream()
+                .map(userProgram -> {
+                    UserDto user = userService.findById(userProgram.getUserId());
+                    return new UserProgramDetailDto(user.getName(), user.getId(), userProgram.getCount(), userProgram.getMaxCount());
+                })
+                .toList();
+        List<UserProgramDetailDto> finishUserDetails = finishUserPrograms.stream()
                 .map(userProgram -> {
                     UserDto user = userService.findById(userProgram.getUserId());
                     return new UserProgramDetailDto(user.getName(), user.getId(), userProgram.getCount(), userProgram.getMaxCount());
@@ -194,6 +201,7 @@ public class InstructorController {
 
         model.addAttribute("program", programDto);
         model.addAttribute("userDetails", userDetails);
+        model.addAttribute("finishUserDetails", finishUserDetails);
         return "instructor/program-detail";
     }
     private boolean checkInstructorAccess(Long programId) {

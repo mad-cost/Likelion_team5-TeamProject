@@ -39,6 +39,7 @@ public class ProgramCheckService {
         Long userProgramId = programCheckDto.getUserProgramId();
         updateUserProgramCount(userProgramId);
     }
+
     //일지 작성시 유저 회차권 소모
     @Transactional
     public void updateUserProgramCount(Long userProgramId){

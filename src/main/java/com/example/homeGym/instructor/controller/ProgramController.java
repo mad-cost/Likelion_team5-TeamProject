@@ -1,6 +1,9 @@
 package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.entity.MainCategory;
+import com.example.homeGym.instructor.repository.MainCategoryRepository;
+import com.example.homeGym.instructor.service.CategoryService;
 import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +21,14 @@ import java.util.List;
 public class ProgramController {
     private final ProgramService programService;
     private final UserProgramService userProgramService;
+    private final CategoryService categoryService;
 
     @GetMapping()
     public String createPage(
             Model model
     ) {
+       /* List<MainCategory> mainCategories = categoryService.findAllMainCategories();
+        model.addAttribute("mainCategories", mainCategories);*/
         model.addAttribute("programDto", new ProgramDto());
         return "/instructor/program/instructor-program";
     }

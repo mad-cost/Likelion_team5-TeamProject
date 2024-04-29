@@ -13,7 +13,7 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${program.title}"></h5>
-                    <p class="card-text" th:text="${program.category}"></p>
+                    <p class="card-text" th:text="${program.getMainCategoryId()}"></p>
                     <p class="card-text"><small class="text-muted" th:text="${program.state.getDescription()}"></small>
                     </p>
                     <!-- 프로그램 상세 페이지로 이동하는 링크 -->
@@ -29,7 +29,7 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${program.title}"></h5>
-                    <p class="card-text" th:text="${program.category}"></p>
+                    <p class="card-text" th:text="${program.getMainCategoryId()}"></p>
                     <p class="card-text"><small class="text-muted" th:text="${program.state.getDescription()}"></small>
                     </p>
                     <!-- 프로그램 상세 페이지로 이동하는 링크 -->
@@ -42,6 +42,7 @@
     <div class="row">
         <div class="col-md-12">
             <a href="/program" class="btn btn-primary">프로그램 생성 요청</a>
+            <a href="/instructor/" class="btn btn-success">프로필로 돌아가기</a>
         </div>
     </div>
 </div>

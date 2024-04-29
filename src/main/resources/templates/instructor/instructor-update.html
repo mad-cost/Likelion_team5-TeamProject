@@ -36,9 +36,9 @@
                             <input type="hidden" name="id" th:value="${instructorDto.id}">
                             <!-- 기존 정보를 불러와서 표시 -->
                             <div class="form-group d-flex mb-3">
-                                <div class="form-floating flex-grow-1">
-                                    <input type="text" class="form-control" id="email" th:value="*{instructorDto.email}" disabled>
-                                    <label for="email">아이디 (수정 불가)</label>
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="email" th:field="*{instructorDto.email}" placeholder="이메일" readonly>
+                                    <label for="email">이메일 (수정 불가)</label>
                                 </div>
                             </div>
 
@@ -167,8 +167,7 @@
         let name = document.getElementById('name').value.trim();
         let gender = document.getElementById('gender').value;
         let birthdate = document.getElementById('birthdate').value.trim();
-        let emailDomain = document.getElementById('emailDomain').value;
-        let customDomain = document.getElementById('customDomain').style.display !== 'none' ? document.getElementById('customDomain').value.trim() : "";
+        let email = document.getElementById('email').value.trim();
         let phonePart1 = document.getElementById('phonePart1').value.trim();
         let phonePart2 = document.getElementById('phonePart2').value.trim();
         let phonePart3 = document.getElementById('phonePart3').value.trim();
@@ -177,7 +176,7 @@
 
 
         // 모든 필수 필드가 채워졌는지 확인
-        if (!name || !gender || !birthdate || !emailDomain || (emailDomain === 'other' && !customDomain) || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
+        if (!name || !gender || !birthdate || !email || !phonePart1 || !phonePart2 || !phonePart3 || !career || !certificate) {
             alert('모든 내용을 작성해 주세요.');
             return; // 필수 필드가 하나라도 비어 있으면 폼 제출을 중단합니다.
         }

@@ -10,16 +10,27 @@
 <div class="container mt-5">
   <h2>프로그램 수정</h2>
 
-  <form th:action="@{/program/update/{programId}(programId=${programDto.id})}" method="post" class="mt-4">
-
+  <form id="programForm" th:action="@{/program/update/{programId}(programId=${programDto.id})}" th:object="${programDto}" th:method="post" class="mt-4">
     <div class="form-group">
-      <label for="category">카테고리:</label>
-      <select class="form-control" id="category" name="category" th:value="${programDto.category}" required>
-        <option value="YOGA" data-subcategories="Mind Health Management">Yoga</option>
-        <option value="PRENATAL_POSTNATAL" data-subcategories="Prenatal/Postnatal Care">Prenatal/Postnatal</option>
-        <option value="EXERCISE" data-subcategories="Diet,Strength,Pain Management">Exercise</option>
+      <label for="mainCategoryId">카테고리:</label>
+      <select class="form-control" id="mainCategoryId" name="mainCategoryId" th:field="*{mainCategoryId}" required>
+        <option value="">Select Category</option>
+        <option value="1">Yoga</option>
+        <option value="2">Prenatal/Postnatal</option>
+        <option value="3">Exercise</option>
       </select>
     </div>
+
+    <div class="form-group">
+      <label for="subCategoryId">서브카테고리:</label>
+      <select class="form-control" id="subCategoryId" name="subCategoryId" th:field="*{subCategoryId}" required>
+        <option value="">Select Subcategory</option>
+        <!-- 서브 카테고리 옵션은 JavaScript를 통해 동적으로 채워짐 -->
+      </select>
+    </div>
+    <!-- 추가된 hidden 필드 -->
+    <input type="hidden" th:field="*{subCategoryId}" id="hiddenSubCategoryId"/>
+
 
     <div class="form-group">
       <label for="title">프로그램 제목 수정:</label>
@@ -65,5 +76,55 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mainCategorySelect = document.getElementById('mainCategoryId');
+    const subCategorySelect = document.getElementById('subCategoryId');
+    const hiddenSubCategoryId = document.getElementById('hiddenSubCategoryId');
+
+    function populateSubCategories(category) {
+      const subCategories = {
+        '1': {'Mind Health Management': 1},
+        '2': {'Prenatal/Postnatal Care': 2},
+        '3': {'Diet': 3, 'Strength': 4, 'Pain Management': 5}
+      };
+
+      subCategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+
+      if (subCategories[category]) {
+        Object.keys(subCategories[category]).forEach(function (name) {
+          const id = subCategories[category][name];
+          const option = document.createElement('option');
+          option.value = id;
+          option.textContent = name;
+          subCategorySelect.appendChild(option);
+        });
+      }
+    }
+
+    function selectSubCategory() {
+      const subCategoryId = hiddenSubCategoryId.value;
+      if (subCategoryId) {
+        subCategorySelect.value = subCategoryId;
+      }
+    }
+
+    mainCategorySelect.addEventListener('change', function () {
+      populateSubCategories(this.value);
+      subCategorySelect.value = ''; // Reset subcategory when main category changes
+    });
+
+    document.getElementById('programForm').addEventListener('submit', function () {
+      hiddenSubCategoryId.value = subCategorySelect.value;
+    });
+
+    // 초기 메인 카테고리와 서브 카테고리 셋업
+    if (mainCategorySelect.value) {
+      populateSubCategories(mainCategorySelect.value);
+      selectSubCategory();
+    }
+  });
+
+</script>
 </body>
 </html>
