@@ -20,8 +20,6 @@ public class Schedule {
     @Setter
     private String time;
     @Setter
-    private boolean selected;
-
     private String instructorName;
     @Setter
     private Long instructorId;

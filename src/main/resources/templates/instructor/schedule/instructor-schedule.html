@@ -115,7 +115,7 @@
     </div>
 
     <!-- 주소 목록 섹션 추가 -->
-    <div class="card mb-3">
+    <div class="card mb-3 mt-3 address-section">
         <div class="card-header">주소 목록</div>
         <div class="card-body">
             <table id="addressTable" class="table">
@@ -147,108 +147,7 @@
             </table>
         </div>
     </div>
-
-
-    <!-- 정렬 옵션 -->
-    <div class="card mb-3">
-        <div class="card-header">스케줄</div>
-        <div class="card-body">
-            <div class="mb-3">
-                <label for="orderBy" class="form-label">정렬:</label>
-                <select id="orderBy" name="orderBy" class="form-select" onchange="handleOrderBySelection(this)">
-                    <option value="/instructor/schedule?orderBy=week" th:selected="${orderBy == 'week'}">요일순</option>
-                    <option value="/instructor/schedule?orderBy=time" th:selected="${orderBy == 'time'}">시간순</option>
-                </select>
-            </div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>요일</th>
-                    <th>시간</th>
-                    <th>생성 시간</th>
-                    <th>수정 및 삭제</th>
-                </tr>
-                </thead>
-                <tbody th:each="scheduleDto : ${scheduleDtos}">
-                <tr>
-                    <form th:action="@{/instructor/schedule/{scheduleId}(scheduleId=${scheduleDto.id})}" method="post"
-                          onsubmit="return confirm('프로그램을 수정하시겠습니까?');">
-                        <td>
-                            <!-- 요일 선택 -->
-                            <select name="week" class="form-select">
-                                <option value="">요일 선택</option>
-                                <option th:each="week : ${T(com.example.homeGym.instructor.entity.Week).values()}"
-                                        th:value="${week.name()}" th:text="${week.koreanName}"
-                                        th:selected="${week.name() == scheduleDto.week}">Week slot
-                                </option>
-                            </select>
-                        </td>
-                        <td>
-                            <!-- 시간 선택 -->
-                            <select name="time" class="form-select">
-                                <option value="">시간 선택</option>
-                                <option th:each="time : ${T(com.example.homeGym.instructor.entity.Time).values()}"
-                                        th:value="${time.name()}" th:text="${time.description}"
-                                        th:selected="${time.name() == scheduleDto.time}">Time slot
-                                </option>
-                            </select>
-                        </td>
-                        <td th:text="${#temporals.format(scheduleDto.createAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                        <td>
-                            <table>
-                                <!-- 스케줄 수정 폼 -->
-                                <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post"
-                                      onsubmit="return confirm('스케줄을 수정하시겠습니까?');">
-                                    <input type="hidden" name="_method" value="put"/>
-                                    <button type="submit" class="btn btn-outline-warning mr-2">수정</button>
-                                </form>
-                                <!-- 스케줄 삭제 폼 -->
-                                <form th:action="@{'/instructor/schedule/' + ${scheduleDto.id}}" method="post"
-                                      onsubmit="return confirm('스케줄을 삭제하시겠습니까?');">
-                                    <input type="hidden" name="_method" value="delete"/>
-                                    <button type="submit" class="btn btn-outline-danger">삭제</button>
-                                </form>
-                            </table>
-                        </td>
-                    </form>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- 스케줄 생성 폼 -->
-
-    <div class="card mb-3">
-        <div class="card-header">새 스케줄 생성</div>
-        <div class="card-body">
-            <form th:action="@{'/instructor/schedule'}" method="post">
-                <div class="form-group">
-                    <label for="week" class="form-label">요일</label>
-                    <select id="week" name="week" class="form-select" required>
-                        <option value="">요일 선택</option>
-                        <option th:each="week : ${T(com.example.homeGym.instructor.entity.Week).values()}"
-                                th:value="${week.name()}" th:text="${week.koreanName}">Week slot
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="time" class="form-label">시간</label>
-                    <select id="time" name="time" class="form-select" required>
-                        <option value="">시간 선택</option>
-                        <option th:each="time : ${T(com.example.homeGym.instructor.entity.Time).values()}"
-                                th:value="${time.name()}" th:text="${time.description}">Time slot
-                        </option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-outline-primary mr-1">스케줄 생성</button>
-                <!-- 페이지로 돌아가는 버튼 -->
-                <button type="button" class="btn btn-outline-success" onclick="goToInstructorPage()">프로필로 돌아가기</button>
-            </form>
-        </div>
-    </div>
-</div>
-  
+  </div>
 
 <div id="scheduleTableContainer"></div>
 <button id="saveButton">선택된 스케줄 저장</button>
@@ -264,14 +163,16 @@
     document.addEventListener("DOMContentLoaded", function () {
         initializeTable();
         fetchSavedSchedules();
-        // 저장 버튼 클릭 시 선택된 스케줄 저장
+
         document.getElementById("saveButton").onclick = function () {
-            saveSelectedSchedules();
+            Promise.all([deleteCanceledSchedules(), saveSelectedSchedules()]) // 두 작업을 병렬로 수행
+                .then(() => fetchSavedSchedules()) // 완료 후 저장된 스케줄 다시 불러오기
+                .catch(error => console.error('Error processing schedules:', error)); // 에러 처리
         };
     });
 
     function fetchSavedSchedules() {
-        fetch("/instructor/schedule/allSchedules")
+        fetch("/instructor/schedule/all") // DB에서 가져오는 엔드포인트
             .then(response => response.json())
             .then(data => {
                 displaySavedSchedules(data);
@@ -285,23 +186,73 @@
     function displaySavedSchedules(savedSchedules) {
         const table = document.getElementById("scheduleTable");
         const cells = table.querySelectorAll(".cell");
+        // 모든 셀의 선택 상태를 초기화
+        cells.forEach(cell => cell.classList.remove("selected"));
 
         // 저장된 스케줄에 해당하는 셀의 선택 상태를 변경합니다.
         savedSchedules.forEach(schedule => {
-            const { week, time } = schedule;
+            const { week, time, id } = schedule;
             const cell = table.querySelector(`td[data-week="${week}"][data-time="${time}"]`);
             if (cell) {
                 cell.classList.add("selected");
+                cell.setAttribute("data-id", id); // 스케줄 ID를 HTML 속성으로 저장
             }
         });
     }
 
     // 요일과 시간대 정보
-    const days = ["월", "화", "수", "목", "금", "토", "일"];
-    const times = ["6시 - 9시", "9시 - 12시", "12시 - 15시", "15시 - 18시", "18시 - 21시", "21시 - 24시"];
+    const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    const times = ["SIX_TO_NINE", "NINE_TO_TWELVE", "TWELVE_TO_FIFTEEN", "FIFTEEN_TO_EIGHTEEN", "EIGHTEEN_TO_TWENTY_ONE", "TWENTY_ONE_TO_TWENTY_FOUR"];
+
+    // 시간대 정보를 Enum의 description으로 변경하는 함수
+    function getTimeDescription(timeEnum) {
+        switch (timeEnum) {
+            case "SIX_TO_NINE":
+                return "6시 - 9시";
+            case "NINE_TO_TWELVE":
+                return "9시 - 12시";
+            case "TWELVE_TO_FIFTEEN":
+                return "12시 - 15시";
+            case "FIFTEEN_TO_EIGHTEEN":
+                return "15시 - 18시";
+            case "EIGHTEEN_TO_TWENTY_ONE":
+                return "18시 - 21시";
+            case "TWENTY_ONE_TO_TWENTY_FOUR":
+                return "21시 - 24시";
+            default:
+                return "";
+        }
+    }
+    // enum 값에 따라 요일과 시간대를 가져옴
+    function getDayName(dayEnum) {
+        switch (dayEnum) {
+            case "MONDAY":
+                return "월";
+            case "TUESDAY":
+                return "화";
+            case "WEDNESDAY":
+                return "수";
+            case "THURSDAY":
+                return "목";
+            case "FRIDAY":
+                return "금";
+            case "SATURDAY":
+                return "토";
+            case "SUNDAY":
+                return "일";
+            default:
+                return "";
+        }
+    }
+    // 시간대 정보를 description으로 변환하여 사용
+    for (const time of times) {
+        console.log(getTimeDescription(time)); // 이렇게 사용하면 description으로 출력됩니다.
+    }
 
     // 선택된 스케줄을 저장하는 배열
     let selectedSchedules = [];
+    // 선택을 취소한 스케줄을 저장하는 배열
+    let canceledSchedules = [];
 
     // 테이블을 생성하고 초기화하는 함수
     function initializeTable() {
@@ -314,7 +265,7 @@
         // 요일 헤더 생성
         for (const week of days) {
             const th = document.createElement("th");
-            th.textContent = week;
+            th.textContent = getDayName(week);
             headerRow.appendChild(th);
         }
 
@@ -322,7 +273,7 @@
         for (const time of times) {
             const row = table.insertRow();
             const timeCell = row.insertCell();
-            timeCell.textContent = time;
+            timeCell.textContent = getTimeDescription(time);
 
             // 각 요일별 셀 생성
             for (const week of days) {
@@ -343,7 +294,8 @@
     function toggleCellColor(cell, week, time) {
         if (cell.classList.contains("selected")) {
             cell.classList.remove("selected");
-            removeSelectedSchedule(week, time);
+            const scheduleId = cell.getAttribute("data-id"); // ID 속성에서 가져옴
+            removeSelectedSchedule(week, time, scheduleId);
         } else {
             cell.classList.add("selected");
             addSelectedSchedule(week, time);
@@ -354,18 +306,53 @@
         selectedSchedules.push({ week, time });
     }
 
-    function removeSelectedSchedule(week, time) {
+    function removeSelectedSchedule(week, time, scheduleId) {
         selectedSchedules = selectedSchedules.filter(schedule => !(schedule.week === week && schedule.time === time));
+        canceledSchedules.push({ week, time, id: scheduleId }); // ID와 함께 추가
+    }
+
+    // 선택된 스케줄과 선택을 취소한 스케줄을 함께 서버로 전송하여 삭제하는 함수
+    function deleteCanceledSchedules() {
+        if (canceledSchedules.length === 0) {
+            return Promise.resolve();  // 선택을 취소한 스케줄이 없으면 아무 작업도 수행하지 않음
+        }
+
+        fetch("/instructor/schedule/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(canceledSchedules.map(schedule => ({
+                week: schedule.week,
+                time: schedule.time,
+                id: schedule.id // ID 포함
+            })))
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete canceled schedules');
+                }
+                alert('선택을 취소한 스케줄이 성공적으로 삭제되었습니다.');
+                canceledSchedules = []; // 선택을 취소한 스케줄 배열 초기화
+                fetchSavedSchedules(); // 저장된 스케줄 다시 불러오기
+            })
+
     }
 
     // 선택된 스케줄을 저장하는 함수
     function saveSelectedSchedules() {
+        if (selectedSchedules.length === 0) {
+            return Promise.resolve(); // 선택된 스케줄이 없으면 바로 해결된 프라미스를 반환
+        }
         fetch("/instructor/schedule/save", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(selectedSchedules)
+            body: JSON.stringify(selectedSchedules.map(schedule => ({
+                week: schedule.week, // Enum 값을 문자열로 변환
+                time: schedule.time  // Enum 값을 문자열로 변환
+            })))
         })
             .then(response => {
                 if (!response.ok) {
@@ -379,11 +366,13 @@
                 console.error('Error saving schedules:', error);
                 alert('스케줄 저장에 실패했습니다.');
             });
-      
-      
-      
-      
-      $(document).ready(function () {
+
+    }
+
+
+
+    // =============================== 주소 검색 ====================================
+    $(document).ready(function () {
 
         $.getJSON("address/siDo", function (data) {
             var siDoSelect = $("#siDoSelect");
@@ -420,11 +409,8 @@
                 });
             });
         });
-
-    });
-
       
-    }
+    })
 
 </script>
 </body>
