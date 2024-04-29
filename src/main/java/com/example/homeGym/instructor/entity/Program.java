@@ -47,6 +47,7 @@ public class Program {
     private ProgramState state;
     @CreationTimestamp
     private LocalDateTime createdAt;
+    @Setter
     private LocalDateTime approvalTime;
 
     @Getter
