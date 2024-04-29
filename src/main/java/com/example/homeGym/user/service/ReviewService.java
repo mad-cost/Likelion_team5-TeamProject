@@ -11,6 +11,10 @@ import com.example.homeGym.user.utils.FileHandlerUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -177,5 +181,12 @@ public class ReviewService {
             }
         }
         return reviewDto;
+    }
+
+
+    @Transactional
+    public Page<Review> findAllStarIsFive(int page, int pageSize){
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending()); // id를 기준으로 역순으로 정렬
+        return reviewRepository.findAllStarIsFive(pageable);
     }
 }

@@ -117,4 +117,20 @@ public class ScheduleController {
         scheduleService.deleteSchedule(scheduleId);
         return "redirect:/instructor/schedule";
     }
+
+    // test
+    @PostMapping("save")
+    public String saveClickedSlot(
+            @RequestParam("week") String week,
+            @RequestParam("time") String time,
+            Model model
+    ) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
+
+        scheduleService.createSchedule(week, time);
+        return "redirect:/instructor/schedule";
+    }
 }

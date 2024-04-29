@@ -26,6 +26,17 @@
         <button class="button p-grid-col5" onclick="location.href='https://localhost:8080/users/myPage';" style="background-color: #e8f3ff; color: #1b64da">마이페이지</button>
     </div>
 </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const codeElement = document.getElementById("code");
+    const messageElement = document.getElementById("message");
+
+    codeElement.textContent = urlParams.get("code");
+    messageElement.textContent = urlParams.get("message");
+</script>
+
 </body>
 
 </html>

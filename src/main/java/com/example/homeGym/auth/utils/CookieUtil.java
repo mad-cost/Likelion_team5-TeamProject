@@ -17,7 +17,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_EXPIRATION);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         res.addCookie(cookie);
     }
 

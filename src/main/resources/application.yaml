@@ -72,5 +72,5 @@ payment:
   toss:
     test_client_api_key: ${TOSS_CLIENT_API_KEY}
     test_secret_api_key: ${TOSS_SECRET_API_KEY}
-    success_url: "http://localhost"
-    fail_url: "http://localhost"
+    success_url: "http://localhost:8080/api/v1/payments/toss/success"
+    fail_url: "http://localhost:8080/api/v1/payments/toss/fail"

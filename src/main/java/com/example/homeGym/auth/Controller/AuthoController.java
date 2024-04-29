@@ -1,6 +1,7 @@
 package com.example.homeGym.auth.Controller;
 
 import com.example.homeGym.auth.dto.SignInDto;
+import com.example.homeGym.auth.utils.CookieUtil;
 import com.example.homeGym.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,17 @@ public class AuthoController {
                 return ResponseEntity.status(401).body(null);
             }
         }catch(Exception e){
-
             return ResponseEntity.internalServerError().body(null);
-
         }
     }
+
+//    @PostMapping("/signout")
+//    public ResponseEntity<String> singOut(){
+//        try{
+//
+//        }catch(Exception e){
+//            return return ResponseEntity.internalServerError().body(null);
+//        }
+//    }
+
 }

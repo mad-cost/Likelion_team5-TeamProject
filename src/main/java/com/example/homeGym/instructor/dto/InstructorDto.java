@@ -6,6 +6,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class InstructorDto {
     private String birthday;
     private Instructor.InstructorState state;
     private String career;
-    private String profileImageUrl;
+    private List<String> profileImageUrl;
     private String certificate;
     private String medal;
     private String email;

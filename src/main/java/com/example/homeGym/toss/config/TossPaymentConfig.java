@@ -26,7 +26,7 @@ public class TossPaymentConfig {
     private String failUrl;
 
     public static final String URL
-            = "http://localhost:8080/";
+            = "https://api.tosspayments.com/v1/payments";
 
 
 
