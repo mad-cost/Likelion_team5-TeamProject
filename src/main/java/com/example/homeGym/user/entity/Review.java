@@ -38,4 +38,6 @@ public class Review {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Setter
+    private String dateCreatedAt; // yyyy년MM월dd일
 }

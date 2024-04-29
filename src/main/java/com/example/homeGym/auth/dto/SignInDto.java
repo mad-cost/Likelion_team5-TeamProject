@@ -1,4 +1,4 @@
-package com.example.homeGym.instructor.dto;
+package com.example.homeGym.auth.dto;
 
 import lombok.*;
 

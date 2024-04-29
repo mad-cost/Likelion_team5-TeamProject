@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @ToString
 @Builder
 @NoArgsConstructor
@@ -24,9 +25,7 @@ public class UserProgramDto {
     private LocalDateTime endTime;
     private Long programId;
     private Long userId;
-    @Setter
     private Program program;
-    @Setter
     private Instructor instructor;
 
     public static UserProgramDto fromEntity(UserProgram entity){

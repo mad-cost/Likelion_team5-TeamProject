@@ -25,5 +25,7 @@ public class Comment {
     @Setter
     @ManyToOne
     private Instructor instructor;
+    @Setter
+    private String dateCreatedAt;
 }
 
