@@ -2,6 +2,7 @@ package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.service.InstructorAddressService;
 import com.example.homeGym.instructor.service.ScheduleService;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final AuthenticationFacade facade;
+    private final InstructorAddressService instructorAddressService;
 
     private boolean isAuthenticated(Long instructorId) {
         Long currentInstructorId = facade.getCurrentInstructor().getId();
@@ -45,8 +47,30 @@ public class ScheduleController {
 
         model.addAttribute("scheduleDtos", scheduleDtos);
         model.addAttribute("orderBy", orderBy); // Add orderBy to model for template
+
+        model.addAttribute("instructorAddresses", instructorAddressService.getInstructorAddresses(currentInstructor.getId()));
+
+
         return "instructor/schedule/instructor-schedule";
     }
+    @PostMapping("/address")
+    public String addInstructorAddress(@RequestParam String siDo, @RequestParam String siGunGu, @RequestParam String dong) {
+        Instructor instructor = facade.getCurrentInstructor();
+        instructorAddressService.saveInstructorAddress(siDo, siGunGu, dong, instructor.getId());
+        return "redirect:/instructor/schedule"; // 주소 등록 페이지로 리다이렉트
+    }
+
+    @DeleteMapping("/address/{addressId}")
+    public String deleteInstructorAddress(@PathVariable("addressId") Long addressId) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+        if (!isAuthenticated(currentInstructor.getId())) {
+            throw new IllegalArgumentException("Authentication failed");
+        }
+
+        instructorAddressService.deleteInstructorAddress(addressId);
+        return "redirect:/instructor/schedule";
+    }
+
 
     @PostMapping()
     public String createSchedule(
