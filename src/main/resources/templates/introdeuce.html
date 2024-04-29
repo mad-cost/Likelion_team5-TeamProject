@@ -107,6 +107,12 @@
       <div class="card outer-card">
         <div class="card-body text-center">
           <h2 class="card-title">프로그램 소개</h2>
+
+          <!-- @@@찜목록 넣어주기@@@  -->
+          <a href="/user/zzim" class="heart-link">
+            <i class="fas fa-heart heart-icon"></i>
+          </a>
+
           <div th:each="program : ${program}">
             <div class="card inner-card">
                 <div class="card-body">

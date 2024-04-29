@@ -116,7 +116,7 @@
 
 <!-- 그라데이션 글씨 -->
 <div class="container mt-5">
-    <a href="#" class="text-center mb-4 position-relative text-decoration-none">
+    <a href="/main/match" class="text-center mb-4 position-relative text-decoration-none">
         <h5 class="rainbow-text"><b>
             운동 전문가 찾으러 가기!
             방구석 운동왕과 함께해요!</b>
@@ -132,7 +132,9 @@
                 <div class="card-body" >
                     <div class="d-flex align-items-center">
                         <h2 class="card-title"><b>인기 강사</b></h2>
+                      <a href="/main/match">
                         <img src="/static/assets/img/search.png" style="width: 50px; height: 50px; border-radius: 15px; margin-left: 10px; margin-bottom: 10px">
+                      </a>
                     </div>
                     <div class="card inner-cardTwo" style="display: flex; justify-content: center; align-items: center;">
                         <div th:each="instructor : ${instructors}">
