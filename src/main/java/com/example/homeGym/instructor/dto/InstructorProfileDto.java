@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class InstructorProfileDto {
-    private String profileImage;
+    private List<String> profileImage;
     private String name;
     private Double rating;
 }

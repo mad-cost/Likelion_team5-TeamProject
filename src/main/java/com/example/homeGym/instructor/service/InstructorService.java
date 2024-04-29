@@ -1,8 +1,6 @@
 package com.example.homeGym.instructor.service;
 
 
-import com.example.homeGym.admin.entity.SettlementFee;
-import com.example.homeGym.admin.repository.SettlementFeeRepository;
 import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.InstructorDetailsManager;
@@ -27,6 +25,7 @@ import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
 import com.example.homeGym.user.repository.UserRepository;
+import com.example.homeGym.user.utils.FileHandlerUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +33,17 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,17 +61,28 @@ public class InstructorService {
     private final CookieUtil cookieUtil;
     private final JwtTokenUtils jwtTokenUtils;
     private final InstructorDetailsManager instructorDetailsManager;
-    private final SettlementFeeRepository settlementFeeRepository;
+    private final FileHandlerUtils fileHandlerUtils;
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
-    public void createInstructor(InstructorCreateDto dto){
+    public void createInstructor(InstructorCreateDto dto, List<MultipartFile> images){
         log.info("Creating instructor with name: {}", dto.getName());
+        List<String> imagePaths = new ArrayList<>();
+        int count = 0;
+        for (MultipartFile image :
+                images) {
+            if (image.getSize() != 0){
+                String imgPath = fileHandlerUtils.saveFile("instructor",
+                        String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                imagePaths.add(imgPath);
+                count ++;
+            }
+        }
+
         Instructor instructor = dto.toEntity();
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
+        instructor.setProfileImageUrl(imagePaths);
         instructorRepository.save(instructor);
-
-
     }
 
     public boolean signIn(HttpServletResponse res, String email, String password) throws Exception{
@@ -239,18 +256,6 @@ public class InstructorService {
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
-
-        //승인 시 강사에게 정산금 테이블 생성해줌
-        SettlementFee settlementFee = settlementFeeRepository.findByInstructorId(instructorId);
-        if (settlementFee == null) {
-            settlementFee = new SettlementFee();
-            settlementFee.setInstructorId(instructorId);
-            settlementFee.setCurrentFee(0);
-            settlementFee.setTotalFee(0);
-            settlementFeeRepository.save(settlementFee);
-            log.info("New SettlementFee created for instructorId: {}", instructorId);
-        }
-
     }
 //    강사 신청 거절
     public void delete(Long instructorId){
@@ -272,7 +277,26 @@ public class InstructorService {
 //    강사 회원 탈퇴 승인
     public void withdraw(Long instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        //이미지 path 가져오기
+        List<String> imagePaths = instructor.getProfileImageUrl();
+        //강사 status 변경
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
+
+        //이미지가 존재하면 삭제
+        if (!imagePaths.isEmpty()){
+            for (String imagePath :
+                    imagePaths) {
+                String mediaPath = "media/";
+                String fullPath = mediaPath + imagePath.replace("/static/", "");
+                try{
+                    Files.deleteIfExists(Path.of(fullPath));
+                }catch (IOException e){
+                    log.error(e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
@@ -283,5 +307,4 @@ public class InstructorService {
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
-
 }
