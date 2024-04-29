@@ -137,7 +137,7 @@ public class UserController {
         return "user/myDetail";
     }
 
-    @GetMapping("mail")
+    @GetMapping("/mail")
     public void mailTest(){
         emailService.sendMail();
     }

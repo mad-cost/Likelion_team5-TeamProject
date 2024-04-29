@@ -117,7 +117,7 @@ public class InstructorController {
         //인증에서 강사 정보 가져오기
         Instructor instructor = facade.getCurrentInstructor();
         model.addAttribute("profileDto",
-                new InstructorProfileDto(instructor.getProfileImageUrl(), instructor.getName(), instructor.getRating()));
+                new InstructorProfileDto(instructor.getProfileImageUrl().get(0), instructor.getName(), instructor.getRating()));
         return "instructor/instructor-page";
     }
 

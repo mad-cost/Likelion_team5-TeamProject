@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InstructorProfileDto {
-    private List<String> profileImage;
+    private String profileImage;
     private String name;
     private Double rating;
 }

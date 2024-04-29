@@ -40,7 +40,7 @@ public class Instructor {
     @Setter
     private String career;
     @Setter
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> profileImageUrl;
     @Setter
     private String certificate;

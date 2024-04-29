@@ -103,8 +103,6 @@ public class ProgramService {
                 .build();
         log.info("program getDescription:{}", programDto.getDescription());
         programRepository.save(program);
-
-
     }
 
     // 프로그램 수정
