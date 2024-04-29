@@ -5,27 +5,24 @@ import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.InstructorDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
-import com.example.homeGym.instructor.dto.*;
+
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
-
+import java.util.Collections;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.ProgramCheck;
 import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.InstructorRepository;
-import com.example.homeGym.instructor.repository.ProgramCheckRepository;
 import com.example.homeGym.instructor.repository.ProgramRepository;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
 import com.example.homeGym.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -265,6 +262,28 @@ public class InstructorService {
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
+    }
+
+//    MainController에서 사용
+    public List<Instructor> findAll(){
+        return instructorRepository.findAll();
+    }
+
+    public List<InstructorDto> findByThreeGoldMedals(List<Instructor> instructors){
+        List<InstructorDto> instructorDtos = new ArrayList<>();
+        List<InstructorDto> result = new ArrayList<>();
+        for (Instructor instructor : instructors){
+//             상태가 ACTIVE이고, 메달이 Gold인 강사 가져오기
+            if (instructor.getMedal().equals("Gold") && instructor.getState()== Instructor.InstructorState.ACTIVE){
+                instructorDtos.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+//        List를 랜덤으로 섞기
+        Collections.shuffle(instructorDtos);
+        for (int i = 0; i < 3; i++) {
+            result.add(instructorDtos.get(i));
+        }
+        return result;
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.homeGym.main.controller;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.entity.Comment;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.CommentRepository;
@@ -36,7 +37,7 @@ public class MainController {
   private final CommentServiceImp commentServiceImp;
 
 //  프로그램 소개 페이지
-  @GetMapping("/introduce/{programId}")
+  @GetMapping("/introduce/program/{programId}")
   public String introduce(
           @PathVariable ("programId")
           Long programId,

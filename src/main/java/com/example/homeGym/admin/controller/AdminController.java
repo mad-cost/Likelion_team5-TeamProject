@@ -89,8 +89,6 @@ public class AdminController {
       Long programs = dto.getProgramId();
       dto.setProgram(programServiceForUser.findById(programs));
     }
-    log.info("####### : {}", userPrograms.get(0).getId());
-    log.info("####### : {}", userPrograms.get(1).getId());
     model.addAttribute("userPrograms", userPrograms);
 
       return "/admin/userUpdate";
@@ -118,7 +116,6 @@ public class AdminController {
           @PathVariable("userProgramId")
           Long userProgramId
   ){
-    log.info("@@@@ ; {}", userProgramId); //13
     userProgramService.refund(userProgramId);
 
 

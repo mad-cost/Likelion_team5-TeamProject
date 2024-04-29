@@ -19,7 +19,11 @@ public class SettlementFeeService {
   public SettlementFeeDto findByInstructorId(Long instructorId) {
     SettlementFeeDto settlementFeeDto = new SettlementFeeDto();
     SettlementFee settlementFee = settlementFeeRepository.findByInstructorId(instructorId);
-    settlementFeeDto = SettlementFeeDto.fromEntity(settlementFee);
+    if (settlementFee != null) {
+      settlementFeeDto = SettlementFeeDto.fromEntity(settlementFee);
+    } else {
+      settlementFeeDto.setTotalFee(0);
+    }
     return settlementFeeDto;
   }
 
