@@ -4,6 +4,8 @@ import com.example.homeGym.instructor.entity.Gender;
 import com.example.homeGym.instructor.entity.Instructor;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -18,7 +20,7 @@ public class InstructorUpdateDto {
     private String birthday;
     private String state;
     private String career;
-    private String profileImageUrl;
+    private List<String> profileImageUrl;
     private String certificate;
     private String email;
     private String phone;

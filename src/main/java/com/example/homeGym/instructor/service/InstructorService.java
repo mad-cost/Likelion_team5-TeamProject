@@ -25,6 +25,7 @@ import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
 import com.example.homeGym.user.repository.UserRepository;
+import com.example.homeGym.user.utils.FileHandlerUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,13 +56,27 @@ public class InstructorService {
     private final CookieUtil cookieUtil;
     private final JwtTokenUtils jwtTokenUtils;
     private final InstructorDetailsManager instructorDetailsManager;
+    private final FileHandlerUtils fileHandlerUtils;
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
-    public void createInstructor(InstructorCreateDto dto){
+    public void createInstructor(InstructorCreateDto dto, List<MultipartFile> images){
         log.info("Creating instructor with name: {}", dto.getName());
+        List<String> imagePaths = new ArrayList<>();
+        int count = 0;
+        for (MultipartFile image :
+                images) {
+            if (image.getSize() != 0){
+                String imgPath = fileHandlerUtils.saveFile("instructor",
+                        String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                imagePaths.add(imgPath);
+                count ++;
+            }
+        }
+
         Instructor instructor = dto.toEntity();
         instructor.setPassword(dto.getPassword(), passwordEncoder); // 비밀번호 설정
+        instructor.setProfileImageUrl(imagePaths);
         instructorRepository.save(instructor);
     }
 
@@ -266,5 +283,4 @@ public class InstructorService {
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
-
 }
