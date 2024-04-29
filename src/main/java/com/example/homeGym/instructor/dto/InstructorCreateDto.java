@@ -5,6 +5,8 @@ import com.example.homeGym.instructor.entity.Instructor;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -21,7 +23,7 @@ public class InstructorCreateDto {
     private String birthday;
     private String state;
     private String career;
-    private String profileImageUrl;
+    private List<String> profileImageUrl;
     private String certificate;
     private String phone;
     private String bank;

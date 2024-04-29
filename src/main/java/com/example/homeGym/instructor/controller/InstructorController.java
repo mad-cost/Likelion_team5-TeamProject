@@ -1,5 +1,6 @@
 package com.example.homeGym.instructor.controller;
 
+import com.example.homeGym.auth.dto.SignInDto;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.*;
 import com.example.homeGym.instructor.entity.Instructor;
@@ -22,11 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-
 
 @Controller
 @Slf4j
@@ -52,7 +53,8 @@ public class InstructorController {
     @PostMapping("/signin")
     public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
 
-        instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+
         return "redirect:/user/main";
     }
 
@@ -69,9 +71,13 @@ public class InstructorController {
         return "/instructor/proposal";
     }
     @PostMapping("/proposal")
-    public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
+    public String proposal(
+            @ModelAttribute InstructorCreateDto instructorCreateDto,
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images) {
         log.info("Creating instructor with name: {}", instructorCreateDto.getName());
-        instructorService.createInstructor(instructorCreateDto);
+        System.out.println("images = " + images.toString());
+        instructorService.createInstructor(instructorCreateDto, images);
         return "redirect:/instructor/proposal/success";
     }
     @GetMapping("/proposal/success")
@@ -178,8 +184,15 @@ public class InstructorController {
         }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
-        // 각 사용자에 대한 정보 조회
+        List<UserProgramDto> finishUserPrograms = userProgramService.findByProgramIdAndStateFINISH(programId);
+        // 각 사용자에 대한 정보 조회 (진행중 유저, 종료된 유저)
         List<UserProgramDetailDto> userDetails = userPrograms.stream()
+                .map(userProgram -> {
+                    UserDto user = userService.findById(userProgram.getUserId());
+                    return new UserProgramDetailDto(user.getName(), user.getId(), userProgram.getCount(), userProgram.getMaxCount());
+                })
+                .toList();
+        List<UserProgramDetailDto> finishUserDetails = finishUserPrograms.stream()
                 .map(userProgram -> {
                     UserDto user = userService.findById(userProgram.getUserId());
                     return new UserProgramDetailDto(user.getName(), user.getId(), userProgram.getCount(), userProgram.getMaxCount());
@@ -188,6 +201,7 @@ public class InstructorController {
 
         model.addAttribute("program", programDto);
         model.addAttribute("userDetails", userDetails);
+        model.addAttribute("finishUserDetails", finishUserDetails);
         return "instructor/program-detail";
     }
     private boolean checkInstructorAccess(Long programId) {
@@ -221,7 +235,7 @@ public class InstructorController {
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         programCheckDto.setUserProgramId(userProgram.getId());
         programCheckService.createProgramCheck(programCheckDto);
-        return "redirect:/instructor/program/" + programId + "/user/" + userId;
+        return "redirect:/instructor/program/" + programId;
 
     }
 

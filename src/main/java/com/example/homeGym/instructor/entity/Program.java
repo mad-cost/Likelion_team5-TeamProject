@@ -17,8 +17,17 @@ public class Program {
     private Long id;
     @Setter
     private Long instructorId;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mainCategoryId")
+    private MainCategory mainCategory;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subCategoryId")
+    private SubCategory subCategory;
+
     @Setter
     private String title;
     @Setter

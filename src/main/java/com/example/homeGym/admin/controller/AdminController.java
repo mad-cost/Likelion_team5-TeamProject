@@ -1,10 +1,13 @@
 package com.example.homeGym.admin.controller;
 
+import com.example.homeGym.auth.dto.SignInDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.user.repository.UserRepository;
 import com.example.homeGym.user.service.ProgramServiceForUser;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,14 @@ public class AdminController {
   private final UserProgramService userProgramService;
   private final ProgramServiceForUser programServiceForUser;
   private final InstructorService instructorService;
+  private final UserRepository userRepository;
+
+  //회원가입 및 로그인
+  @GetMapping("/signin")
+  public String signUpAdminPage(){
+    return "admin/admin-signin";
+  }
+
 
   @GetMapping
   public String admin(
@@ -69,7 +80,7 @@ public class AdminController {
       return "redirect:/admin/user/" + userId;
 
   }
-//    유저 회차 수정
+  //    유저 회차 수정
   @PostMapping("/user/{userId}/userProgram/{userProgramId}/update")
   public String update(
           @PathVariable("userId")
@@ -89,6 +100,7 @@ public class AdminController {
       Long programs = dto.getProgramId();
       dto.setProgram(programServiceForUser.findById(programs));
     }
+    log.info("####### : {}", userPrograms.get(0).getId());
     model.addAttribute("userPrograms", userPrograms);
 
       return "/admin/userUpdate";
@@ -116,6 +128,7 @@ public class AdminController {
           @PathVariable("userProgramId")
           Long userProgramId
   ){
+    log.info("@@@@ ; {}", userProgramId); //13
     userProgramService.refund(userProgramId);
 
 

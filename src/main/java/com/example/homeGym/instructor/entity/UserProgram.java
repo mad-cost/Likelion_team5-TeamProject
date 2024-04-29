@@ -39,6 +39,6 @@ public class UserProgram {
     private Long userId;
 
     public enum UserProgramState{
-        PAYMENT_COMPLETED, IN_PROGRESS, FINISH, CANCEL
+        IN_PROGRESS, FINISH, CANCEL
     }
 }

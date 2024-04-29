@@ -19,7 +19,10 @@ public class Schedule {
     private String week;
     @Setter
     private String time;
+    @Setter
+    private boolean selected;
 
+    private String instructorName;
     @Setter
     private Long instructorId;
     @CreationTimestamp

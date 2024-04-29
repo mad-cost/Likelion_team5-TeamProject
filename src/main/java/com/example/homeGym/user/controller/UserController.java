@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final UserProgramService userProgramService;
@@ -62,6 +62,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         return "/main";
     }
+
 
     @GetMapping("/loginpage")
     public String loginPage(){

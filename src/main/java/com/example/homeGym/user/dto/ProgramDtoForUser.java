@@ -1,10 +1,9 @@
 package com.example.homeGym.user.dto;
 
-import com.example.homeGym.instructor.entity.Category;
+import com.example.homeGym.instructor.entity.MainCategory;
 import com.example.homeGym.instructor.entity.Program;
-import jakarta.persistence.*;
+import com.example.homeGym.instructor.entity.SubCategory;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +16,8 @@ public class ProgramDtoForUser {
 
     private Long id;
     private Long instructorId;
-    private Category category;
+    private MainCategory mainCategory;
+    private SubCategory subCategory;
     private String title;
     private String description;
     private String supplies;
@@ -33,7 +33,8 @@ public class ProgramDtoForUser {
         ProgramDtoForUser.ProgramDtoForUserBuilder builder = ProgramDtoForUser.builder()
                 .id(entity.getId())
                 .instructorId(entity.getInstructorId())
-                .category(entity.getCategory())
+                .mainCategory(entity.getMainCategory())
+                .subCategory(entity.getSubCategory())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .supplies(entity.getSupplies())

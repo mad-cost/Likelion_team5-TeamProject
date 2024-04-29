@@ -27,7 +27,7 @@ public class CustomInstructorDetails implements UserDetails {
     private String roles;
     private String state;
     private String career;
-    private String profileImageUrl;
+    private List<String> profileImageUrl;
     private String certificate;
     private String medal;
     private String email;
