@@ -33,11 +33,16 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -272,7 +277,26 @@ public class InstructorService {
 //    강사 회원 탈퇴 승인
     public void withdraw(Long instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
+        //이미지 path 가져오기
+        List<String> imagePaths = instructor.getProfileImageUrl();
+        //강사 status 변경
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
+
+        //이미지가 존재하면 삭제
+        if (!imagePaths.isEmpty()){
+            for (String imagePath :
+                    imagePaths) {
+                String mediaPath = "media/";
+                String fullPath = mediaPath + imagePath.replace("/static/", "");
+                try{
+                    Files.deleteIfExists(Path.of(fullPath));
+                }catch (IOException e){
+                    log.error(e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
