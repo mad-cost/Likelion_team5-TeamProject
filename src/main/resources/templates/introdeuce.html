@@ -14,6 +14,11 @@
           border: none;
       }
 
+      .review-stars {
+          color: #f1c40f; /* 별점 색상 */
+          margin-bottom: 10px;
+      }
+
       .inner-card {
           background-color: #ffffff; /* 안의 카드 배경색 */
           border-radius: 20px;
@@ -102,6 +107,12 @@
       <div class="card outer-card">
         <div class="card-body text-center">
           <h2 class="card-title">프로그램 소개</h2>
+
+          <!-- @@@찜목록 넣어주기@@@  -->
+          <a href="/user/zzim" class="heart-link">
+            <i class="fas fa-heart heart-icon"></i>
+          </a>
+
           <div th:each="program : ${program}">
             <div class="card inner-card">
                 <div class="card-body">
@@ -140,23 +151,26 @@
                   <span class="card-countTwo" th:text="${review.user.name}"></span>
                   <span th:text="${review.dateCreatedAt}"></span>
                 </div>
-                <div class="align-items-center mb-2">
-                  <img class="ml-2" src="/static/assets/img/star.png" alt="star" style="width: 15px; height: 15px;">
-                  <span style="font-size: 15px; margin-left: 8px;"> <td th:text="${review.stars}"></td></span>
+                <div class="review-stars">
+                  <span th:each="starNumber : ${#numbers.sequence(1, 5)}">
+                    <i th:class="${starNumber <= review.stars} ? 'fas fa-star' : 'far fa-star'"></i>
+                  </span>
                 </div>
                 <div class="align-items-center mb-2">
                   <td><p th:text="${review.memo}"></p></td>
                 </div>
 
-                <!--  전문가의 답글  -->
+                  <!--  전문가의 답글  -->
+                <div th:if="${review.comment != null and review.comment.content != null}">
                 <div class="card inner-card">
-                  <div class="card-body">
-                    <div class="align-items-center mb-2">
-                      <span class="card-countTwo">전문가의 답글</span>
-                      <span th:text="${review.comment.dateCreatedAt}"></span>
-                    </div>
-                    <div class="align-items-center mb-2">
-                      <td><p th:text="${review.comment.content}"></p></td>
+                    <div class="card-body">
+                      <div class="align-items-center mb-2">
+                        <span class="card-countTwo">전문가의 답글</span>
+                        <span th:text="${review.comment.dateCreatedAt}"></span>
+                      </div>
+                      <div class="align-items-center mb-2">
+                        <td><p th:text="${review.comment.content}"></p></td>
+                      </div>
                     </div>
                   </div>
                 </div>

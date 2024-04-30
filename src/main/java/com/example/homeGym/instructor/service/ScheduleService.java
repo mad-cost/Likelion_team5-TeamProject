@@ -26,62 +26,35 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
-    @Transactional
-    public List<ScheduleDto> findAllByOrderByWeek() {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-        List<ScheduleDto> scheduleDtos = scheduleRepository.findWeekAndTimeAndCreateAtOrderByInstructorId(currentInstructor.getId())
-                .stream()
-                .sorted(Comparator.comparing(schedule -> {
-                    Week weekEnum = Week.valueOf(schedule.getWeek());
-                    return weekEnum.getOrder();
-                }))
+    public List<ScheduleDto> getAllSchedules(Long instructorId) {
+        List<Schedule> schedules = scheduleRepository.findAllByInstructorId(instructorId);
+        return schedules.stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
-        return scheduleDtos;
     }
 
     @Transactional
-    public List<ScheduleDto> findAllByOrderByTime() {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-        List<ScheduleDto> scheduleDtos = scheduleRepository.findWeekAndTimeAndCreateAtOrderByInstructorId(currentInstructor.getId())
-                .stream()
-                .sorted(Comparator.comparing(schedule -> {
-                    Time scheduleTime = Time.valueOf(schedule.getTime());
-                    return scheduleTime.getStartHour(); // 시작 시간을 기준으로 정렬
-                }))
-                .map(ScheduleDto::fromEntity)
-                .collect(Collectors.toList());
-        return scheduleDtos;
-    }
-
-
-
-    @Transactional
-    public ScheduleDto createSchedule(String week, String time) {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-
-        Schedule schedule = Schedule.builder()
-                .week(week)
-                .time(time)
-                .instructorName(currentInstructor.getName())
-                .instructorId(currentInstructor.getId())
-                .build();
-
-        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
-
-        return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
+    public void saveSchedules(List<Schedule> schedules, Long instructorId, String instructorName) {
+        // 각 스케줄에 instructorId와 instructorName 설정
+        schedules.forEach(schedule -> {
+            schedule.setInstructorId(instructorId);
+            schedule.setInstructorName(instructorName);
+        });
+        // 스케줄 저장
+        scheduleRepository.saveAll(schedules);
     }
 
     @Transactional
-    public ScheduleDto updateSchedule(Long scheduleId, String week, String time) {
-        Schedule schedule = findScheduleById(scheduleId);
-
-        schedule.setWeek(week);
-        schedule.setTime(time);
-
-        log.info("Updating schedule: {}", scheduleId);
-
-        return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
+    public void deleteCanceledSchedules(List<ScheduleDto> canceledSchedules) {
+        for (ScheduleDto dto : canceledSchedules) {
+            Long id = dto.getId(); // ID 추출
+            if (id != null) {
+                scheduleRepository.deleteById(id); // ID 기반으로 삭제
+                log.info("Deleted schedule: {}", id);
+            } else {
+                log.warn("Cannot delete schedule without ID: {}", dto);
+            }
+        }
     }
 
     @Transactional
@@ -117,5 +90,4 @@ public class ScheduleService {
 
         return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
     }
-
 }

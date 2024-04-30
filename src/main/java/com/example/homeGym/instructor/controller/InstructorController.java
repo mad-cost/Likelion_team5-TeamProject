@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -70,9 +71,13 @@ public class InstructorController {
         return "/instructor/proposal";
     }
     @PostMapping("/proposal")
-    public String proposal(@ModelAttribute InstructorCreateDto instructorCreateDto) {
+    public String proposal(
+            @ModelAttribute InstructorCreateDto instructorCreateDto,
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images) {
         log.info("Creating instructor with name: {}", instructorCreateDto.getName());
-        instructorService.createInstructor(instructorCreateDto);
+        System.out.println("images = " + images.toString());
+        instructorService.createInstructor(instructorCreateDto, images);
         return "redirect:/instructor/proposal/success";
     }
     @GetMapping("/proposal/success")
@@ -112,7 +117,7 @@ public class InstructorController {
         //인증에서 강사 정보 가져오기
         Instructor instructor = facade.getCurrentInstructor();
         model.addAttribute("profileDto",
-                new InstructorProfileDto(instructor.getProfileImageUrl(), instructor.getName(), instructor.getRating()));
+                new InstructorProfileDto(instructor.getProfileImageUrl().get(0), instructor.getName(), instructor.getRating()));
         return "instructor/instructor-page";
     }
 

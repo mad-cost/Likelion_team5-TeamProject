@@ -1,10 +1,254 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .outer-card {
+            background-color: #f8f9fa; /* 밖의 카드 배경색 */
+            border: none;
+        }
+
+        .review-stars {
+            color: #f1c40f; /* 별점 색상 */
+            margin-bottom: 10px;
+        }
+
+        .outer-cardTwo {
+            background-color: #f8f9fa; /* 밖의 카드 배경색 */
+            border: none;
+            width: 90%;
+        }
+
+        .inner-card {
+            background-color: #ffffff; /* 안의 카드 배경색 */
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .inner-cardTwo {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 1rem; /* 설명 크기 */
+            color: #6c757d; /* 설명 색상 */
+        }
+
+        .card-count {
+            font-size: 1.2rem; /* 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+        }
+
+        .card-countTwo {
+            font-size: 1.0rem; /* 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+        }
+
+        .card-max-count {
+            font-size: 1.0rem; /* 총 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+            color: #6c757d; /* 총 회차 색상 */
+        }
+        .card.inner-card a {
+            text-decoration: none;
+        }
+        .heart-icon {
+            font-size: 2rem; /* 아이콘 크기 */
+            color: red; /* 아이콘 색상 */
+        }
+
+        .heart-link {
+            position: absolute; /* 절대 위치 */
+            top: 50%; /* 중앙 정렬을 위해 상단 50%로 설정 */
+            right: 0; /* 오른쪽 정렬 */
+            transform: translateY(-50%); /* 수직으로 중앙 정렬 */
+            margin-right: 30px; /* 오른쪽으로부터 30px 간격 */
+        }
+        .card-body.position-relative.d-flex.align-items-center img.rounded-circle {
+            border-radius: 50%; /* 원형 모양으로 만듭니다. */
+        }
+
+        /* 이름과 성별을 나란히 정렬하는 CSS */
+        .card-body.position-relative.d-flex.align-items-center div {
+            margin-right: 30px; /* 이름과 성별 사이의 간격 조절 */
+            display: flex; /* 내부 요소들을 수평으로 정렬하기 위해 flex로 설정 */
+            align-items: center; /* 내부 요소들을 수직으로 중앙 정렬 */
+        }
+        .card-body.position-relative.d-flex.align-items-center p {
+            margin-right: 10px; /* 이름과 성별 사이의 간격 조절 */
+        }
+
+        @keyframes rainbow {
+            0% { color: red; }
+            20% { color: orange; }
+            40% { color: blue; }
+            60% { color: blueviolet; }
+            80% { color: #ab294c; }
+            100% { color: red; } /* 빨간색으로 되돌아가는 구간 추가 */
+        }
+
+        .rainbow-text {
+            animation: rainbow 10s infinite reverse; /* 전체 애니메이션 지속 시간을 늘림 */
+        }
+    </style>
     <title>Title</title>
+    <style>
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">navbar 위치</h1>
+</div>
+<div class="container mt-5">
+    <h1 class="text-center mb-4"><b>방구석 운동왕</b></h1>
+</div>
+
+<!-- 그라데이션 글씨 -->
+<div class="container mt-5">
+    <a href="/main/match" class="text-center mb-4 position-relative text-decoration-none">
+        <h5 class="rainbow-text"><b>
+            운동 전문가 찾으러 가기!
+            방구석 운동왕과 함께해요!</b>
+        </h5>
+    </a>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <div class="col-md-12 mb-4" style="margin-left: 60px;">
+            <div class="card outer-cardTwo" >
+                <div class="card-body" >
+                    <div class="d-flex align-items-center">
+                        <h2 class="card-title"><b>인기 강사</b></h2>
+                      <a href="/main/match">
+                        <img src="/static/assets/img/search.png" style="width: 50px; height: 50px; border-radius: 15px; margin-left: 10px; margin-bottom: 10px">
+                      </a>
+                    </div>
+                    <div class="card inner-cardTwo" style="display: flex; justify-content: center; align-items: center;">
+                        <div th:each="instructor : ${instructors}">
+                            <div class="card-body">
+                                <img th:src="${instructor.profileImageUrl}" class="mt-4 mb-3" style="width: 300px; height: 300px; border-radius: 20px;">
+<!--                                <img th:src="${instructor.profileImageUrl}" class="mt-4 mb-3" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">-->
+                                <div class="align-items-center" style="text-align: center;">
+                                    <td><p class="card-count" th:text="${instructor.name}"></p></td>
+                                    <td><p th:text="${instructor.career}"></p></td>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="card outer-card">
+        <div class="card-body">
+          <h2 class="card-title">회원 후기</h2>
+          <div th:each="review : ${reviews}">
+            <div th:if="${review.imageUrl.size() > 0}">
+              <div class="card inner-card">
+                <div class="card-body">
+                  <div class="align-items-center mb-2">
+                    <span th:text="${review.dateCreatedAt}"></span>
+                  </div>
+                  <div class="review-stars">
+                    <span th:each="starNumber : ${#numbers.sequence(1, 5)}">
+                      <i th:class="${starNumber <= review.stars} ? 'fas fa-star' : 'far fa-star'"></i>
+                    </span>
+                  </div>
+                  <div class="align-items-center mb-2">
+                    <td><p th:text="${review.memo}"></p></td>
+                  </div>
+                  <!-- 프론트에서 이미지를 같은 줄에 보여주기-->
+                  <div class="d-flex">
+                    <!-- 이미지를 최대 3개까지만 보여주기 -->
+                    <div th:each="index : ${#numbers.sequence(0, (review.imageUrl.size() > 3 ? 2 : review.imageUrl.size() - 1))}" class="mr-3">
+                    <img th:src="${review.imageUrl[index]}" class="mt-4 mb-3" style="width: 150px; height: 150px; border-radius: 20px; margin-right: 2rem">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center" style="margin-top: 1rem">
+            <a th:if="${reviews.hasPrevious()}" th:href="@{/user/main(page=${currentPage - 1})}">Previous</a>
+            <span th:text="${reviews.number + 1}">1</span>
+            <a th:if="${reviews.hasNext()}" th:href="@{/user/main(page=${currentPage + 1})}">Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <h1>메인입니다</h1>
+
+<button id="signoutButton" style="display:none;" onclick="location.href='/auth/signout'">로그아웃</button>
+
+<script>
+
+    function checkAuthorizationCookie() {
+        // 쿠키에서 Authorization 항목을 가져옵니다.
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Authorization 항목이 있는지 확인합니다.
+            if (cookie.startsWith('Authorization=')) {
+                return true; // Authorization 항목이 존재하면 true를 반환합니다.
+            }
+        }
+        return false; // Authorization 항목이 존재하지 않으면 false를 반환합니다.
+    }
+
+
+    // 페이지가 로드될 때 로그인 상태를 확인하고 버튼을 보여줍니다.
+    if (checkAuthorizationCookie()) {
+        document.getElementById('signoutButton').style.display = 'block';
+    }
+</script>
+
 </body>
 </html>

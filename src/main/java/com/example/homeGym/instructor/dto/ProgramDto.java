@@ -20,8 +20,9 @@ public class ProgramDto {
 
   @NotNull(message = "Category cannot be null")
   private Long mainCategoryId;
-
+  private String mainCategoryName;
   private Long subCategoryId;
+  private String subCategoryName;
 
   @NotBlank(message = "Title cannot be empty")
   @Size(max = 255, message = "Title cannot be longer than 255 characters")
@@ -51,7 +52,9 @@ public class ProgramDto {
             .id(entity.getId())
             .instructorId(entity.getInstructorId())
             .mainCategoryId(entity.getMainCategory().getId())
+            .mainCategoryName(entity.getMainCategory().getName())
             .subCategoryId(entity.getSubCategory().getId())
+            .subCategoryName(entity.getSubCategory().getName())
             .title(entity.getTitle())
             .description(entity.getDescription())
             .supplies(entity.getSupplies())

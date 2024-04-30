@@ -6,7 +6,7 @@
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 프로젝트</title>
+    <title>homeGym</title>
 </head>
 <body>
     <div class="box_section" style="width: 600px">
@@ -30,5 +30,48 @@
             <button class="button p-grid-col5" onclick="location.href='https://localhost:8080/users/myPage';" style="background-color: #e8f3ff; color: #1b64da">마이페이지</button>
         </div>
     </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // 결제 승인에 필요한 정보
+        async function confirm() {
+            var requestData = {
+                paymentKey: urlParams.get("paymentKey"),
+                orderId: urlParams.get("orderId"),
+                amount: urlParams.get("amount"),
+            };
+
+            const response = await fetch("/confirm", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            const json = await response.json();
+
+            if (!response.ok) {
+                // TODO 결제 실패
+                console.log(json);
+                window.location.href = `/fail?message=${json.message}&code=${json.code}`;
+            }
+
+            // TODO 결제 성공
+            return json;
+        }
+        confirm().then(function (data) {
+            document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        });
+
+        const paymentKeyElement = document.getElementById("paymentKey");
+        const orderIdElement = document.getElementById("orderId");
+        const amountElement = document.getElementById("amount");
+
+        orderIdElement.textContent = urlParams.get("orderId");
+        amountElement.textContent = urlParams.get("amount") + "원";
+        paymentKeyElement.textContent = urlParams.get("paymentKey");
+    </script>
 </body>
 </html>

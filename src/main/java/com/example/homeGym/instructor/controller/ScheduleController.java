@@ -2,6 +2,8 @@ package com.example.homeGym.instructor.controller;
 
 import com.example.homeGym.instructor.dto.ScheduleDto;
 import com.example.homeGym.instructor.entity.Instructor;
+import com.example.homeGym.instructor.entity.Schedule;
+import com.example.homeGym.instructor.service.InstructorAddressService;
 import com.example.homeGym.instructor.service.ScheduleService;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +19,16 @@ import java.util.List;
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final AuthenticationFacade facade;
+    private final InstructorAddressService instructorAddressService;
 
     private boolean isAuthenticated(Long instructorId) {
         Long currentInstructorId = facade.getCurrentInstructor().getId();
         return currentInstructorId.equals(instructorId);
     }
 
+    //주소 검색 보여주는 요청과 스케줄 보내주는 요청 분리
     @GetMapping()
-    public String readSchedule(
+    public String readAddress(
             @RequestParam(value = "orderBy", defaultValue = "week") String orderBy,
             Model model
     ) {
@@ -34,79 +38,66 @@ public class ScheduleController {
         }
 
         // 현재 강사의 이름을 모델에 추가
+        model.addAttribute("instructorId", currentInstructor.getId());
         model.addAttribute("instructorName", currentInstructor.getName());
+        model.addAttribute("instructorAddresses", instructorAddressService.getInstructorAddresses(currentInstructor.getId()));
 
-        List<ScheduleDto> scheduleDtos;
-        if ("time".equals(orderBy)) {
-            scheduleDtos = scheduleService.findAllByOrderByTime();
-        } else { // Default to orderBy week
-            scheduleDtos = scheduleService.findAllByOrderByWeek();
-        }
-
-        model.addAttribute("scheduleDtos", scheduleDtos);
-        model.addAttribute("orderBy", orderBy); // Add orderBy to model for template
         return "instructor/schedule/instructor-schedule";
     }
 
-    @PostMapping()
-    public String createSchedule(
-            @RequestParam("week") String week,
-            @RequestParam("time") String time,
-            Model model
-    ) {
+    @PostMapping("/address")
+    public String addInstructorAddress(@RequestParam String siDo, @RequestParam String siGunGu, @RequestParam String dong) {
+        Instructor instructor = facade.getCurrentInstructor();
+        instructorAddressService.saveInstructorAddress(siDo, siGunGu, dong, instructor.getId());
+        return "redirect:/instructor/schedule"; // 주소 등록 페이지로 리다이렉트
+    }
+
+    @DeleteMapping("/address/{addressId}")
+    public String deleteInstructorAddress(@PathVariable("addressId") Long addressId) {
         Instructor currentInstructor = facade.getCurrentInstructor();
         if (!isAuthenticated(currentInstructor.getId())) {
             throw new IllegalArgumentException("Authentication failed");
         }
 
-        ScheduleDto scheduleDto = scheduleService.createSchedule(week, time);
-        model.addAttribute("scheduleDto", scheduleDto);
+        instructorAddressService.deleteInstructorAddress(addressId);
         return "redirect:/instructor/schedule";
     }
 
-    @PutMapping("/{scheduleId}")
-    public String updateSchedule(
-            @PathVariable("scheduleId") Long scheduleId,
-            @RequestParam("week") String week,
-            @RequestParam("time") String time,
-            Model model
-    ) {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-        if (!isAuthenticated(currentInstructor.getId())) {
-            throw new IllegalArgumentException("Authentication failed");
-        }
-
-        ScheduleDto scheduleDto = scheduleService.updateSchedule(scheduleId, week, time);
-        model.addAttribute("scheduleDto", scheduleDto);
-        return "redirect:/instructor/schedule";
+    @GetMapping("/all")
+    @ResponseBody
+    public List<ScheduleDto> getAllSchedules() {
+        Instructor instructor = facade.getCurrentInstructor();
+        return scheduleService.getAllSchedules(instructor.getId());
     }
 
-    @DeleteMapping("/{scheduleId}")
-    public String deleteSchedule(
-            @PathVariable("scheduleId") Long scheduleId
-    ) {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-        if (!isAuthenticated(currentInstructor.getId())) {
-            throw new IllegalArgumentException("Authentication failed");
-        }
-
-        scheduleService.deleteSchedule(scheduleId);
-        return "redirect:/instructor/schedule";
+    @PostMapping("/save")
+    @ResponseBody
+    public void saveSchedule(@RequestBody List<Schedule> schedules) {
+       Instructor instructor = facade.getCurrentInstructor();
+        scheduleService.saveSchedules(schedules, instructor.getId(), instructor.getName());
     }
 
-    // test
-    @PostMapping("save")
-    public String saveClickedSlot(
-            @RequestParam("week") String week,
-            @RequestParam("time") String time,
-            Model model
-    ) {
-        Instructor currentInstructor = facade.getCurrentInstructor();
-        if (!isAuthenticated(currentInstructor.getId())) {
-            throw new IllegalArgumentException("Authentication failed");
-        }
-
-        scheduleService.createSchedule(week, time);
-        return "redirect:/instructor/schedule";
+    @DeleteMapping("/delete")
+    @ResponseBody
+    public void deleteCanceledSchedules(@RequestBody List<ScheduleDto> canceledSchedules) {
+        scheduleService.deleteCanceledSchedules(canceledSchedules);
     }
+
+
+
+//    // test
+//    @PostMapping("save")
+//    public String saveClickedSlot(
+//            @RequestParam("week") String week,
+//            @RequestParam("time") String time,
+//            Model model
+//    ) {
+//        Instructor currentInstructor = facade.getCurrentInstructor();
+//        if (!isAuthenticated(currentInstructor.getId())) {
+//            throw new IllegalArgumentException("Authentication failed");
+//        }
+//
+//        scheduleService.createSchedule(week, time);
+//        return "redirect:/instructor/schedule";
+//    }
 }

@@ -28,6 +28,7 @@ public class ProgramCheckDto {
                 .memo(entity.getMemo())
                 .programDate(entity.getProgramDate())
                 .time(entity.getTime())
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 
