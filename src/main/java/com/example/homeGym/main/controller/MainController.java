@@ -35,6 +35,7 @@ public class MainController {
   private final UserService userService;
   private final CommentServiceImp commentServiceImp;
 
+
 //  프로그램 소개 페이지
   @GetMapping("/introduce/program/{programId}")
   public String introduce(
@@ -76,6 +77,7 @@ public class MainController {
           Model model
   ){
     List<Instructor> instructors = instructorService.findAll();
+
     model.addAttribute("ex", instructors);
 
     return "/match";
