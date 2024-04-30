@@ -28,79 +28,79 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/main")
 public class MainController {
-  private final ProgramService programService;
-  private final InstructorService instructorService;
-  private final UserProgramService userProgramService;
-  private final ReviewService reviewService;
-  private final UserService userService;
-  private final CommentServiceImp commentServiceImp;
+    private final ProgramService programService;
+    private final InstructorService instructorService;
+    private final UserProgramService userProgramService;
+    private final ReviewService reviewService;
+    private final UserService userService;
+    private final CommentServiceImp commentServiceImp;
 
 
-//  프로그램 소개 페이지
-  @GetMapping("/introduce/program/{programId}")
-  public String introduce(
-          @PathVariable ("programId")
-          Long programId,
-          Model model
-  ){
-      Program program = programService.findById(programId);
+    //  프로그램 소개 페이지
+    @GetMapping("/introduce/program/{programId}")
+    public String introduce(
+            @PathVariable("programId")
+            Long programId,
+            Model model
+    ) {
+        Program program = programService.findById(programId);
 
-      ProgramDto programDto = programService.findByProgramId(programId);
-      model.addAttribute("program", programDto);
+        ProgramDto programDto = programService.findByProgramId(programId);
+        model.addAttribute("program", programDto);
 
 //      Program의 instructorId를 가져와서 InstructorDto 가져오기
-      Long instructorId = program.getInstructorId();
-      InstructorDto instructorDto = instructorService.findById(instructorId);
-      model.addAttribute("instructor", instructorDto);
+        Long instructorId = program.getInstructorId();
+        InstructorDto instructorDto = instructorService.findById(instructorId);
+        model.addAttribute("instructor", instructorDto);
 
 //      programId에 해당하는 모든 user_program을 가져오고 user_program의 id로 리뷰 전부 가져오기
 //      programId에 해당하는 모든 user_program의 id가져오기
-      List<UserProgram> userPrograms = userProgramService.findAllByProgramIdConvertId(programId);
+        List<UserProgram> userPrograms = userProgramService.findAllByProgramIdConvertId(programId);
 //      user_program들의 id 해당하는 리뷰 전부 가져오기
-      List<ReviewDto> programReviews = reviewService.findAllByUserProgramIdConvertId(userPrograms);
-      for (ReviewDto dto : programReviews){
+        List<ReviewDto> programReviews = reviewService.findAllByUserProgramIdConvertId(userPrograms);
+        for (ReviewDto dto : programReviews) {
 //        dto에 User 넣어주기
-        Long userId = dto.getUserId();
-        dto.setUser(userService.findByLongId(userId));
+            Long userId = dto.getUserId();
+            dto.setUser(userService.findByLongId(userId));
 //        dto에 Comment 넣어주기
-        Comment comment = commentServiceImp.findByReviewId(dto.getId());
-        dto.setComment(comment);
-      }
+            Comment comment = commentServiceImp.findByReviewId(dto.getId());
+            dto.setComment(comment);
+        }
 
-      model.addAttribute("reviews", programReviews);
+        model.addAttribute("reviews", programReviews);
 
-      return "introdeuce";
-  }
+        return "/introduce";
+    }
 
-  @GetMapping("/match")
-  public String match(
-          Model model
-  ){
-    List<Instructor> instructors = instructorService.findAll();
+    @GetMapping("/match")
+    public String match(
+            Model model
+    ) {
+        List<Instructor> instructors = instructorService.findAll();
 
-    model.addAttribute("ex", instructors);
+        model.addAttribute("ex", instructors);
 
-    return "/match";
-  }
+        return "/match";
+    }
 
-  @PostMapping("/match/search")
-  public String search(
-          @RequestParam(value = "firstBox", required = false) String firstBox,
-          @RequestParam(value = "SecondBox", required = false) String SecondBox,
-          @RequestParam(value = "thirdBox", required = false) String thirdBox,
-          @RequestParam(value = "fourthBox", required = false) String fourthBox,
-          Model model
-  ){
-    List<Instructor> instructors = instructorService.findAll();
-    model.addAttribute("ex", instructors);
+    @PostMapping("/match/search")
+    public String search(
+            @RequestParam(value = "firstBox", required = false) String firstBox,
+            @RequestParam(value = "SecondBox", required = false) String SecondBox,
+            @RequestParam(value = "thirdBox", required = false) String thirdBox,
+            @RequestParam(value = "fourthBox", required = false) String fourthBox,
+            Model model
+    ) {
+        List<Instructor> instructors = instructorService.findAll();
+        model.addAttribute("ex", instructors);
 
-    model.addAttribute("first", firstBox); // 선택된 값 미리 보여주기
-    model.addAttribute("second", SecondBox); // 선택된 값 미리 보여주기
-    model.addAttribute("third", thirdBox); // 선택된 값 미리 보여주기
-    model.addAttribute("fourth", fourthBox); // 선택된 값 미리 보여주기
+        model.addAttribute("first", firstBox); // 선택된 값 미리 보여주기
+        model.addAttribute("second", SecondBox); // 선택된 값 미리 보여주기
+        model.addAttribute("third", thirdBox); // 선택된 값 미리 보여주기
+        model.addAttribute("fourth", fourthBox); // 선택된 값 미리 보여주기
 
-    return "/search";
-  }
+        return "/search";
+    }
 
 
 }
