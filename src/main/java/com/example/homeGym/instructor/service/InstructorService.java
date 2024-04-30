@@ -9,6 +9,9 @@ import com.example.homeGym.auth.utils.CookieUtil;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
@@ -173,8 +176,10 @@ public class InstructorService {
                 for (MultipartFile image :
                         images) {
                     if (image.getSize() != 0){
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+                        String formattedDateTime = LocalDateTime.now().format(formatter);
                         String imgPath = fileHandlerUtils.saveFile("instructor",
-                                String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                                String.format("profile_image_instructor_%s_%d", formattedDateTime, count), image);
                         newImagePaths.add(imgPath);
                         count ++;
                     }
