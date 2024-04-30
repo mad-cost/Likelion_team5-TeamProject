@@ -37,29 +37,15 @@ public class InstructorController {
     private final InstructorService instructorService;
     private final UserService userService;
     private final UserProgramService userProgramService;
-    private final InstructorRepository instructorRepository;
     private final AuthenticationFacade facade;
     private final ProgramService programService;
     private final ProgramCheckService programCheckService;
 
-    //인증쪽에서 작성
+
     // 강사 로그인
     @GetMapping("/signin")
     public String loginPage(){
         return "instructor/instructor-signin";
-    }
-
-    @PostMapping("/signin")
-    public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
-
-        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
-
-        return "redirect:/user/main";
-    }
-
-    // 강사 로그아웃
-    @PostMapping("/logout")
-    public void logout() {
     }
 
 
