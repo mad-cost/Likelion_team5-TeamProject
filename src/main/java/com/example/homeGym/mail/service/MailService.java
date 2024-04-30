@@ -83,7 +83,7 @@ public class MailService {
     //코드 검증
     public Boolean verifyEmailCode(String email, String code){
         String codeFoundByEmail = redisUtil.getData(email);
-        System.out.println("codeFoundByEmail=" + codeFoundByEmail);
+//        System.out.println("codeFoundByEmail=" + codeFoundByEmail);
         if (codeFoundByEmail == null){
             return false;
         }

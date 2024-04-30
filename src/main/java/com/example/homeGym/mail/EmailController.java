@@ -14,14 +14,14 @@ import java.util.Map;
 public class EmailController {
     private final MailService mailService;
 
-    @GetMapping("/{email_addr}/authcode")
-    public ResponseEntity<String> sendEmailPath(
-            @PathVariable
-            String email_addr
-    )throws MessagingException{
-        mailService.sendEmail(email_addr);
-        return ResponseEntity.ok("이메일을 확인하세요");
-    }
+//    @GetMapping("/{email_addr}/authcode")
+//    public ResponseEntity<String> sendEmailPath(
+//            @PathVariable
+//            String email_addr
+//    )throws MessagingException{
+//        mailService.sendEmail(email_addr);
+//        return ResponseEntity.ok("이메일을 확인하세요");
+//    }
     @PostMapping("/send")
     public ResponseEntity<?> sendEmailPath(
             @RequestBody
@@ -37,7 +37,7 @@ public class EmailController {
             @RequestBody
             Map<String, String> request
     ){
-        System.out.println(request.get("code"));
+//        System.out.println(request.get("code"));
         if (mailService.verifyEmailCode(request.get("email"), request.get("code"))){
             return ResponseEntity.ok(Map.of("isCheck", true));
         }
