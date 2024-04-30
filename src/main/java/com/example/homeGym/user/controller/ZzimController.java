@@ -18,7 +18,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class ZzimController {
     private final ZzimService zzimService;
-    private final ProgramServiceForUser programServiceForUser;
     private final AuthenticationUtilService authenticationUtilService;
 
     @GetMapping("/zzim")

@@ -92,7 +92,7 @@ public class MainController {
             Model model
     ) {
         List<Instructor> instructors = instructorService.findAll();
-        model.addAttribute("ex", instructors);
+        model.addAttribute("exs", instructors);
 
         model.addAttribute("first", firstBox); // 선택된 값 미리 보여주기
         model.addAttribute("second", SecondBox); // 선택된 값 미리 보여주기

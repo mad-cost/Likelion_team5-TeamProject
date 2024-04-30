@@ -100,7 +100,6 @@ public class AdminController {
       Long programs = dto.getProgramId();
       dto.setProgram(programServiceForUser.findById(programs));
     }
-    log.info("####### : {}", userPrograms.get(0).getId());
     model.addAttribute("userPrograms", userPrograms);
 
       return "/admin/userUpdate";

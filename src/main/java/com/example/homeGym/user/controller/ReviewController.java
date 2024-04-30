@@ -77,7 +77,7 @@ public class ReviewController {
     ){
 
         model.addAttribute("review", reviewService.updateReview(reviewId));
-        return "user/updatereview";
+        return "/user/updatereview";
     }
 
     @PostMapping("review/update")

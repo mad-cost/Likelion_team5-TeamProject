@@ -38,7 +38,6 @@ public class InstructorController {
     private final InstructorService instructorService;
     private final UserService userService;
     private final UserProgramService userProgramService;
-    private final InstructorRepository instructorRepository;
     private final AuthenticationFacade facade;
     private final ProgramService programService;
     private final ProgramCheckService programCheckService;
@@ -55,7 +54,7 @@ public class InstructorController {
 
         boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
 
-        return "redirect:/user/main";
+        return "redirect:/";
     }
 
     // 강사 로그아웃
@@ -112,7 +111,7 @@ public class InstructorController {
     }
 
     // 강사 페이지
-    @GetMapping("/")
+    @GetMapping()
     public String InstructorPage(Model model) {
         //인증에서 강사 정보 가져오기
         Instructor instructor = facade.getCurrentInstructor();
@@ -183,7 +182,7 @@ public class InstructorController {
 
         //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/user/main";
+            return "redirect:/";
         }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
@@ -219,7 +218,7 @@ public class InstructorController {
 
          //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/user/main";
+            return "redirect:/";
         }
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         List<ProgramCheckDto> programCheckDtoList = programCheckService.getAllProgramChecksByUserProgramId(userProgram.getId());

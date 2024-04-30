@@ -22,8 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AcceptController {
     private final AcceptService acceptService;
-    private final UserService userService;
-    private final ProgramRepository programRepository;
     private final AuthenticationFacade facade;
 
     // 강사 수락 페이지
