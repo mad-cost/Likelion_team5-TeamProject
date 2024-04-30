@@ -31,7 +31,7 @@ public class ReviewController {
             Model model
     ){
         model.addAttribute("userProgramId", id);
-        return "/user/review";
+        return "user/review";
     }
 
     @PostMapping("review")
@@ -77,7 +77,7 @@ public class ReviewController {
     ){
 
         model.addAttribute("review", reviewService.updateReview(reviewId));
-        return "/user/updatereview";
+        return "user/updatereview";
     }
 
     @PostMapping("review/update")

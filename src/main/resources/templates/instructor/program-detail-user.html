@@ -79,8 +79,12 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
+
             </form>
         </div>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <a th:href="@{/instructor/program/{programId}(programId=${programId})}" class="btn btn-success button-spacing">목록으로 돌아가기</a>
     </div>
 </div>
 

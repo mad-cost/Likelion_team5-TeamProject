@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/main")
+@RequestMapping("main")
 public class MainController {
     private final ProgramService programService;
     private final InstructorService instructorService;
@@ -69,7 +69,7 @@ public class MainController {
 
         model.addAttribute("reviews", programReviews);
 
-        return "/introduce";
+        return "introduce";
     }
 
     @GetMapping("/match")
@@ -77,13 +77,27 @@ public class MainController {
             Model model
     ) {
         List<Instructor> instructors = instructorService.findAll();
-
+        model.addAttribute("programDto", new ProgramDto());
         model.addAttribute("ex", instructors);
 
-        return "/match";
+        return "match";
+    }
+    @PostMapping("/match/search")
+    public String filterPrograms(
+            @RequestParam("siDo") String siDo,
+            @RequestParam("siGunGu") String siGunGu,
+            @RequestParam("dong") String dong,
+            @RequestParam("mainCategoryId") Integer mainCategoryId,
+            @RequestParam("subCategoryId") Integer subCategoryId,
+            Model model
+    ) {
+        List<Program> programs = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+        model.addAttribute("programs", programs);
+        return "/instructor/program/instructor-program"; // 프로그램 목록 프래그먼트로 반환
     }
 
-    @PostMapping("/match/search")
+
+ /*   @PostMapping("/match/search")
     public String search(
             @RequestParam(value = "firstBox", required = false) String firstBox,
             @RequestParam(value = "SecondBox", required = false) String SecondBox,
@@ -100,7 +114,7 @@ public class MainController {
         model.addAttribute("fourth", fourthBox); // 선택된 값 미리 보여주기
 
         return "/search";
-    }
+    }*/
 
 
 }

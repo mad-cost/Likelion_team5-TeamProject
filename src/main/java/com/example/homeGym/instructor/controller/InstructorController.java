@@ -54,7 +54,7 @@ public class InstructorController {
 
         boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
 
-        return "redirect:/";
+        return "redirect:/main";
     }
 
     // 강사 로그아웃
@@ -67,7 +67,7 @@ public class InstructorController {
     @GetMapping("/proposal")
     public String proposalPage(Model model){
         model.addAttribute("InstructorCreateDto", new InstructorCreateDto());
-        return "/instructor/proposal";
+        return "instructor/proposal";
     }
     @PostMapping("/proposal")
     public String proposal(
@@ -81,7 +81,7 @@ public class InstructorController {
     }
     @GetMapping("/proposal/success")
     public String proposalSuccessPage(){
-        return "/instructor/proposal-success";
+        return "instructor/proposal-success";
     }
 
 

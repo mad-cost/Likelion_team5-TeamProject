@@ -33,7 +33,7 @@ public class SettlementController {
 
         model.addAttribute("settlementDto", settlementDto);
         model.addAttribute("settlementFeeDto", settlementFeeDto);
-        return "/instructor/settlement";
+        return "instructor/settlement";
 
     }
 

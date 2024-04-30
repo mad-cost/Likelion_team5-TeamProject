@@ -22,55 +22,55 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/admin/settlement")
+@RequestMapping("admin/settlement")
 public class AdSettlementController {
-  private final SettlementService settlementService;
-  private final InstructorService instructorService;
-  private final NumberUtils numberUtils;
+    private final SettlementService settlementService;
+    private final InstructorService instructorService;
+    private final NumberUtils numberUtils;
 
 
-  @GetMapping()
-  public String settlement(
-          Model model
-  ){
+    @GetMapping()
+    public String settlement(
+            Model model
+    ) {
 //    Settlementd의 state가 SETTLEMENT_PENDING인 값들 모두 가져오기 + date : yyyy-mm-dd
-    List<SettlementDto> settlementsPending = settlementService.findAllByStateIsPENDING();
+        List<SettlementDto> settlementsPending = settlementService.findAllByStateIsPENDING();
 //    금액에 , 찍어주기
-    for (SettlementDto settlementPending : settlementsPending) {
-      settlementPending.setNewAmount(numberUtils.addCommasToNumber(settlementPending.getAmount()));
-    }
+        for (SettlementDto settlementPending : settlementsPending) {
+            settlementPending.setNewAmount(numberUtils.addCommasToNumber(settlementPending.getAmount()));
+        }
 
 //  Instruction객체 가져오기
-    for (SettlementDto dto : settlementsPending){
-      Long instructorId = dto.getInstructorId();
-      dto.setInstructor(instructorService.findByLongId(instructorId));
-    }
-    model.addAttribute("settlementsPending", settlementsPending);
+        for (SettlementDto dto : settlementsPending) {
+            Long instructorId = dto.getInstructorId();
+            dto.setInstructor(instructorService.findByLongId(instructorId));
+        }
+        model.addAttribute("settlementsPending", settlementsPending);
 
 //    Settlementd의 state가 COMPLETE 값들 모두 가져오기 + date : yyyy-mm-dd
-    List<SettlementDto> settlementsComplete = settlementService.findAllByStateIsComplete();
+        List<SettlementDto> settlementsComplete = settlementService.findAllByStateIsComplete();
 //    금액에 , 찍어주기
-    for (SettlementDto settlementPending : settlementsComplete) {
-      settlementPending.setNewAmount(numberUtils.addCommasToNumber(settlementPending.getAmount()));
+        for (SettlementDto settlementPending : settlementsComplete) {
+            settlementPending.setNewAmount(numberUtils.addCommasToNumber(settlementPending.getAmount()));
+        }
+        //  Instruction객체 가져오기
+        for (SettlementDto dto : settlementsComplete) {
+            Long instructorId = dto.getInstructorId();
+            dto.setInstructor(instructorService.findByLongId(instructorId));
+        }
+        model.addAttribute("settlementsComplete", settlementsComplete);
+
+
+        return "admin/settlement";
     }
-    //  Instruction객체 가져오기
-    for (SettlementDto dto : settlementsComplete){
-      Long instructorId = dto.getInstructorId();
-      dto.setInstructor(instructorService.findByLongId(instructorId));
+
+    @GetMapping("/{pendingId}")
+    public String pendingId(
+            @PathVariable("pendingId")
+            Long pendingId
+    ) {
+        settlementService.updateState(pendingId);
+        return "redirect:/admin/settlement";
     }
-    model.addAttribute("settlementsComplete", settlementsComplete);
-
-
-    return "/admin/settlement";
-  }
-
-  @GetMapping("/{pendingId}")
-  public String pendingId(
-          @PathVariable("pendingId")
-          Long pendingId
-  ){
-    settlementService.updateState(pendingId);
-    return "redirect:/admin/settlement";
-  }
 
 }

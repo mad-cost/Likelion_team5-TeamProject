@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface InstructorAddressRepository extends JpaRepository<InstructorAddress, Long> {
     List<InstructorAddress> findByInstructorId(Long instructorId);
-
+    List<InstructorAddress> findBySiDoAndSiGunGuAndDong(String siDo, String siGunGu, String dong);
 }
+

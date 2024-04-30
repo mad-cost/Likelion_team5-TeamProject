@@ -41,7 +41,7 @@ public class UserController {
     private final EmailService emailService;
     private final InstructorService instructorService;
 
-    @GetMapping("/")
+    @GetMapping("/main")
     public String mainPage(
             @RequestParam(defaultValue = "0")
             int page,
@@ -59,7 +59,7 @@ public class UserController {
 
         model.addAttribute("reviews", reviewPage);
         model.addAttribute("currentPage", page);
-        return "/main";
+        return "main";
     }
 
 
@@ -106,7 +106,7 @@ public class UserController {
         model.addAttribute("finishProgress", finishList);
 
 
-        return "/user/myPage";
+        return "user/myPage";
     }
 
     @GetMapping("/user/program/{userProgramId}")
@@ -133,7 +133,7 @@ public class UserController {
         model.addAttribute("reviews", reviewDtos);
         model.addAttribute("program", userProgramDto);
 
-        return "/user/myDetail";
+        return "user/myDetail";
     }
 
     @GetMapping("/user/mail")

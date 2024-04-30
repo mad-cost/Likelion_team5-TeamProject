@@ -102,7 +102,7 @@ public class AdminController {
     }
     model.addAttribute("userPrograms", userPrograms);
 
-      return "/admin/userUpdate";
+      return "admin/userUpdate";
   }
   // 카운트 수정 및 redirect
   @PostMapping("/user/{userId}/updated/program/{programId}")
