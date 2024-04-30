@@ -135,9 +135,12 @@ public class InstructorController {
 
     // 강사 정보 수정
     @PutMapping("/profile")
-    public String updateProfile(@ModelAttribute InstructorUpdateDto updateDto, RedirectAttributes attributes) {
+    public String updateProfile(
+            @ModelAttribute InstructorUpdateDto updateDto, RedirectAttributes attributes,
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images) {
         try {
-            instructorService.updateInstructor(updateDto);
+            instructorService.updateInstructor(updateDto, images);
             attributes.addFlashAttribute("message", "강사 정보가 업데이트 되었습니다.");
             return "redirect:/instructor/update-result";
         } catch (Exception e) {
