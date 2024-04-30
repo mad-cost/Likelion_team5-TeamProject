@@ -99,4 +99,23 @@ public class ScheduleService {
                     return new IllegalArgumentException("Schedule not found");
                 });
     }
+
+    //TODO test
+    @Transactional
+    public ScheduleDto saveSchedule(String week, String time) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+
+        Schedule schedule = Schedule.builder()
+                .week(week)
+                .time(time)
+
+                .instructorName(currentInstructor.getName())
+                .instructorId(currentInstructor.getId())
+                .build();
+
+        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
+
+        return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
+    }
+
 }
