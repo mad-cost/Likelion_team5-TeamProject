@@ -142,11 +142,45 @@ public class InstructorService {
 
     //강사 정보 수정
     @Transactional
-    public void updateInstructor(InstructorUpdateDto dto) {
+    public void updateInstructor(InstructorUpdateDto dto, List<MultipartFile> images) {
         Optional<Instructor> instructorOpt = instructorRepository.findById(dto.getId());
 
         if (instructorOpt.isPresent()) {
             Instructor instructor = instructorOpt.get();
+
+            //저장된 사진 삭제
+            //리뷰에 연관된 이미지 파일 경로를 가져오기.
+            List<String> imagePaths = instructor.getProfileImageUrl();
+
+            //이미지 파일이 존재하면 삭제
+            if (!imagePaths.isEmpty()){
+                for (String imagePath :
+                        imagePaths) {
+                    String mediaPath = "media/";
+                    String fullPath = mediaPath + imagePath.replace("/static/", "");
+                    try{
+                        Files.deleteIfExists(Path.of(fullPath));
+                    }catch (IOException e){
+                        log.error(e.getMessage());
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }
+            }
+
+            List<String> newImagePaths = new ArrayList<>();
+            int count = 0;
+            if (images != null) {
+                for (MultipartFile image :
+                        images) {
+                    if (image.getSize() != 0){
+                        String imgPath = fileHandlerUtils.saveFile("instructor",
+                                String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                        newImagePaths.add(imgPath);
+                        count ++;
+                    }
+                }
+            }
+            dto.setProfileImageUrl(newImagePaths);
             dto.updateEntity(instructor); // DTO를 사용하여 엔티티 업데이트
             instructorRepository.save(instructor);
             log.info("Updated instructor with id: {}", dto.getId());
@@ -296,7 +330,7 @@ public class InstructorService {
                 }
             }
         }
-
+        instructor.setProfileImageUrl(new ArrayList<>());
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
