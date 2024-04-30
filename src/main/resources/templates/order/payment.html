@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/toss-style.css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>homeGym</title>
@@ -19,23 +19,22 @@
         <div id="payment-method"></div>
         <!-- 이용약관 UI -->
         <div id="agreement"></div>
-        <!-- 쿠폰 체크박스 -->
-        <div class="checkable typography--p" style="padding-left: 25px">
-            <label for="coupon-box" class="checkable__label typography--regular"
-            ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
-            >
-        </div>
+        <!-- &lt;!&ndash; 쿠폰 체크박스 &ndash;&gt;
+         <div class="checkable typography&#45;&#45;p" style="padding-left: 25px">
+             <label for="coupon-box" class="checkable__label typography&#45;&#45;regular"
+             ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" disabled /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
+             >
+         </div>-->
         <!-- 결제하기 버튼 -->
         <button class="button" id="payment-button" style="margin-top: 30px" disabled>결제하기</button>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     const button = document.getElementById("payment-button");
-    const coupon = document.getElementById("coupon-box");
     const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
-    var amount = 50000;
+    var amount = [[${amount}]];
     // ------  결제위젯 초기화 ------
-    const clientKey = "test_ck_jExPeJWYVQRJaBZ76ggor49R5gvN";
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
     const customerKey = generateRandomString();
     const paymentWidget = PaymentWidget(clientKey, customerKey);
 
@@ -50,27 +49,17 @@
     //  ------  결제 UI 렌더링 완료 이벤트 ------
     paymentMethodWidget.on("ready", function () {
         button.disabled = false;
-        coupon.disabled = false;
     });
-
-    coupon.addEventListener("change", function () {
-        if (coupon.checked) {
-            paymentMethodWidget.updateAmount(amount - 5000);
-        } else {
-            paymentMethodWidget.updateAmount(amount);
-        }
-    });
-
 
     button.addEventListener("click", function () {
         paymentWidget.requestPayment({
             orderId: generateRandomString(),
-            orderName: "건강해지기 프로그램",
-            successUrl: window.location.origin + "/success",
-            failUrl: window.location.origin + "/fail",
-            customerEmail: "homeGym@gmail.com",
-            customerName: "김건강",
-            customerMobilePhone: "01012341234",
+            orderName: "[[${orderName}]]",
+            successUrl: window.location.origin + "/orders/success",
+            failUrl: window.location.origin + "/orders/fail",
+            customerEmail: "[[${userEmail}]]",
+            customerName: "[[${userName}]]",
+            customerMobilePhone: "[[${userPhone}]]",
         });
     });
 </script>
