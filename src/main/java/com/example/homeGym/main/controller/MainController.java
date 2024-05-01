@@ -69,7 +69,7 @@ public class MainController {
 
       model.addAttribute("reviews", programReviews);
 
-      return "/introdeuce";
+      return "introduce";
   }
 
   @GetMapping("/match")
