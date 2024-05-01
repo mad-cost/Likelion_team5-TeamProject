@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.homeGym.instructor.entity.Program.*;
 
@@ -43,8 +44,19 @@ public class ProgramService {
     public ProgramDto findByProgramId(Long id) {
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Program not found with id: " + id));
-
         return ProgramDto.fromEntity(program);
+    }
+    public ProgramDto findByProgramIdPlusCategory(Long id) {
+        Program program = programRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Program not found with id: " + id));
+        ProgramDto programDto = ProgramDto.fromEntity(program);
+        MainCategory mainCategory = mainCategoryRepository.findById(programDto.getMainCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid main category ID"));
+        SubCategory subCategory = subCategoryRepository.findById(programDto.getSubCategoryId())
+                .orElseThrow(() -> new RuntimeException("Invalid sub category ID"));
+        programDto.setMainCategoryName(mainCategory.getName());
+        programDto.setSubCategoryName(subCategory.getName());
+        return programDto;
     }
 
     public List<ProgramDto> findAllByInstructorIdConvertId(Long instructorId) {
@@ -228,9 +240,14 @@ public class ProgramService {
     }
 
     //강사매칭에서 사용
-    public List<Program> findProgramsByFilters(String siDo, String siGunGu, String dong, Integer mainCategoryId, Integer subCategoryId) {
-        return programRepository.findByAddressAndCategory(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+    public List<ProgramDto> findProgramsByFilters(String siDo, String siGunGu, String dong, Integer mainCategoryId, Integer subCategoryId) {
+        List<Program> programs = programRepository.findByAddressAndCategory(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+
+        return programs.stream()
+                .map(ProgramDto::fromEntity) // 각 Program을 ProgramDto로 변환
+                .collect(Collectors.toList()); // 리스트로 변환하여 반환
     }
+
 
 
 
