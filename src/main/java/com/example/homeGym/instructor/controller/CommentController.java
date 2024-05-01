@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/instructor/review")
+@RequestMapping("instructor/review")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/instructor/schedule")
+@RequestMapping("instructor/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
@@ -29,7 +29,6 @@ public class ScheduleController {
     //주소 검색 보여주는 요청과 스케줄 보내주는 요청 분리
     @GetMapping()
     public String readAddress(
-            @RequestParam(value = "orderBy", defaultValue = "week") String orderBy,
             Model model
     ) {
         Instructor currentInstructor = facade.getCurrentInstructor();
@@ -83,21 +82,4 @@ public class ScheduleController {
         scheduleService.deleteCanceledSchedules(canceledSchedules);
     }
 
-
-
-//    // test
-//    @PostMapping("save")
-//    public String saveClickedSlot(
-//            @RequestParam("week") String week,
-//            @RequestParam("time") String time,
-//            Model model
-//    ) {
-//        Instructor currentInstructor = facade.getCurrentInstructor();
-//        if (!isAuthenticated(currentInstructor.getId())) {
-//            throw new IllegalArgumentException("Authentication failed");
-//        }
-//
-//        scheduleService.createSchedule(week, time);
-//        return "redirect:/instructor/schedule";
-//    }
 }

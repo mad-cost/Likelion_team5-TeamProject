@@ -17,12 +17,13 @@
         <div class="card-body">
             <h5 class="card-title" th:text="${program.title}"></h5>
             <p class="card-text"><small class="text-muted" th:text="${program.state.getDescription()}"></small></p>
-            <p class="card-text">메인 카테고리: <span th:text="${program.mainCategoryName}"></span> </p>
-            <p class="card-text">서브 카테고리: <span th:text="${program.subCategoryName}"></span> </p>
+            <p class="card-text">메인 카테고리: <span th:text="${program.mainCategoryName}"></span></p>
+            <p class="card-text">서브 카테고리: <span th:text="${program.subCategoryName}"></span></p>
             <p class="card-text">설명: <span th:text="${program.description}"></span></p>
-            <p class="card-text">준비물: <span th:text="${program.supplies}"></span> </p>
-            <p class="card-text">커리큘럼: <span th:text="${program.curriculum}"></span> </p>
-            <p class="card-text">1회권: <span th:text="${program.price1}"></span>원,  10회권: <span th:text="${program.price10}"></span>원,  20회권: <span th:text="${program.price20}"></span>원</p>
+            <p class="card-text">준비물: <span th:text="${program.supplies}"></span></p>
+            <p class="card-text">커리큘럼: <span th:text="${program.curriculum}"></span></p>
+            <p class="card-text">1회권: <span th:text="${program.price1}"></span>원, 10회권: <span
+                    th:text="${program.price10}"></span>원, 20회권: <span th:text="${program.price20}"></span>원</p>
             <p class="card-text"></p>
             <p class="card-text"></p>
             <p></p>
@@ -30,10 +31,12 @@
             <h6 class="card-subtitle mb-2 text-muted">진행중인 회원 목록</h6>
             <div th:each="userDetail : ${userDetails}">
                 <div class="card mt-3">
-                    <a th:href="@{/instructor/program/{programId}/user/{userId}(programId=${program.id}, userId=${userDetail.userId})}" class="stretched-link"></a>
+                    <a th:href="@{/instructor/program/{programId}/user/{userId}(programId=${program.id}, userId=${userDetail.userId})}"
+                       class="stretched-link"></a>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${userDetail.userName}"></h5>
-                        <p class="card-text" th:text="'진행 회차: ' + ${userDetail.count} + '/' + ${userDetail.maxCount}"></p>
+                        <p class="card-text"
+                           th:text="'진행 회차: ' + ${userDetail.count} + '/' + ${userDetail.maxCount}"></p>
                     </div>
                 </div>
             </div>
@@ -41,10 +44,12 @@
             <h6 class="card-subtitle mb-2 text-muted">완료된 회원 목록</h6>
             <div th:each="finishUserDetails : ${finishUserDetails}">
                 <div class="card mt-3">
-                    <a th:href="@{/instructor/program/{programId}/user/{userId}(programId=${program.id}, userId=${finishUserDetails.userId})}" class="stretched-link"></a>
+                    <a th:href="@{/instructor/program/{programId}/user/{userId}(programId=${program.id}, userId=${finishUserDetails.userId})}"
+                       class="stretched-link"></a>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${finishUserDetails.userName}"></h5>
-                        <p class="card-text" th:text="'진행 회차: ' + ${finishUserDetails.count} + '/' + ${finishUserDetails.maxCount}"></p>
+                        <p class="card-text"
+                           th:text="'진행 회차: ' + ${finishUserDetails.count} + '/' + ${finishUserDetails.maxCount}"></p>
                     </div>
                 </div>
             </div>
@@ -53,18 +58,22 @@
 </div>
 <div class="container mt-3">
     <div class="row">
-        <div class="col">
-            <!-- 프로그램 수정 페이지로 이동하는 버튼 -->
-            <a th:href="@{/program/update/{programId}(programId=${program.id})}" class="btn btn-primary">프로그램 수정</a>
+        <div class="col-auto">
+            <a th:href="@{/program/update/{programId}(programId=${program.id})}" class="btn btn-primary button-spacing">프로그램 수정</a>
         </div>
-        <div class="col">
-            <!-- 프로그램 삭제 요청을 처리하는 버튼 -->
-            <form th:action="@{/program/{programId}(programId=${program.id})}" method="post" onsubmit="return confirm('프로그램을 삭제하시겠습니까?');">
-                <input type="hidden" name="_method" value="delete" />
-                <button type="submit" class="btn btn-danger">프로그램 삭제</button>
+        <div class="col-auto">
+            <form th:action="@{/program/{programId}(programId=${program.id})}" method="post"
+                  onsubmit="return confirm('프로그램을 삭제하시겠습니까?');">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger button-spacing">프로그램 삭제</button>
             </form>
+        </div>
+        <div class="col d-flex justify-content-end">
+            <button class="btn btn-success button-spacing" onclick="window.location.href = window.location.origin + '/instructor/program'">목록으로 돌아가기</button>
         </div>
     </div>
 </div>
+
+
 </body>
 </html>

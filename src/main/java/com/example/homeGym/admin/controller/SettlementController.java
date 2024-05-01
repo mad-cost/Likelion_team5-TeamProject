@@ -33,7 +33,7 @@ public class SettlementController {
 
         model.addAttribute("settlementDto", settlementDto);
         model.addAttribute("settlementFeeDto", settlementFeeDto);
-        return "/instructor/settlement";
+        return "instructor/settlement";
 
     }
 
@@ -47,6 +47,6 @@ public class SettlementController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/instructor/settlement";
         }
-        return "redirect:/instructor/";
+        return "redirect:/instructor";
     }
 }

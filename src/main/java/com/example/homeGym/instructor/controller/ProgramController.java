@@ -16,21 +16,18 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/program")
+@RequestMapping("program")
 @RequiredArgsConstructor
 public class ProgramController {
     private final ProgramService programService;
     private final UserProgramService userProgramService;
-    private final CategoryService categoryService;
 
     @GetMapping()
     public String createPage(
             Model model
     ) {
-       /* List<MainCategory> mainCategories = categoryService.findAllMainCategories();
-        model.addAttribute("mainCategories", mainCategories);*/
         model.addAttribute("programDto", new ProgramDto());
-        return "/instructor/program/instructor-program";
+        return "instructor/program/instructor-program";
     }
 
     @PostMapping()
@@ -49,7 +46,7 @@ public class ProgramController {
     ) {
         ProgramDto programDto = programService.findByProgramId(programId);
         model.addAttribute("programDto", programDto);
-        return "/instructor/program/update-program";
+        return "instructor/program/update-program";
     }
 
     @PostMapping("/update/{programId}")
@@ -60,7 +57,7 @@ public class ProgramController {
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            return "/instructor/program/update-program";
+            return "instructor/program/update-program";
         }
         try {
             programService.updateProgram(programId, programDto);

@@ -227,5 +227,14 @@ public class ProgramService {
         return programRepository.findById(programId).orElseThrow();
     }
 
+    //강사매칭에서 사용
+    public List<Program> findProgramsByFilters(String siDo, String siGunGu, String dong, Integer mainCategoryId, Integer subCategoryId) {
+        return programRepository.findByAddressAndCategory(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+    }
+
+
+
+
+
 
 }

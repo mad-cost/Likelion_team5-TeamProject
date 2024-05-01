@@ -31,7 +31,7 @@ public class ReviewController {
             Model model
     ){
         model.addAttribute("userProgramId", id);
-        return "/user/review";
+        return "user/review";
     }
 
     @PostMapping("review")

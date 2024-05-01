@@ -61,15 +61,15 @@
             <h3>관리 옵션</h3>
             <div class="btn-group mt-3">
                 <div class="btn-group mt-3">
-                    <a href="/instructor/program" class="btn-custom">나의 수업 관리</a>
-                    <a href="/instructor/schedule" class="btn-custom">나의 스케줄 관리</a>
-                    <a href="/instructor/reviews" class="btn-custom">나의 후기 보기</a>
-                    <a href="/instructor/settlement" class="btn-custom">정산 하러 가기</a>
-                    <a href="/instructor/profile" class="btn-custom">내 정보 수정</a>
-                    <a href="/instructor/withdraw" class="btn-custom">탈퇴 신청</a>
-                    <form th:action="@{/instructor/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-outline-danger">로그아웃</button>
-                    </form>
+                    <a href="instructor/program" class="btn-custom">나의 수업 관리</a>
+                    <a href="instructor/schedule" class="btn-custom">나의 스케줄 관리</a>
+                    <a href="instructor/reviews" class="btn-custom">나의 후기 보기</a>
+                    <a href="instructor/settlement" class="btn-custom">정산 하러 가기</a>
+                    <a href="instructor/profile" class="btn-custom">내 정보 수정</a>
+                    <a href="instructor/withdraw" class="btn-custom">탈퇴 신청</a>
+
+                    <button id="signoutButton" class="btn btn-outline-danger"onclick="window.location.href = window.location.origin + '/auth/signout'">로그아웃</button>
+
                 </div>
             </div>
         </div>

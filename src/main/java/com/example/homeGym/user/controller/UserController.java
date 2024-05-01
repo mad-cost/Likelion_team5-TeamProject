@@ -31,7 +31,6 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final UserProgramService userProgramService;
@@ -60,17 +59,17 @@ public class UserController {
 
         model.addAttribute("reviews", reviewPage);
         model.addAttribute("currentPage", page);
-        return "/main";
+        return "main";
     }
 
 
-    @GetMapping("/loginpage")
+    @GetMapping("/user/loginpage")
     public String loginPage(){
         return "user/loginPage";
     }
 
 
-    @GetMapping("/mypage")
+    @GetMapping("/user/mypage")
     public String myPage(
             Model model,
             Authentication authentication
@@ -110,7 +109,7 @@ public class UserController {
         return "user/myPage";
     }
 
-    @GetMapping("/program/{userProgramId}")
+    @GetMapping("/user/program/{userProgramId}")
     public String userProgramDetail(
             @PathVariable("userProgramId")
             Long userProgramId,
@@ -137,7 +136,7 @@ public class UserController {
         return "user/myDetail";
     }
 
-    @GetMapping("/mail")
+    @GetMapping("/user/mail")
     public void mailTest(){
         emailService.sendMail();
     }

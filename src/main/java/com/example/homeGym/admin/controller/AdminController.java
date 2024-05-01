@@ -100,10 +100,9 @@ public class AdminController {
       Long programs = dto.getProgramId();
       dto.setProgram(programServiceForUser.findById(programs));
     }
-    log.info("####### : {}", userPrograms.get(0).getId());
     model.addAttribute("userPrograms", userPrograms);
 
-      return "/admin/userUpdate";
+      return "admin/userUpdate";
   }
   // 카운트 수정 및 redirect
   @PostMapping("/user/{userId}/updated/program/{programId}")

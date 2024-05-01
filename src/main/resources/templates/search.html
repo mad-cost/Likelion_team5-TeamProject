@@ -124,22 +124,22 @@
             <div class="d-flex flex-wrap justify-content-center">
               <div class="card inner-card mb-2" style="width: 150px; margin-right: 15px;">
                 <select name="firstBox">
-                  <option th:each="ex : ${ex}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == first}"></option>
+                  <option th:each="ex : ${exs}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == first}"></option>
                 </select>
               </div>
               <div class="card inner-card mb-2" style="width: 150px; margin-right: 15px;">
                 <select name="SecondBox">
-                  <option th:each="ex : ${ex}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == second}"></option>
+                  <option th:each="ex : ${exs}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == second}"></option>
                 </select>
               </div>
               <div class="card inner-card mb-2" style="width: 150px; margin-right: 15px;">
                 <select name="thirdBox">
-                  <option th:each="ex : ${ex}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == third}"></option>
+                  <option th:each="ex : ${exs}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == third}"></option>
                 </select>
               </div>
               <div class="card inner-card mb-2" style="width: 150px; margin-right: 15px;">
                 <select name="fourthBox">
-                  <option th:each="ex : ${ex}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == fourth}"></option>
+                  <option th:each="ex : ${exs}" th:value="${ex.name}" th:text="${ex.name}" th:selected="${ex.name == fourth}"></option>
                 </select>
               </div>
             </div>

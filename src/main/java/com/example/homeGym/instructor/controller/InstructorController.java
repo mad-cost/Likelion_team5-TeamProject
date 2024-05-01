@@ -49,12 +49,25 @@ public class InstructorController {
         return "instructor/instructor-signin";
     }
 
+    @PostMapping("/signin")
+    public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
+
+        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
+
+        return "redirect:/main";
+    }
+
+    // 강사 로그아웃
+    @PostMapping("/logout")
+    public void logout() {
+    }
+
 
     // 강사 신청
     @GetMapping("/proposal")
     public String proposalPage(Model model){
         model.addAttribute("InstructorCreateDto", new InstructorCreateDto());
-        return "/instructor/proposal";
+        return "instructor/proposal";
     }
     @PostMapping("/proposal")
     public String proposal(
@@ -68,7 +81,7 @@ public class InstructorController {
     }
     @GetMapping("/proposal/success")
     public String proposalSuccessPage(){
-        return "/instructor/proposal-success";
+        return "instructor/proposal-success";
     }
 
 
@@ -98,7 +111,7 @@ public class InstructorController {
     }
 
     // 강사 페이지
-    @GetMapping("/")
+    @GetMapping()
     public String InstructorPage(Model model) {
         //인증에서 강사 정보 가져오기
         Instructor instructor = facade.getCurrentInstructor();
@@ -169,7 +182,7 @@ public class InstructorController {
 
         //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/user/main";
+            return "redirect:/main";
         }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
@@ -205,7 +218,7 @@ public class InstructorController {
 
          //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/user/main";
+            return "redirect:/main";
         }
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         List<ProgramCheckDto> programCheckDtoList = programCheckService.getAllProgramChecksByUserProgramId(userProgram.getId());

@@ -9,18 +9,16 @@ import com.example.homeGym.auth.utils.CookieUtil;
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
-import com.example.homeGym.instructor.entity.Comment;
-import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.ProgramCheck;
-import com.example.homeGym.instructor.repository.CommentRepository;
-import com.example.homeGym.instructor.repository.InstructorRepository;
-import com.example.homeGym.instructor.repository.ProgramCheckRepository;
-import com.example.homeGym.instructor.repository.ProgramRepository;
+import com.example.homeGym.instructor.entity.*;
+import com.example.homeGym.instructor.repository.*;
 import com.example.homeGym.user.entity.Review;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.repository.ReviewRepository;
@@ -53,6 +51,7 @@ import java.util.stream.Collectors;
 @ToString
 public class InstructorService {
     private final InstructorRepository instructorRepository;
+    private final InstructorAddressRepository instructorAddressRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final ReviewRepository reviewRepository;
@@ -65,17 +64,17 @@ public class InstructorService {
 
     //강사 회원 가입
     //REGISTRATION_PENDING 상태로 DB에 저장
-    public void createInstructor(InstructorCreateDto dto, List<MultipartFile> images){
+    public void createInstructor(InstructorCreateDto dto, List<MultipartFile> images) {
         log.info("Creating instructor with name: {}", dto.getName());
         List<String> imagePaths = new ArrayList<>();
         int count = 0;
         for (MultipartFile image :
                 images) {
-            if (image.getSize() != 0){
+            if (image.getSize() != 0) {
                 String imgPath = fileHandlerUtils.saveFile("instructor",
                         String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
                 imagePaths.add(imgPath);
-                count ++;
+                count++;
             }
         }
 
@@ -85,15 +84,15 @@ public class InstructorService {
         instructorRepository.save(instructor);
     }
 
-    public boolean signIn(HttpServletResponse res, String email, String password) throws Exception{
-        Optional<Instructor> nowInstructor= instructorRepository.findByEmail(email);
+    public boolean signIn(HttpServletResponse res, String email, String password) throws Exception {
+        Optional<Instructor> nowInstructor = instructorRepository.findByEmail(email);
         Instructor instructor = nowInstructor.get();
         Boolean pwCheck = passwordEncoder.matches(password, instructor.getPassword());
-        if(pwCheck){
+        if (pwCheck) {
             CustomInstructorDetails customInstructorDetails = (CustomInstructorDetails) instructorDetailsManager.loadUserByUsername(email);
             String jwtToken = jwtTokenUtils.generateToken(customInstructorDetails);
 
-            cookieUtil.createCookie(res,"Authorization", jwtToken);
+            cookieUtil.createCookie(res, "Authorization", jwtToken);
             return true;
         }
         return false;
@@ -132,6 +131,7 @@ public class InstructorService {
         }
         return instructorDtos;
     }
+
     public InstructorDto findById(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId)
                 .orElseThrow(() -> new NoSuchElementException("Instructor not found with ID: " + instructorId));
@@ -152,14 +152,14 @@ public class InstructorService {
             List<String> imagePaths = instructor.getProfileImageUrl();
 
             //이미지 파일이 존재하면 삭제
-            if (!imagePaths.isEmpty()){
+            if (!imagePaths.isEmpty()) {
                 for (String imagePath :
                         imagePaths) {
                     String mediaPath = "media/";
                     String fullPath = mediaPath + imagePath.replace("/static/", "");
-                    try{
+                    try {
                         Files.deleteIfExists(Path.of(fullPath));
-                    }catch (IOException e){
+                    } catch (IOException e) {
                         log.error(e.getMessage());
                         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
                     }
@@ -171,11 +171,13 @@ public class InstructorService {
             if (images != null) {
                 for (MultipartFile image :
                         images) {
-                    if (image.getSize() != 0){
+                    if (image.getSize() != 0) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+                        String formattedDateTime = LocalDateTime.now().format(formatter);
                         String imgPath = fileHandlerUtils.saveFile("instructor",
-                                String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                                String.format("profile_image_instructor_%s_%d", formattedDateTime, count), image);
                         newImagePaths.add(imgPath);
-                        count ++;
+                        count++;
                     }
                 }
             }
@@ -211,15 +213,15 @@ public class InstructorService {
         String commentContent = comment != null ? comment.getContent() : null;
         return
                 new InstructorReviewDto(
-                review.getId(),
-                user.getName(),
-                review.getMemo(),
-                review.getStars(),
-                review.getCreatedAt(),
-                commentContent,
-                commentId,
-                review.getImageUrl()  // Assume this is properly handled
-        );
+                        review.getId(),
+                        user.getName(),
+                        review.getMemo(),
+                        review.getStars(),
+                        review.getCreatedAt(),
+                        commentContent,
+                        commentId,
+                        review.getImageUrl()  // Assume this is properly handled
+                );
     }
 
 
@@ -246,14 +248,14 @@ public class InstructorService {
 
 //=============================   관리자    ==============================================================
 
-    public void saveMedal(Long instructorId, String medal){
+    public void saveMedal(Long instructorId, String medal) {
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setMedal(medal);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
 
-    public String findRank(String Gold, String Silver, String Bronze, String Unranked){
+    public String findRank(String Gold, String Silver, String Bronze, String Unranked) {
         String myRank = null;
         // rank값 찾아서 저장
         if (Gold != null) {
@@ -266,37 +268,39 @@ public class InstructorService {
         return myRank;
     }
 
-    public Instructor findByLongId(Long instructorId){
+    public Instructor findByLongId(Long instructorId) {
         return instructorRepository.findById(instructorId).orElseThrow();
     }
 
     // 강사 신청시 처리 로직 REGISTRATION_PENDING만 가져온다
-    public List<InstructorDto> findAllByStateIsRegistration(){
+    public List<InstructorDto> findAllByStateIsRegistration() {
         List<InstructorDto> instructorDto = new ArrayList<>();
         // state가 REGISTRATION인 강사 모두 가져오기
         List<Instructor> instructors = instructorRepository.findAll();
-        for (Instructor instructor : instructors){
-            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING){
+        for (Instructor instructor : instructors) {
+            if (instructor.getState() == Instructor.InstructorState.REGISTRATION_PENDING) {
                 instructorDto.add(InstructorDto.fromEntity(instructor));
             }
         }
         return instructorDto;
     }
-//    강사 신청 승인
-    public void accept(Long instructorId){
+
+    //    강사 신청 승인
+    public void accept(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setRoles("ROLE_INSTRUCTOR");
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
-//    강사 신청 거절
-    public void delete(Long instructorId){
+
+    //    강사 신청 거절
+    public void delete(Long instructorId) {
         instructorRepository.deleteById(instructorId);
     }
 
-//
-    public List<InstructorDto> findAllByStateIsWithdrawalComplete(){
+    //
+    public List<InstructorDto> findAllByStateIsWithdrawalComplete() {
         List<InstructorDto> instructorDto = new ArrayList<>();
         // state가 WITHDRAWAL_PENDING 강사 모두 가져오기
         List<Instructor> instructors = instructorRepository.findAll();
@@ -307,8 +311,9 @@ public class InstructorService {
         }
         return instructorDto;
     }
-//    강사 회원 탈퇴 승인
-    public void withdraw(Long instructorId){
+
+    //    강사 회원 탈퇴 승인
+    public void withdraw(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         //이미지 path 가져오기
         List<String> imagePaths = instructor.getProfileImageUrl();
@@ -316,14 +321,14 @@ public class InstructorService {
         instructor.setState(Instructor.InstructorState.WITHDRAWAL_COMPLETE);
 
         //이미지가 존재하면 삭제
-        if (!imagePaths.isEmpty()){
+        if (!imagePaths.isEmpty()) {
             for (String imagePath :
                     imagePaths) {
                 String mediaPath = "media/";
                 String fullPath = mediaPath + imagePath.replace("/static/", "");
-                try{
+                try {
                     Files.deleteIfExists(Path.of(fullPath));
-                }catch (IOException e){
+                } catch (IOException e) {
                     log.error(e.getMessage());
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -333,34 +338,44 @@ public class InstructorService {
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
-//     강사 회원 탈퇴 거절
-    public void withdrawCancel(Long instructorId){
+
+    //     강사 회원 탈퇴 거절
+    public void withdrawCancel(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow();
         instructor.setState(Instructor.InstructorState.ACTIVE);
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
 
-//    MainController에서 사용
-    public List<Instructor> findAll(){
+    //    MainController에서 사용
+    public List<Instructor> findAll() {
         return instructorRepository.findAll();
     }
 
-    public List<InstructorDto> findByThreeGoldMedals(List<Instructor> instructors){
+    public List<InstructorDto> findByThreeGoldMedals(List<Instructor> instructors) {
         List<InstructorDto> instructorDtos = new ArrayList<>();
-        List<InstructorDto> result = new ArrayList<>();
-        for (Instructor instructor : instructors){
-//             상태가 ACTIVE이고, 메달이 Gold인 강사 가져오기
-            if (instructor.getMedal().equals("Gold") && instructor.getState()== Instructor.InstructorState.ACTIVE){
+
+        // 상태가 ACTIVE이고 메달이 Gold인 강사 가져오기
+        for (Instructor instructor : instructors) {
+            if (instructor.getMedal().equals("Gold") && instructor.getState() == Instructor.InstructorState.ACTIVE) {
                 instructorDtos.add(InstructorDto.fromEntity(instructor));
             }
         }
-//        List를 랜덤으로 섞기
-        Collections.shuffle(instructorDtos);
-        for (int i = 0; i < 3; i++) {
-            result.add(instructorDtos.get(i));
+
+        // 골드인 강사가 없을 때 ID가 1인 강사 가져오기
+        if (instructorDtos.isEmpty()) {
+            Instructor defaultInstructor = instructorRepository.findById(1L)
+                    .orElseThrow(() -> new IllegalStateException("No instructor with ID 1 found"));
+            instructorDtos.add(InstructorDto.fromEntity(defaultInstructor));
+        } else {
+            // 리스트를 랜덤으로 섞기
+            Collections.shuffle(instructorDtos);
         }
+
+        // 상위 3개만 선택
+        List<InstructorDto> result = instructorDtos.stream().limit(3).collect(Collectors.toList());
         return result;
+
     }
 
 }

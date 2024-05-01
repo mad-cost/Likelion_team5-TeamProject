@@ -137,7 +137,7 @@
 
 <!-- 그라데이션 글씨 -->
 <div class="container mt-5">
-    <a href="/main/match" class="text-center mb-4 position-relative text-decoration-none">
+    <a href="main/match" class="text-center mb-4 position-relative text-decoration-none">
         <h5 class="rainbow-text"><b>
             운동 전문가 찾으러 가기!
             방구석 운동왕과 함께해요!</b>
@@ -147,20 +147,21 @@
 
 <div class="container mt-5">
     <div class="row">
-
         <div class="col-md-12 mb-4" style="margin-left: 60px;">
             <div class="card outer-cardTwo" >
                 <div class="card-body" >
                     <div class="d-flex align-items-center">
                         <h2 class="card-title"><b>인기 강사</b></h2>
-                      <a href="/main/match">
+                      <a href="main/match">
                         <img src="/static/assets/img/search.png" style="width: 50px; height: 50px; border-radius: 15px; margin-left: 10px; margin-bottom: 10px">
                       </a>
                     </div>
                     <div class="card inner-cardTwo" style="display: flex; justify-content: center; align-items: center;">
                         <div th:each="instructor : ${instructors}">
                             <div class="card-body">
-                                <img th:src="${instructor.profileImageUrl}" class="mt-4 mb-3" style="width: 300px; height: 300px; border-radius: 20px;">
+                                <div th:if="${instructor.profileImageUrl != null && !instructor.profileImageUrl.isEmpty()}">
+                                    <img th:src="${instructor.profileImageUrl.get(0)}" class="mt-4 mb-3" style="width: 300px; height: 300px; border-radius: 20px;">
+                                </div>
 <!--                                <img th:src="${instructor.profileImageUrl}" class="mt-4 mb-3" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">-->
                                 <div class="align-items-center" style="text-align: center;">
                                     <td><p class="card-count" th:text="${instructor.name}"></p></td>
@@ -172,7 +173,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -218,15 +218,14 @@
       </div>
     </div>
   </div>
+
 </div>
+<button id="signoutButton" style="display:none;" onclick="location.href='/auth/signout'">로그아웃</button>
 
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-<h1>메인입니다</h1>
-
-<button id="signoutButton" style="display:none;" onclick="location.href='/auth/signout'">로그아웃</button>
 
 <script>
 
