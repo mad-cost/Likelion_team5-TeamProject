@@ -8,12 +8,10 @@ import com.example.homeGym.common.exception.CustomGlobalErrorCode;
 import com.example.homeGym.common.exception.GlobalExceptionHandler;
 import com.example.homeGym.common.util.AuthenticationFacade;
 import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.dto.ProgramMatchDto;
 import com.example.homeGym.instructor.dto.UserProgramDto;
 import com.example.homeGym.instructor.entity.*;
-import com.example.homeGym.instructor.repository.MainCategoryRepository;
-import com.example.homeGym.instructor.repository.ProgramRepository;
-import com.example.homeGym.instructor.repository.SubCategoryRepository;
-import com.example.homeGym.instructor.repository.UserProgramRepository;
+import com.example.homeGym.instructor.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +32,7 @@ import static com.example.homeGym.instructor.entity.Program.*;
 public class ProgramService {
     private final ProgramRepository programRepository;
     private final UserProgramService userProgramService;
+    private final InstructorRepository instructorRepository;
     private final UserProgramRepository userProgramRepository;
     private final AuthenticationFacade facade;
     private final SettlementFeeRepository settlementFeeRepository;
@@ -240,12 +239,17 @@ public class ProgramService {
     }
 
     //강사매칭에서 사용
-    public List<ProgramDto> findProgramsByFilters(String siDo, String siGunGu, String dong, Integer mainCategoryId, Integer subCategoryId) {
+
+    public List<ProgramMatchDto> findProgramsByFilters(String siDo, String siGunGu, String dong, Integer mainCategoryId, Integer subCategoryId) {
         List<Program> programs = programRepository.findByAddressAndCategory(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
 
         return programs.stream()
-                .map(ProgramDto::fromEntity) // 각 Program을 ProgramDto로 변환
-                .collect(Collectors.toList()); // 리스트로 변환하여 반환
+                .filter(program -> program.getState() == ProgramState.IN_PROGRESS)
+                .map(program -> {
+                    Instructor instructor = instructorRepository.findById(program.getInstructorId()).orElse(null);
+                    return ProgramMatchDto.fromEntity(program, instructor);  // 강사 정보 포함
+                })
+                .collect(Collectors.toList());
     }
 
 
