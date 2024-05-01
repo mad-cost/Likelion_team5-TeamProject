@@ -9,69 +9,72 @@
     <title>homeGym</title>
 </head>
 <body>
-    <div class="box_section" style="width: 600px">
-        <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-        <h2>결제를 완료했어요</h2>
+<div class="box_section" style="width: 600px">
+    <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
+    <h2>결제를 완료했어요</h2>
 
-        <div class="p-grid typography--p" style="margin-top: 50px">
-            <div class="p-grid-col text--left"><b>결제금액</b></div>
-            <div class="card-text" id="amount"> <span th:text="${program.price1}"></span></div>
-        </div>
-        <div class="p-grid typography--p" style="margin-top: 10px">
-            <div class="p-grid-col text--left"><b>주문번호</b></div>
-            <div class="card-text" id="orderId"> <span th:text="@{/program/{orderId}}"></span></div>
-        </div>
-        <div class="p-grid typography--p" style="margin-top: 10px">
-            <div class="p-grid-col text--left"><b>paymentKey</b></div>
-            <div class="card-text" id="paymentKey" style="white-space: initial; width: 250px"><span th:text="${order.paymentKey}"></span></div>
-        </div>
-        <div class="p-grid" style="margin-top: 30px">
-            <button class="button p-grid-col5" onclick="location.href='https://localhost:8080/main';">메인으로</button>
-            <button class="button p-grid-col5" onclick="location.href='https://localhost:8080/users/myPage';" style="background-color: #e8f3ff; color: #1b64da">마이페이지</button>
-        </div>
+    <div class="p-grid typography&#45;&#45;p" style="margin-top: 50px">
+        <div class="p-grid-col text&#45;&#45;left"><b>결제금액</b></div>
+        <div class="card-text" id="amount"></div>
     </div>
+    <div class="p-grid typography&#45;&#45;p" style="margin-top: 10px">
+        <div class="p-grid-col text&#45;&#45;left"><b>주문번호</b></div>
+        <div class="card-text" id="orderId"></div>
+    </div>
+    <div class="p-grid typography&#45;&#45;p" style="margin-top: 10px">
+        <div class="p-grid-col text&#45;&#45;left"><b>paymentKey</b></div>
+        <div class="card-text" id="paymentKey" style="white-space: initial; width: 250px"></div>
+    </div>
+    <div class="p-grid" style="margin-top: 30px">
+        <button class="button p-grid-col5" onclick="location.href='https://localhost:8080/toss/confirm-payment';">결제 완료하기</button>
+        <!--<button class="button p-grid-col5" onclick="location.href='https://localhost:8080/users/myPage';" style="background-color: #e8f3ff; color: #1b64da">마이페이지</button>-->
+    </div>
+</div>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
 
-        // 결제 승인에 필요한 정보
-        async function confirm() {
-            var requestData = {
-                paymentKey: urlParams.get("paymentKey"),
-                orderId: urlParams.get("orderId"),
-                amount: urlParams.get("amount"),
-            };
+    // 결제 승인에 필요한 정보
+    async function confirm() {
+        var requestData = {
+            paymentKey: urlParams.get("paymentKey"),
+            orderId: urlParams.get("orderId"),
+            amount: urlParams.get("amount"),
+        };
 
-            const response = await fetch("/confirm", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const json = await response.json();
-
-            if (!response.ok) {
-                // TODO 결제 실패
-                console.log(json);
-                window.location.href = `/fail?message=${json.message}&code=${json.code}`;
-            }
-
-            // TODO 결제 성공
-            return json;
-        }
-        confirm().then(function (data) {
-            document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        // 결제 승인 호출하는 영역
+        const response = await fetch("/toss/confirm-payment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
         });
 
-        const paymentKeyElement = document.getElementById("paymentKey");
-        const orderIdElement = document.getElementById("orderId");
-        const amountElement = document.getElementById("amount");
+        const json = await response.json();
 
-        orderIdElement.textContent = urlParams.get("orderId");
-        amountElement.textContent = urlParams.get("amount") + "원";
-        paymentKeyElement.textContent = urlParams.get("paymentKey");
-    </script>
+        if (!response.ok) {
+            // TODO 결제 실패
+            console.log(json);
+            window.location.href = `/orders/fail?message=${json.message}&code=${json.code}`;
+        }
+
+        // TODO 결제 성공 -> 나중에 메인으로 이동하도록 변경 필요
+        window.location.href = `/program`;
+    }
+    confirm().then(function (data) {
+        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+    });
+
+    const paymentKeyElement = document.getElementById("paymentKey");
+    const orderIdElement = document.getElementById("orderId");
+    const amountElement = document.getElementById("amount");
+
+    // html 에 들어갈 주문번호, OrderId, paymentKey 값을 바꾸고 싶으면 여기서
+    orderIdElement.textContent = urlParams.get("orderId");
+    amountElement.textContent = urlParams.get("amount") + "원";
+    paymentKeyElement.textContent = urlParams.get("paymentKey");
+</script>
+
 </body>
 </html>
