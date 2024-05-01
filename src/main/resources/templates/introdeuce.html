@@ -14,6 +14,11 @@
           border: none;
       }
 
+      .review-stars {
+          color: #f1c40f; /* 별점 색상 */
+          margin-bottom: 10px;
+      }
+
       .inner-card {
           background-color: #ffffff; /* 안의 카드 배경색 */
           border-radius: 20px;
@@ -55,7 +60,6 @@
 
       .heart-link {
           position: absolute; /* 절대 위치 */
-          top: 50%; /* 중앙 정렬을 위해 상단 50%로 설정 */
           right: 0; /* 오른쪽 정렬 */
           transform: translateY(-50%); /* 수직으로 중앙 정렬 */
           margin-right: 30px; /* 오른쪽으로부터 30px 간격 */
@@ -102,10 +106,16 @@
       <div class="card outer-card">
         <div class="card-body text-center">
           <h2 class="card-title">프로그램 소개</h2>
-          <div th:each="program : ${program}">
+
+
             <div class="card inner-card">
                 <div class="card-body">
-                  <h3 class="card-title">[[${[program.category]}]][[${program.title}]]</h3>
+                  <h3 class="card-title">[[${program.title}]]</h3>
+                  <!-- 찜목록 넣어주기 -->
+                  <a th:href="@{/user/zzim}" class="heart-link">
+                    <i class="fas fa-heart heart-icon"></i>
+                  </a>
+
                   <td><p th:text="${program.description}"></p></td>
                   <div class="align-items-center mb-2">
                     <p class="card-count">커리큘럼</p>
@@ -124,7 +134,7 @@
                   </form>
                 </div>
             </div>
-          </div>
+
         </div>
       </div>
     </div>
@@ -140,23 +150,26 @@
                   <span class="card-countTwo" th:text="${review.user.name}"></span>
                   <span th:text="${review.dateCreatedAt}"></span>
                 </div>
-                <div class="align-items-center mb-2">
-                  <img class="ml-2" src="/static/assets/img/star.png" alt="star" style="width: 15px; height: 15px;">
-                  <span style="font-size: 15px; margin-left: 8px;"> <td th:text="${review.stars}"></td></span>
+                <div class="review-stars">
+                  <span th:each="starNumber : ${#numbers.sequence(1, 5)}">
+                    <i th:class="${starNumber <= review.stars} ? 'fas fa-star' : 'far fa-star'"></i>
+                  </span>
                 </div>
                 <div class="align-items-center mb-2">
                   <td><p th:text="${review.memo}"></p></td>
                 </div>
 
-                <!--  전문가의 답글  -->
+                  <!--  전문가의 답글  -->
+                <div th:if="${review.comment != null and review.comment.content != null}">
                 <div class="card inner-card">
-                  <div class="card-body">
-                    <div class="align-items-center mb-2">
-                      <span class="card-countTwo">전문가의 답글</span>
-                      <span th:text="${review.comment.dateCreatedAt}"></span>
-                    </div>
-                    <div class="align-items-center mb-2">
-                      <td><p th:text="${review.comment.content}"></p></td>
+                    <div class="card-body">
+                      <div class="align-items-center mb-2">
+                        <span class="card-countTwo">전문가의 답글</span>
+                        <span th:text="${review.comment.dateCreatedAt}"></span>
+                      </div>
+                      <div class="align-items-center mb-2">
+                        <td><p th:text="${review.comment.content}"></p></td>
+                      </div>
                     </div>
                   </div>
                 </div>

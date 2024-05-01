@@ -5,11 +5,11 @@ import com.example.homeGym.auth.dto.CustomInstructorDetails;
 import com.example.homeGym.auth.jwt.JwtTokenUtils;
 import com.example.homeGym.auth.service.InstructorDetailsManager;
 import com.example.homeGym.auth.utils.CookieUtil;
-import com.example.homeGym.instructor.dto.*;
+
 
 import com.example.homeGym.instructor.dto.InstructorCreateDto;
 import com.example.homeGym.instructor.dto.InstructorDto;
-
+import java.util.Collections;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.InstructorReviewDto;
 import com.example.homeGym.instructor.dto.InstructorUpdateDto;
@@ -142,11 +142,45 @@ public class InstructorService {
 
     //강사 정보 수정
     @Transactional
-    public void updateInstructor(InstructorUpdateDto dto) {
+    public void updateInstructor(InstructorUpdateDto dto, List<MultipartFile> images) {
         Optional<Instructor> instructorOpt = instructorRepository.findById(dto.getId());
 
         if (instructorOpt.isPresent()) {
             Instructor instructor = instructorOpt.get();
+
+            //저장된 사진 삭제
+            //리뷰에 연관된 이미지 파일 경로를 가져오기.
+            List<String> imagePaths = instructor.getProfileImageUrl();
+
+            //이미지 파일이 존재하면 삭제
+            if (!imagePaths.isEmpty()){
+                for (String imagePath :
+                        imagePaths) {
+                    String mediaPath = "media/";
+                    String fullPath = mediaPath + imagePath.replace("/static/", "");
+                    try{
+                        Files.deleteIfExists(Path.of(fullPath));
+                    }catch (IOException e){
+                        log.error(e.getMessage());
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }
+            }
+
+            List<String> newImagePaths = new ArrayList<>();
+            int count = 0;
+            if (images != null) {
+                for (MultipartFile image :
+                        images) {
+                    if (image.getSize() != 0){
+                        String imgPath = fileHandlerUtils.saveFile("instructor",
+                                String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                        newImagePaths.add(imgPath);
+                        count ++;
+                    }
+                }
+            }
+            dto.setProfileImageUrl(newImagePaths);
             dto.updateEntity(instructor); // DTO를 사용하여 엔티티 업데이트
             instructorRepository.save(instructor);
             log.info("Updated instructor with id: {}", dto.getId());
@@ -296,7 +330,7 @@ public class InstructorService {
                 }
             }
         }
-
+        instructor.setProfileImageUrl(new ArrayList<>());
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
@@ -307,4 +341,27 @@ public class InstructorService {
         instructorRepository.save(instructor);
         InstructorDto.fromEntity(instructor);
     }
+
+//    MainController에서 사용
+    public List<Instructor> findAll(){
+        return instructorRepository.findAll();
+    }
+
+    public List<InstructorDto> findByThreeGoldMedals(List<Instructor> instructors){
+        List<InstructorDto> instructorDtos = new ArrayList<>();
+        List<InstructorDto> result = new ArrayList<>();
+        for (Instructor instructor : instructors){
+//             상태가 ACTIVE이고, 메달이 Gold인 강사 가져오기
+            if (instructor.getMedal().equals("Gold") && instructor.getState()== Instructor.InstructorState.ACTIVE){
+                instructorDtos.add(InstructorDto.fromEntity(instructor));
+            }
+        }
+//        List를 랜덤으로 섞기
+        Collections.shuffle(instructorDtos);
+        for (int i = 0; i < 3; i++) {
+            result.add(instructorDtos.get(i));
+        }
+        return result;
+    }
+
 }

@@ -38,29 +38,15 @@ public class InstructorController {
     private final InstructorService instructorService;
     private final UserService userService;
     private final UserProgramService userProgramService;
-    private final InstructorRepository instructorRepository;
     private final AuthenticationFacade facade;
     private final ProgramService programService;
     private final ProgramCheckService programCheckService;
 
-    //인증쪽에서 작성
+
     // 강사 로그인
     @GetMapping("/signin")
     public String loginPage(){
         return "instructor/instructor-signin";
-    }
-
-    @PostMapping("/signin")
-    public String login(HttpServletResponse res, @ModelAttribute SignInDto signInDto) throws Exception {
-
-        boolean login = instructorService.signIn(res, signInDto.getEmail(), signInDto.getPassword());
-
-        return "redirect:/user/main";
-    }
-
-    // 강사 로그아웃
-    @PostMapping("/logout")
-    public void logout() {
     }
 
 
@@ -117,7 +103,7 @@ public class InstructorController {
         //인증에서 강사 정보 가져오기
         Instructor instructor = facade.getCurrentInstructor();
         model.addAttribute("profileDto",
-                new InstructorProfileDto(instructor.getProfileImageUrl(), instructor.getName(), instructor.getRating()));
+                new InstructorProfileDto(instructor.getProfileImageUrl().get(0), instructor.getName(), instructor.getRating()));
         return "instructor/instructor-page";
     }
 
@@ -135,9 +121,12 @@ public class InstructorController {
 
     // 강사 정보 수정
     @PutMapping("/profile")
-    public String updateProfile(@ModelAttribute InstructorUpdateDto updateDto, RedirectAttributes attributes) {
+    public String updateProfile(
+            @ModelAttribute InstructorUpdateDto updateDto, RedirectAttributes attributes,
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images) {
         try {
-            instructorService.updateInstructor(updateDto);
+            instructorService.updateInstructor(updateDto, images);
             attributes.addFlashAttribute("message", "강사 정보가 업데이트 되었습니다.");
             return "redirect:/instructor/update-result";
         } catch (Exception e) {

@@ -19,6 +19,55 @@
             margin-left: 0.5rem;
             margin-right: 0.5rem;
         }
+        .image-container {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-container .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: red;
+            cursor: pointer;
+        }
+        .image-container .file-name {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #333;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .image-container .add-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: green;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .add-image-btn {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -29,7 +78,7 @@
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-8 col-xl-6">
                         <h1 class="text-center mb-5">강사 정보 수정</h1>
-                        <form action="/instructor/profile" th:action="@{/instructor/profile}" method="post" id="updateForm">
+                        <form action="/instructor/profile" th:action="@{/instructor/profile}" method="post" id="updateForm" enctype="multipart/form-data">
                             <!-- 숨겨진 필드로 PUT 메소드 지정 -->
                             <input type="hidden" name="_method" value="PUT" />
                             <!-- ID 값을 숨겨진 필드로 전송 -->
@@ -139,6 +188,21 @@
                                 <label for="account">계좌번호</label>
                             </div>
 
+                            <div class="image-container-wrapper" style="display: flex;">
+                                <div th:each="image, index : ${instructorDto.profileImageUrl}" class="image-container" th:data-index="${index}">
+                                    <input type="file" class="d-none" accept="image/*" name="images">
+                                    <span class="file-name"></span>
+                                    <span class="delete-button">&times;</span>
+                                    <span class="add-image">+</span>
+                                    <div>
+                                        <img th:src="@{${image}}" alt="img">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="add-image-btn" style="margin-left: 10px;">
+                                <button type="button" class="btn btn-success" id="add-image-container">+</button>
+                            </div>
+
 
                             <!-- 변경사항 저장 버튼 -->
                             <div class="d-grid">
@@ -154,6 +218,88 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script>
+    $(document).ready(function() {
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+        $('#add-image-container').on('click', function() {
+            var imageIndex = $('.image-container-wrapper').children().length + 1;
+            if (imageIndex <= 5) {
+                var newImageContainer = $('<div class="image-container" data-index="' + imageIndex + '">');
+                var newInput = $('<input type="file" class="d-none" accept="image/*" name="images">');
+                var newFileName = $('<span class="file-name"></span>');
+                var deleteButton = $('<span class="delete-button">&times;</span>');
+                var addButton = $('<span class="add-image">+</span>');
+
+                newImageContainer.append(newInput);
+                newImageContainer.append(newFileName);
+                newImageContainer.append(deleteButton);
+                newImageContainer.append(addButton);
+
+                $('.image-container-wrapper').append(newImageContainer);
+            } else {
+                alert('이미지는 최대 5개까지 업로드 가능합니다.');
+            }
+        });
+
+        // + 버튼 클릭 시 해당 이미지 컨테이너의 파일 업로드 창을 엽니다.
+        $(document).on('click', '.add-image', function() {
+            $(this).siblings('input[type=file]').trigger('click');
+        });
+
+        // 파일이 선택되면 파일 이름을 해당 이미지 컨테이너에 표시합니다.
+        $(document).on('change', 'input[type=file]', function() {
+            // 파일이 선택되었을 때만 실행
+            if (this.files.length > 0) {
+                var file = this.files[0];
+                var reader = new FileReader();
+                var $imageContainer = $(this).parent('.image-container');
+
+                reader.onload = function(e) {
+                    $imageContainer.find('img').remove(); // Remove existing image if any
+                    $imageContainer.prepend('<img src="' + e.target.result + '">');
+                    $imageContainer.find('.file-name').text(file.name); // Display file name
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // 파일을 선택하지 않은 경우 해당 이미지 컨테이너의 파일을 무시
+                var $imageContainer = $(this).parent('.image-container');
+                $imageContainer.find('img').remove(); // Remove existing image if any
+                $imageContainer.find('.file-name').text(''); // Clear file name
+            }
+        });
+
+
+        // 삭제 버튼 클릭 시 해당 이미지 컨테이너를 삭제합니다.
+        $(document).on('click', '.delete-button', function() {
+            $(this).parent('.image-container').remove();
+            // 남아 있는 이미지 컨테이너의 data-index를 다시 설정합니다.
+        });
+    });
+
+    // 페이지 로드 시 이미지를 <input type="file">의 값으로 설정
+    $(document).ready(function() {
+        $('.image-container').each(function() {
+            var imageUrl = $(this).find('img').attr('src');
+            if (imageUrl) {
+                var fileInput = $(this).find('input[type=file]');
+                fetch(imageUrl)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+                        const fileList = new DataTransfer();
+                        fileList.items.add(file);
+                        fileInput[0].files = fileList.files;
+                    });
+            }
+        });
+    });
+</script>
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {

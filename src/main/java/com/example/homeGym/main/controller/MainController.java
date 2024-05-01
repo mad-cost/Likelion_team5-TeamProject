@@ -3,6 +3,7 @@ package com.example.homeGym.main.controller;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.entity.Comment;
+import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
 import com.example.homeGym.instructor.entity.UserProgram;
 import com.example.homeGym.instructor.repository.CommentRepository;
@@ -11,15 +12,14 @@ import com.example.homeGym.instructor.service.InstructorService;
 import com.example.homeGym.instructor.service.ProgramService;
 import com.example.homeGym.instructor.service.UserProgramService;
 import com.example.homeGym.user.dto.ReviewDto;
+import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,8 +35,9 @@ public class MainController {
   private final UserService userService;
   private final CommentServiceImp commentServiceImp;
 
+
 //  프로그램 소개 페이지
-  @GetMapping("/introduce/{programId}")
+  @GetMapping("/introduce/program/{programId}")
   public String introduce(
           @PathVariable ("programId")
           Long programId,
@@ -68,9 +69,38 @@ public class MainController {
 
       model.addAttribute("reviews", programReviews);
 
-      return "introdeuce";
+      return "introduce";
   }
 
+  @GetMapping("/match")
+  public String match(
+          Model model
+  ){
+    List<Instructor> instructors = instructorService.findAll();
+
+    model.addAttribute("ex", instructors);
+
+    return "/match";
+  }
+
+  @PostMapping("/match/search")
+  public String search(
+          @RequestParam(value = "firstBox", required = false) String firstBox,
+          @RequestParam(value = "SecondBox", required = false) String SecondBox,
+          @RequestParam(value = "thirdBox", required = false) String thirdBox,
+          @RequestParam(value = "fourthBox", required = false) String fourthBox,
+          Model model
+  ){
+    List<Instructor> instructors = instructorService.findAll();
+    model.addAttribute("ex", instructors);
+
+    model.addAttribute("first", firstBox); // 선택된 값 미리 보여주기
+    model.addAttribute("second", SecondBox); // 선택된 값 미리 보여주기
+    model.addAttribute("third", thirdBox); // 선택된 값 미리 보여주기
+    model.addAttribute("fourth", fourthBox); // 선택된 값 미리 보여주기
+
+    return "/search";
+  }
 
 
 }

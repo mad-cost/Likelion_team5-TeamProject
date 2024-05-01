@@ -16,6 +16,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByUserProgramIdAndUserId(Long userProgramId, Long userId);
     @Query("SELECT r FROM Review r JOIN UserProgram up ON r.userProgramId = up.id JOIN Program p ON up.programId = p.id WHERE p.instructorId = :instructorId")
     Page<Review> findByInstructorId(@Param("instructorId") Long instructorId, Pageable pageable);
-
     Review findByUserProgramId(Long userProgramId);
+    
+//    별이 5 이상인 리뷰만 가져오기
+    @Query("SELECT r FROM Review r WHERE r.stars >= 5")
+    Page<Review> findAllStarIsFive(Pageable pageable);
+
 }
