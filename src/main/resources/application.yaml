@@ -28,10 +28,10 @@ spring:
               - birthyear
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${MYSQL_ID}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:sqlite:db.sqlite
+    driver-class-name: org.sqlite.JDBC
+    username: sa
+    password: password
 
   jpa:
     hibernate:

@@ -8,6 +8,7 @@ import com.example.homeGym.toss.entity.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -35,15 +36,33 @@ public class OrderController {
     ) {
         return service.readOne(id);
     }
-   
 
+    @GetMapping("/payment")
+    public ModelAndView readTossPayment() {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("orderId", "abcddksdkf2203");
+        mav.addObject("amount", "15000");
+        mav.addObject("orderName", "김건강씨의 헬스 프로젝트");
+        mav.addObject("userName", "이시은");
+        mav.addObject("userEmail", "sieun@naver.com");
+        mav.addObject("userPhone", "01011111111");
+        mav.setViewName("order/payment");
 
-    @GetMapping("{id}/payment")
-    public Object readTossPayment(
-            @PathVariable("id")
-            Long id
-    ) {
-        return service.readTossPayment(id);
+        return mav;
+    }
+
+    @GetMapping("/success")
+    public String success() {
+        return "order/success";
+    }
+
+    @GetMapping("/fail")
+    public ModelAndView fail(@RequestParam(value = "message") final String message, @RequestParam(value = "code")final String code) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("message", message);
+        mav.addObject("code", code);
+        mav.setViewName("order/fail");
+        return mav;
     }
 
     @PostMapping("{id}/cancel")

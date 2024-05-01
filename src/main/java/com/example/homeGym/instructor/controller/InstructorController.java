@@ -42,7 +42,7 @@ public class InstructorController {
     private final ProgramService programService;
     private final ProgramCheckService programCheckService;
 
-    //인증쪽에서 작성
+
     // 강사 로그인
     @GetMapping("/signin")
     public String loginPage(){
@@ -182,7 +182,7 @@ public class InstructorController {
 
         //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/";
+            return "redirect:/main";
         }
 
         List<UserProgramDto> userPrograms = userProgramService.findByProgramIdAndStateInProgress(programId);
@@ -218,7 +218,7 @@ public class InstructorController {
 
          //강사 id 와 프로그램의 주인 여부 검증
         if (!checkInstructorAccess(programId)) {
-            return "redirect:/";
+            return "redirect:/main";
         }
         UserProgram userProgram = userProgramService.findByUserIdAndProgramId(userId, programId);
         List<ProgramCheckDto> programCheckDtoList = programCheckService.getAllProgramChecksByUserProgramId(userProgram.getId());

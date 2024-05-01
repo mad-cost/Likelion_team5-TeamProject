@@ -12,6 +12,4 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     // 유저별 주문 찾기
     Optional<Payment> findByPaymentKeyAndUserId(String PaymentKey, Long userId);
 
-
-
 }

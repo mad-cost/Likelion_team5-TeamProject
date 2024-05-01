@@ -42,19 +42,16 @@ public class OrderService {
 
         Object tossPaymentObj = tossService.confirmPayment(dto);
 
-        String programTitle = ((LinkedHashMap<?, ?>) tossPaymentObj)
-                .get("programTitle").toString();
+        // TODO 로직 채우기
+//        String programTitle = ((LinkedHashMap<?, ?>) tossPaymentObj)
+//                .get("programTitle").toString();
+//
+//        Long programId = Long.parseLong(programTitle.split("-")[0]);
+//        Program program = programRepository.findById(programId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        Long programId = Long.parseLong(programTitle.split("-")[0]);
-        Program program = programRepository.findById(programId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
 
-
-        return ProgramOrderDto.fromEntity(orderRepository.save(ProgramOrder.builder()
-                .program(program)
-                .tossPaymentKey(dto.getPaymentKey())
-                .tossOrderId(dto.getOrderId())
-                .build()));
+        return tossPaymentObj;
     }
 
     public Payment requestTossPayment(Payment payment, Long id) {

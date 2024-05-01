@@ -93,28 +93,7 @@ public class MainController {
     ) {
         List<Program> programs = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
         model.addAttribute("programs", programs);
-        return "/instructor/program/instructor-program"; // 프로그램 목록 프래그먼트로 반환
+        return "instructor/program/instructor-program"; // 프로그램 목록 프래그먼트로 반환
     }
-
-
- /*   @PostMapping("/match/search")
-    public String search(
-            @RequestParam(value = "firstBox", required = false) String firstBox,
-            @RequestParam(value = "SecondBox", required = false) String SecondBox,
-            @RequestParam(value = "thirdBox", required = false) String thirdBox,
-            @RequestParam(value = "fourthBox", required = false) String fourthBox,
-            Model model
-    ) {
-        List<Instructor> instructors = instructorService.findAll();
-        model.addAttribute("exs", instructors);
-
-        model.addAttribute("first", firstBox); // 선택된 값 미리 보여주기
-        model.addAttribute("second", SecondBox); // 선택된 값 미리 보여주기
-        model.addAttribute("third", thirdBox); // 선택된 값 미리 보여주기
-        model.addAttribute("fourth", fourthBox); // 선택된 값 미리 보여주기
-
-        return "/search";
-    }*/
-
 
 }
