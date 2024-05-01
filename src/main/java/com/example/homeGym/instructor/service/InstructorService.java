@@ -139,7 +139,6 @@ public class InstructorService {
     }
 
 
-
     //강사 정보 수정
     @Transactional
     public void updateInstructor(InstructorUpdateDto dto, List<MultipartFile> images) {

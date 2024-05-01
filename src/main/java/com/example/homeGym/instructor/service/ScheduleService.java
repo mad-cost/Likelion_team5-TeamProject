@@ -57,4 +57,37 @@ public class ScheduleService {
         }
     }
 
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        Schedule schedule = findScheduleById(scheduleId);
+        scheduleRepository.delete(schedule);
+
+        log.info("Deleted schedule: {}", scheduleId);
+    }
+
+    private Schedule findScheduleById(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> {
+                    log.warn("Schedule not found: {}", scheduleId);
+                    return new IllegalArgumentException("Schedule not found");
+                });
+    }
+
+    //TODO test
+    @Transactional
+    public ScheduleDto saveSchedule(String week, String time) {
+        Instructor currentInstructor = facade.getCurrentInstructor();
+
+        Schedule schedule = Schedule.builder()
+                .week(week)
+                .time(time)
+
+                .instructorName(currentInstructor.getName())
+                .instructorId(currentInstructor.getId())
+                .build();
+
+        log.info("Creating new schedule for instructor: {}", currentInstructor.getId());
+
+        return ScheduleDto.fromEntity(scheduleRepository.save(schedule));
+    }
 }
