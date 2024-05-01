@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -44,8 +45,8 @@ public class MainController {
             Model model
     ) {
         Program program = programService.findById(programId);
+        ProgramDto programDto = programService.findByProgramIdPlusCategory(programId);
 
-        ProgramDto programDto = programService.findByProgramId(programId);
         model.addAttribute("program", programDto);
 
 //      Program의 instructorId를 가져와서 InstructorDto 가져오기
@@ -77,13 +78,16 @@ public class MainController {
             Model model
     ) {
         List<Instructor> instructors = instructorService.findAll();
+        List<ProgramDto> programs = new ArrayList<>();
+        model.addAttribute("programs", programs);
         model.addAttribute("programDto", new ProgramDto());
         model.addAttribute("ex", instructors);
 
         return "match";
     }
     @PostMapping("/match/search")
-    public String filterPrograms(
+    @ResponseBody
+    public List<ProgramDto>  filterPrograms(
             @RequestParam("siDo") String siDo,
             @RequestParam("siGunGu") String siGunGu,
             @RequestParam("dong") String dong,
@@ -91,9 +95,8 @@ public class MainController {
             @RequestParam("subCategoryId") Integer subCategoryId,
             Model model
     ) {
-        List<Program> programs = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
-        model.addAttribute("programs", programs);
-        return "instructor/program/instructor-program"; // 프로그램 목록 프래그먼트로 반환
+        List<ProgramDto> programDtos  = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+        return programDtos;
     }
 
 }

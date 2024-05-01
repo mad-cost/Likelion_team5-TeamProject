@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+<div class="card mb-3">
+    <div class="card-header">스케줄 선택</div>
+    <div class="card-body">
+        <!--TODO: form action 부분 수정-->
+        <form th:action="@{'/instructor/schedule'}" method="post">
+            <div class="form-group">
+                <label for="week" class="form-label">요일</label>
+                <select id="week" name="week" class="form-select" required>
+                    <option value="">요일 선택</option>
+                    <option th:each="week : ${T(com.example.homeGym.instructor.entity.Week).values()}"
+                            th:value="${week.name()}" th:text="${week.koreanName}">Week slot
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="time" class="form-label">시간</label>
+                <select id="time" name="time" class="form-select" required>
+                    <option value="">시간 선택</option>
+                    <option th:each="time : ${T(com.example.homeGym.instructor.entity.Time).values()}"
+                            th:value="${time.name()}" th:text="${time.description}">Time slot
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="count" class="form-label">회차권 선택</label>
+                <select id="count" name="count" class="form-select" required>
+                    <option value="">회차권 선택</option>
+                    <!--<option th:value="${program.price1}">1회</option>
+                    <option th:value="${program.price10}">10회</option>
+                    <option th:value="${program.price20}">20회</option>-->
+                </select>
+            <!--TODO: 선택한 회차권에 따라서 program 가격을 amount에 저장해서 보내주어야 함.-->
+            </div>
+            <button type="submit" class="btn btn-outline-primary mr-1">결제 하기</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>
