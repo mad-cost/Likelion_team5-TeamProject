@@ -36,28 +36,70 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user/main",
+                                "/main",
+                                "/admin/signin",
                                 "/user/loginpage",
-                                "/user/logout",
-                                "/token/issue",
-                                "/token/validate",
-                                "/instructor",
-                                "/instructor/**",
                                 "/program/**",
-                                "/auth/admin/signin"
+                                "/auth/admin/signin",
+                                "/instructor/signin",
+                                "/instructor/proposal/**",
+                                "/instructor/check-email",
+                                "/auth/instructor/signin",
+                                "/css/**","/js/**",
+                                "/static/**",
+                                "/email/**",
+                                "/main/**",
+
+                                "/instructor/address/**",
+                                "/toss"
                         )
                         .permitAll()
 
                         .requestMatchers(
+                                "/user/review/**",
+                                "/user/mypage",
+                                "/user/program/**",
+                                "/orders/**",
+                                "/user/zzim"
+
+                        )
+                        .hasRole("USER") // 유저 권한을 가진 사용자만 접근 가능
+
+                        .requestMatchers(
+                              "/instructor/accept/**",
+
+                                "/instructor/review/**",
+                                "/instructor/withdraw",
+                                "/instructor",
+                                "/instructor/profile",
+                                "/instructor/update-result",
+                                "/instructor/program/**",
+                                "/instructor/settlement/**",
+                                "/program/**",
+                                "/instructor/schedule/**"
+
+                        )
+                        .hasRole("INSTRUCTOR") // 강사 권한을 가진 사용자만 접근 가능
+
+                        .requestMatchers(
+                                "/admin",
+                                "/admin/instructor",
+                                "/admin/user/**",
+                                "/admin/program/**",
+                                "/admin/settlement/**"
+
+                        )
+                        .hasRole("ADMIN") // 관리자 권한을 가진 사용자만 접근 가능
+
+                        .requestMatchers(
                                 "/user/signup",
                                 "/user/signin",
-
                                 "/instructor/signup"
-
                         )
                         .anonymous()
                         .anyRequest()
-                        .permitAll()
+                        .authenticated()
+
                 )
 
                 .oauth2Login(oauth2Login -> oauth2Login
