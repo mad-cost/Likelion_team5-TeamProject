@@ -9,14 +9,18 @@ import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.instructor.service.*;
 import com.example.homeGym.user.dto.ReviewDto;
+import com.example.homeGym.user.entity.Apply;
 import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.service.ApplyService;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +37,7 @@ public class MainController {
     private final UserService userService;
     private final CommentServiceImp commentServiceImp;
     private final ScheduleService scheduleService;
-    private final ScheduleRepository scheduleRepository;
+    private final ApplyService applyService;
 
 
     //  프로그램 소개 페이지
@@ -96,10 +100,39 @@ public class MainController {
         Long instructorId = program.getInstructorId();
         return scheduleService.getAllSchedules(instructorId);
     }
+
+
     @PostMapping("introduce/program/{programId}/apply")
-    public String apply(){
-        return "main";
+    public String apply(
+            @PathVariable("programId")
+            Long programId,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes
+    ) {
+        String week = request.getParameter("week");
+        String time = request.getParameter("time");
+        String count = request.getParameter("count");
+
+        // 요일, 시간, 회차권을 모두 선택했는지 확인합니다.
+        if (week == null || time == null || count == null || week.isEmpty() || time.isEmpty() || count.isEmpty()) {
+            // 선택하지 않은 경우, 에러 메시지를 추가하고 다시 프로그램 소개 페이지로 리다이렉션합니다.
+            redirectAttributes.addFlashAttribute("error", "요일, 시간, 회차권을 모두 선택해주세요.");
+            return "redirect:/main/introduce/program/" + programId;
+        }
+
+        // 선택한 요일, 시간, 회차권을 이용하여 Apply 엔티티를 생성하고 저장합니다.
+        Apply apply = new Apply();
+        apply.setAble_week(Week.valueOf(week));
+        apply.setAble_time(Time.valueOf(time));
+        apply.setCount(Integer.parseInt(count));
+
+        applyService.saveApply(apply);
+
+        return "redirect:/main/introduce/program/" + programId;
     }
+
+
+
 
     @GetMapping("/match")
     public String match(

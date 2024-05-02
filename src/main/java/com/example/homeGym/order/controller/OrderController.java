@@ -21,7 +21,6 @@ public class OrderController {
     @GetMapping("/schedule")
     public String selectSchedulePage(){
         return "order/select-schedule";
-
     }
 
     @GetMapping

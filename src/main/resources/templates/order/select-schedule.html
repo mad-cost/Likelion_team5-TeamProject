@@ -8,39 +8,73 @@
 <div class="card mb-3">
     <div class="card-header">스케줄 선택</div>
     <div class="card-body">
-        <!--TODO: form action 부분 수정-->
-        <form th:action="@{'/instructor/schedule'}" method="post">
+        <form id="applyForm" th:action="@{'introduce/program/{programId}/apply'}" method="post">
             <div class="form-group">
                 <label for="week" class="form-label">요일</label>
                 <select id="week" name="week" class="form-select" required>
                     <option value="">요일 선택</option>
                     <option th:each="week : ${T(com.example.homeGym.instructor.entity.Week).values()}"
-                            th:value="${week.name()}" th:text="${week.koreanName}">Week slot
+                            th:value="${week}" th:text="${week.koreanName}">Week slot
                     </option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="time" class="form-label">시간</label>
                 <select id="time" name="time" class="form-select" required>
                     <option value="">시간 선택</option>
                     <option th:each="time : ${T(com.example.homeGym.instructor.entity.Time).values()}"
-                            th:value="${time.name()}" th:text="${time.description}">Time slot
+                            th:value="${time}" th:text="${time.description}">Time slot
                     </option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="count" class="form-label">회차권 선택</label>
-                <select id="count" name="count" class="form-select" required>
+                <select id="count" name="count" class="form-select" required onchange="calculateAmount()">
                     <option value="">회차권 선택</option>
-                    <!--<option th:value="${program.price1}">1회</option>
-                    <option th:value="${program.price10}">10회</option>
-                    <option th:value="${program.price20}">20회</option>-->
+                    <option value="1">1회</option>
+                    <option value="10">10회</option>
+                    <option value="20">20회</option>
                 </select>
-            <!--TODO: 선택한 회차권에 따라서 program 가격을 amount에 저장해서 보내주어야 함.-->
+                <input type="hidden" id="amount" name="amount" value="">
             </div>
-            <button type="submit" class="btn btn-outline-primary mr-1">결제 하기</button>
+
+            <button type="submit" class="btn btn-outline-primary mr-1" onclick="return validateForm()">신청하기</button>
         </form>
     </div>
 </div>
+
+<script>
+    function validateForm() {
+        var week = document.getElementById("week").value;
+        var time = document.getElementById("time").value;
+        var count = document.getElementById("count").value;
+
+        if (week === "" || time === "" || count === "") {
+            alert("요일, 시간, 회차권을 모두 선택해주세요.");
+            return false; // 폼 제출을 막습니다.
+        }
+
+        // 폼이 유효하면 true를 반환하여 제출합니다.
+        return true;
+    }
+
+    function calculateAmount() {
+        var count = document.getElementById("count").value;
+        var amountInput = document.getElementById("amount");
+
+        if (count === "1") {
+            amountInput.value = "${program.price1}";
+        } else if (count === "10") {
+            amountInput.value = "${program.price10}";
+        } else if (count === "20") {
+            amountInput.value = "${program.price20}";
+        } else {
+            amountInput.value = ""; // 회차권을 선택하지 않은 경우 가격을 비웁니다.
+        }
+    }
+</script>
+
 </body>
 </html>
