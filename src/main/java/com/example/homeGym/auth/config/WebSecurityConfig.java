@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/main",
+                                "/main", "/error",
                                 "/admin/signin",
                                 "/user/loginpage",
                                 "/program/**",
@@ -48,8 +48,9 @@ public class WebSecurityConfig {
                                 "/css/**","/js/**",
                                 "/static/**",
                                 "/email/**",
-                                "/main/**",
-
+                                "/main", "/main/match","/main/match/search",
+                                "/main/introduce/program/{programId}",
+                                "/main/introduce/program/all/{programId}",
                                 "/instructor/address/**",
                                 "/toss"
                         )
@@ -60,7 +61,8 @@ public class WebSecurityConfig {
                                 "/user/mypage",
                                 "/user/program/**",
                                 "/orders/**",
-                                "/user/zzim"
+                                "/user/zzim",
+                                "/main/introduce/program/{programId}/apply"
 
                         )
                         .hasRole("USER") // 유저 권한을 가진 사용자만 접근 가능

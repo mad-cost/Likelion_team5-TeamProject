@@ -1,5 +1,6 @@
 package com.example.homeGym.main.controller;
 
+import com.example.homeGym.common.util.AuthenticationUtilService;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.ProgramMatchDto;
@@ -17,6 +18,7 @@ import com.example.homeGym.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,7 @@ public class MainController {
     private final CommentServiceImp commentServiceImp;
     private final ScheduleService scheduleService;
     private final ApplyService applyService;
+    private final AuthenticationUtilService authenticationUtilService;
 
 
     //  프로그램 소개 페이지
@@ -102,12 +105,13 @@ public class MainController {
     }
 
 
-    @PostMapping("introduce/program/{programId}/apply")
+    @PostMapping("/introduce/program/{programId}/apply")
     public String apply(
             @PathVariable("programId")
             Long programId,
             HttpServletRequest request,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            Authentication authentication
     ) {
         String week = request.getParameter("week");
         String time = request.getParameter("time");
@@ -119,14 +123,8 @@ public class MainController {
             redirectAttributes.addFlashAttribute("error", "요일, 시간, 회차권을 모두 선택해주세요.");
             return "redirect:/main/introduce/program/" + programId;
         }
-
-        // 선택한 요일, 시간, 회차권을 이용하여 Apply 엔티티를 생성하고 저장합니다.
-        Apply apply = new Apply();
-        apply.setAble_week(Week.valueOf(week));
-        apply.setAble_time(Time.valueOf(time));
-        apply.setCount(Integer.parseInt(count));
-
-        applyService.saveApply(apply);
+        Long userId = authenticationUtilService.getId(authentication);
+        applyService.saveApply(week, time, count, userId, programId );
 
         return "redirect:/main/introduce/program/" + programId;
     }
