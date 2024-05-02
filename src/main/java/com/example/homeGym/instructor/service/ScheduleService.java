@@ -26,12 +26,20 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final AuthenticationFacade facade;
 
+    public List<ScheduleDto> getAllSchedulesByInstructorId(Long instructorId) {
+        List<Schedule> schedules = scheduleRepository.findAllByInstructorId(instructorId);
+        return schedules.stream()
+                .map(ScheduleDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public List<ScheduleDto> getAllSchedules(Long instructorId) {
         List<Schedule> schedules = scheduleRepository.findAllByInstructorId(instructorId);
         return schedules.stream()
                 .map(ScheduleDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     public void saveSchedules(List<Schedule> schedules, Long instructorId, String instructorName) {
