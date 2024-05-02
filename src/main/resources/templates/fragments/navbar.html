@@ -18,12 +18,8 @@
                 <li class="nav-item" id="myPageNavItem">
                     <a class="nav-link" href="#">마이페이지</a>
                 </li>
-                <li class="nav-item" id="logoutNavItem">
-                    <a class="nav-link" href="#">마이페이지</a>
-                </li>
-
-                <button id="signoutButton" class="btn btn-outline-danger"onclick="window.location.href = window.location.origin + '/auth/signout'">로그아웃</button>
-
+                <button id="signinButton" class="btn btn-outline-primary" onclick="window.location.href = `${window.location.origin}/user/loginpage`">로그인</button>
+                <button id="signoutButton" class="btn btn-outline-danger" onclick="window.location.href = `${window.location.origin}/auth/signout`">로그아웃</button>
             </ul>
         </div>
     </div>
@@ -33,7 +29,14 @@
             display: flex; /* Flexbox 레이아웃 활성화 */
             justify-content: space-between; /* 양 끝으로 정렬 */
             width: 100%; /* 전체 너비를 차지하도록 설정 */
-        }</style>
+        }
+    </style>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
 
         // 쿠키에서 이름으로 쿠키를 가져오는 함수
@@ -63,7 +66,11 @@
                 myPageNavItem.innerHTML = '<a class="nav-link" href="/user/mypage">마이페이지</a>';
             } else if (userType === "instructor") {
                 myPageNavItem.innerHTML = '<a class="nav-link" href="/instructor">마이페이지</a>';
-            } else {
+            } else if(userType === "admin" ) {
+                myPageNavItem.innerHTML = '<a class="nav-link" href="/admin">마이페이지</a>';
+            }
+
+            else {
                 myPageNavItem.style.display = "none";
             }
         }
@@ -71,6 +78,46 @@
         // 페이지 로드 시 userType을 가져와 마이페이지 링크를 설정하는 함수
         document.addEventListener("DOMContentLoaded", function() {
             const jwtToken = getCookie("Authorization");
+
+            const myPageNavItem = document.getElementById("myPageNavItem");
+            const signoutButton = document.getElementById("signoutButton");
+
+            // 로그인 상태에 따라 버튼 표시
+            if (jwtToken) {
+                const claims = parseJWT(jwtToken);
+                if (claims && claims.userType) {
+                    setMyPageLink(claims.userType);
+                }
+                signoutButton.style.display = "block";
+                myPageNavItem.style.display = "block";
+                if (signinButton) {
+                    signinButton.style.display = "none"; // 로그인 버튼 숨기기
+                }
+            } else {
+                signoutButton.style.display = "none";
+                myPageNavItem.style.display = "none";
+
+                // 로그아웃 시 로그인 버튼을 네비게이션 바에 추가
+                const navbarNav = document.querySelector(".navbar-nav-wrapper ul");
+                if (!signinButton) {
+                    signinButton = document.createElement("button");
+                    signinButton.id = "signinButton";
+                    signinButton.textContent = "로그인";
+                    signinButton.className = "btn btn-outline-primary";
+                    signinButton.onclick = function() {
+                        window.location.href = `${window.location.origin}/user/loginpage`;
+                    };
+                    navbarNav.appendChild(signinButton); // 로그아웃 상태에서는 로그인 버튼 추가
+                }
+            }
+            //로고 이미지 화면 설정
+            const logoLink = document.getElementById("navbarLogoLink");
+            const logoImg = document.getElementById("navbarLogo");
+
+            logoLink.href = `${window.location.origin}/main`;
+            logoImg.src = `${window.location.origin}/static/assets/img/free-icon-lion-512px.png`;
+
+
             if (!jwtToken) {
                 console.warn("쿠키에서 JWT 토큰을 찾지 못했습니다");
                 return;
@@ -84,12 +131,6 @@
 
             setMyPageLink(claims.userType);
 
-            //로고 이미지 화면 설정
-            const logoLink = document.getElementById("navbarLogoLink");
-            const logoImg = document.getElementById("navbarLogo");
-
-            logoLink.href = `${window.location.origin}/main`;
-            logoImg.src = `${window.location.origin}/static/assets/img/free-icon-lion-512px.png`;
 
         });
 

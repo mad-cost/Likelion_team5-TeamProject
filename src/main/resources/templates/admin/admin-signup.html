@@ -145,7 +145,7 @@
             const email = emailUser + '@' + (emailDomain === 'other' ? customDomain : emailDomain);
 
             try {
-                const result = await fetch('http://localhost:8080/auth/mailSend', {
+                const result = await fetch('/auth/mailSend', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -55,7 +55,7 @@ public class AdInstructorController {
     SettlementFeeDto settlementFeeId = settlementFeeService.findByInstructorId(instructorId);
     model.addAttribute("settlementFee", settlementFeeId);
 
-    return "/admin/instructor";
+    return "admin/instructor";
   }
 
   @PostMapping("/{instructorId}/medal")
@@ -80,7 +80,7 @@ public class AdInstructorController {
     //강사의 상태가 REGISTRATION인 강사 모두 가져오기
     List<InstructorDto> instructorDto = instructorService.findAllByStateIsRegistration();
     model.addAttribute("instructors", instructorDto);
-    return "/admin/accept";
+    return "admin/accept";
   }
 
   // 강사 승인하기
@@ -112,7 +112,7 @@ public class AdInstructorController {
   ) {
     List<InstructorDto> instructorDto = instructorService.findAllByStateIsWithdrawalComplete();
     model.addAttribute("instructors", instructorDto);
-    return "/admin/withdraw";
+    return "admin/withdraw";
   }
   // 강사 회원 탈퇴 승인
   @PostMapping("/{instructorId}/withdraw")

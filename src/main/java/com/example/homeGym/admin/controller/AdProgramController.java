@@ -37,7 +37,7 @@ public class AdProgramController {
             dto.setInstructor(instructorService.findByLongId(InstructorId));
         }
         model.addAttribute("programs", stateCreates);
-        return "/admin/creation";
+        return "admin/creation";
     }
 
     //  신규 프로그램 등록
@@ -74,7 +74,7 @@ public class AdProgramController {
             dto.setInstructor(instructorService.findByLongId(InstructorId));
         }
         model.addAttribute("programs", stateModification);
-        return "/admin/modification";
+        return "admin/modification";
     }
 
     //  수정 프로그램 수락
