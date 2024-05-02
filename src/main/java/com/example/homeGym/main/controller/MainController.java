@@ -2,6 +2,7 @@ package com.example.homeGym.main.controller;
 
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
+import com.example.homeGym.instructor.dto.ProgramMatchDto;
 import com.example.homeGym.instructor.entity.Comment;
 import com.example.homeGym.instructor.entity.Instructor;
 import com.example.homeGym.instructor.entity.Program;
@@ -78,16 +79,18 @@ public class MainController {
             Model model
     ) {
         List<Instructor> instructors = instructorService.findAll();
-        List<ProgramDto> programs = new ArrayList<>();
-        model.addAttribute("programs", programs);
-        model.addAttribute("programDto", new ProgramDto());
+      //  List<ProgramDto> programs = new ArrayList<>();
+        List<ProgramMatchDto> programMatchDtos = new ArrayList<>();
+      //  model.addAttribute("programs", programs);
+        model.addAttribute("programMatchDtos", programMatchDtos);
+        model.addAttribute("programMatch", new ProgramMatchDto());
         model.addAttribute("ex", instructors);
 
         return "match";
     }
     @PostMapping("/match/search")
     @ResponseBody
-    public List<ProgramDto>  filterPrograms(
+    public List<ProgramMatchDto>  filterPrograms(
             @RequestParam("siDo") String siDo,
             @RequestParam("siGunGu") String siGunGu,
             @RequestParam("dong") String dong,
@@ -95,8 +98,8 @@ public class MainController {
             @RequestParam("subCategoryId") Integer subCategoryId,
             Model model
     ) {
-        List<ProgramDto> programDtos  = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
-        return programDtos;
+        List<ProgramMatchDto> programMatchDtos  = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+        return programMatchDtos;
     }
 
 }
