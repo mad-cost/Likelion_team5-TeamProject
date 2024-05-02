@@ -147,25 +147,7 @@
         </div>
 
         <!-- 스케줄 view -->
-        <div class="col-md-12 mb-4">
-            <div class="card outer-card">
-                <div class="card-body">
-                    <h2 class="card-title">스케줄</h2>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="list-group">
-                                <!-- 강사의 스케줄 리스트를 반복하여 출력 -->
-                                <li class="list-group-item" th:each="schedule : ${schedules}">
-                                    <span th:text="${schedule.week}"></span> -
-                                    <span th:text="${schedule.time}"></span>
-                                    <!-- 여기에 추가적인 스케줄 정보를 표시 -->
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ul id="schedule-list"></ul>
 
         <div class="col-md-12 mb-4">
             <div class="card outer-card">
@@ -212,6 +194,20 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    fetch('/instructor/schedule/all')
+            .then(response => response.json())
+            .then(schedules => {
+                const scheduleList = document.getElementById('schedule-list');
+                // 스케줄 데이터를 반복하여 HTML 요소로 변환하여 추가
+                schedules.forEach(schedule => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${schedule.week} - ${schedule.time}`;
+                    scheduleList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+</script>
 
 </body>
 </html>
