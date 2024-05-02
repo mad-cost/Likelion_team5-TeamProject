@@ -72,7 +72,7 @@ public class InstructorService {
                 images) {
             if (image.getSize() != 0) {
                 String imgPath = fileHandlerUtils.saveFile("instructor",
-                        String.format("profile_image_instructor_%s_%d", LocalTime.now().toString(), count), image);
+                        String.format("profile_image_instructor_%s_%d", "1", count), image);
                 imagePaths.add(imgPath);
                 count++;
             }

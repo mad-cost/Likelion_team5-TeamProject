@@ -18,7 +18,7 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_EXPIRATION);
         cookie.setHttpOnly(false);
-        cookie.setDomain("101.101.209.157");
+       // cookie.setDomain("101.101.209.157");
         res.addCookie(cookie);
     }
 

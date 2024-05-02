@@ -70,7 +70,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String jwt = tokenUtils.generateToken(details);
         cookieUtil.createCookie(response, "Authorization", jwt);
 
-        String targetUrl = "http://101.101.209.157/main";
+        String targetUrl = "http://localhost:8080/main";
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
 
