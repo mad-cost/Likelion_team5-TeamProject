@@ -40,35 +40,30 @@
                 <input type="hidden" id="amount" name="amount" value="">
             </div>
 
-            <button type="button" class="btn btn-outline-primary mr-1" onclick="apply()">신청하기</button>
+            <button type="submit" class="btn btn-outline-primary mr-1" onclick="return validateForm()">신청하기</button>
         </form>
     </div>
 </div>
 
 <script>
-    function apply() {
-        // 회차권 선택 정보를 가져옵니다.
+    function validateForm() {
         var week = document.getElementById("week").value;
         var time = document.getElementById("time").value;
-        var count = document.getElementById("count").value; // 회차권 선택값 추가
+        var count = document.getElementById("count").value;
 
-        // 회차권 선택값을 form 데이터에 추가합니다.
-        var form = document.getElementById("applyForm");
-        var countInput = document.createElement("input");
-        countInput.setAttribute("type", "hidden");
-        countInput.setAttribute("name", "count");
-        countInput.setAttribute("value", count);
-        form.appendChild(countInput);
+        if (week === "" || time === "" || count === "") {
+            alert("요일, 시간, 회차권을 모두 선택해주세요.");
+            return false; // 폼 제출을 막습니다.
+        }
 
-        // 신청 정보를 서버에 제출합니다.
-        form.submit();
+        // 폼이 유효하면 true를 반환하여 제출합니다.
+        return true;
     }
 
     function calculateAmount() {
         var count = document.getElementById("count").value;
         var amountInput = document.getElementById("amount");
 
-        // 프로그램의 가격을 가져와서 amountInput에 설정합니다.
         if (count === "1") {
             amountInput.value = "${program.price1}";
         } else if (count === "10") {

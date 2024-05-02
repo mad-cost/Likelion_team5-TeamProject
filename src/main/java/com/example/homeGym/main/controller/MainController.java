@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,13 +103,25 @@ public class MainController {
 
 
     @PostMapping("introduce/program/{programId}/apply")
-    public String apply(@PathVariable("programId") Long programId, HttpServletRequest request) {
+    public String apply(
+            @PathVariable("programId")
+            Long programId,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes
+    ) {
         String week = request.getParameter("week");
         String time = request.getParameter("time");
         String count = request.getParameter("count");
 
-        Apply apply = new Apply();
+        // 요일, 시간, 회차권을 모두 선택했는지 확인합니다.
+        if (week == null || time == null || count == null || week.isEmpty() || time.isEmpty() || count.isEmpty()) {
+            // 선택하지 않은 경우, 에러 메시지를 추가하고 다시 프로그램 소개 페이지로 리다이렉션합니다.
+            redirectAttributes.addFlashAttribute("error", "요일, 시간, 회차권을 모두 선택해주세요.");
+            return "redirect:/main/introduce/program/" + programId;
+        }
 
+        // 선택한 요일, 시간, 회차권을 이용하여 Apply 엔티티를 생성하고 저장합니다.
+        Apply apply = new Apply();
         apply.setAble_week(Week.valueOf(week));
         apply.setAble_time(Time.valueOf(time));
         apply.setCount(Integer.parseInt(count));
@@ -117,6 +130,7 @@ public class MainController {
 
         return "redirect:/main/introduce/program/" + programId;
     }
+
 
 
 
