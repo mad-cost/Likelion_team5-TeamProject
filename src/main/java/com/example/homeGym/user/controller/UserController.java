@@ -53,9 +53,8 @@ public class UserController {
         model.addAttribute("instructors", instructorDto);
 
         int pageSize = 3;
-//        별이 5개인 리뷰만 가져오기
+        //별이 5개인 리뷰만 가져오기
         Page<Review> reviewPage = reviewService.findAllStarIsFive(page, pageSize);
-
 
         model.addAttribute("reviews", reviewPage);
         model.addAttribute("currentPage", page);

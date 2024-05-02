@@ -61,6 +61,7 @@ public class InstructorCreateDto {
                 .career(this.career)
                 .profileImageUrl(this.profileImageUrl)
                 .certificate(this.certificate)
+                .medal("unlanked")
                 .email(this.email)
                 .phone(this.phone)
                 .bank(this.bank)
