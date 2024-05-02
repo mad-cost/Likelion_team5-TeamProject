@@ -71,6 +71,8 @@
     </style>
 </head>
 <body>
+<!--네비바-->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
 
 <div class="container mt-5">
     <h2 th:text="${instructorName} + '님의 스케줄'"></h2>

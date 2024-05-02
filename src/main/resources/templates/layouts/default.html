@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title>Layout Page</title>
 </head>
@@ -7,23 +7,15 @@
 <header>
     <!-- 공통 헤더 -->
 </header>
+<!-- 네비게이션 바 프래그먼트 포함 -->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
 
-<nav>
-    <!-- 기본 네비게이션 바 -->
-</nav>
 
-<div th:fragment="sidebar">
-    <!-- 기본 사이드바 -->
-</div>
 
-<section>
-    <div th:replace="${content}">
+<th:block layout:fragment="content"></th:block>
         <!-- 메인 컨텐츠 섹션, 각 페이지의 내용이 여기에 들어감 -->
-    </div>
-</section>
 
-<footer>
-    <!-- 공통 푸터 -->
-</footer>
+
+<footer th:replace="fragments/footer::footer"></footer>
 </body>
 </html>

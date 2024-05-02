@@ -45,6 +45,9 @@
     </style>
 </head>
 <body>
+<!--네비바-->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
+
 <div class="container mt-5">
     <h1 class="mb-4">Instructor Reviews</h1>
     <div th:each="review : ${reviews}" class="mb-4">
