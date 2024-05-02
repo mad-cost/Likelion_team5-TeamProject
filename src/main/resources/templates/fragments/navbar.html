@@ -1,0 +1,99 @@
+
+<!--네비게이션 바-->
+
+<nav  th:fragment="navbarFragment" class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" id="navbarLogoLink">
+            <img id="navbarLogo" alt="로고" style="width: 50px; height: 50px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse navbar-nav-wrapper" id="navbarNav">
+            <ul class="navbar-nav">
+                <!-- 다른 네비게이션 항목들 -->
+            </ul>
+            <ul class="navbar-nav">
+                <!-- 사용자 유형에 따라 동적으로 표시될 마이페이지 링크 -->
+                <li class="nav-item" id="myPageNavItem">
+                    <a class="nav-link" href="#">마이페이지</a>
+                </li>
+                <li class="nav-item" id="logoutNavItem">
+                    <a class="nav-link" href="#">마이페이지</a>
+                </li>
+
+                <button id="signoutButton" class="btn btn-outline-danger"onclick="window.location.href = window.location.origin + '/auth/signout'">로그아웃</button>
+
+            </ul>
+        </div>
+    </div>
+
+    <style>
+        .navbar-nav-wrapper {
+            display: flex; /* Flexbox 레이아웃 활성화 */
+            justify-content: space-between; /* 양 끝으로 정렬 */
+            width: 100%; /* 전체 너비를 차지하도록 설정 */
+        }</style>
+    <script>
+
+        // 쿠키에서 이름으로 쿠키를 가져오는 함수
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // JWT 토큰을 파싱하는 함수
+        function parseJWT(token) {
+            try {
+                const payload = token.split('.')[1];
+                const decodedPayload = atob(payload);
+                return JSON.parse(decodedPayload);
+            } catch (e) {
+                console.error("JWT 토큰 파싱에 실패했습니다:", e);
+                return null;
+            }
+        }
+
+        // userType에 따라 마이페이지 링크를 설정하는 함수
+        function setMyPageLink(userType) {
+            const myPageNavItem = document.getElementById("myPageNavItem");
+            if (userType === "user") {
+                myPageNavItem.innerHTML = '<a class="nav-link" href="/user/mypage">마이페이지</a>';
+            } else if (userType === "instructor") {
+                myPageNavItem.innerHTML = '<a class="nav-link" href="/instructor">마이페이지</a>';
+            } else {
+                myPageNavItem.style.display = "none";
+            }
+        }
+
+        // 페이지 로드 시 userType을 가져와 마이페이지 링크를 설정하는 함수
+        document.addEventListener("DOMContentLoaded", function() {
+            const jwtToken = getCookie("Authorization");
+            if (!jwtToken) {
+                console.warn("쿠키에서 JWT 토큰을 찾지 못했습니다");
+                return;
+            }
+
+            const claims = parseJWT(jwtToken);
+            if (!claims || !claims.userType) {
+                console.warn("JWT 토큰에서 userType을 찾지 못했습니다");
+                return;
+            }
+
+            setMyPageLink(claims.userType);
+
+            //로고 이미지 화면 설정
+            const logoLink = document.getElementById("navbarLogoLink");
+            const logoImg = document.getElementById("navbarLogo");
+
+            logoLink.href = `${window.location.origin}/main`;
+            logoImg.src = `${window.location.origin}/static/assets/img/free-icon-lion-512px.png`;
+
+        });
+
+
+    </script>
+</nav>
+

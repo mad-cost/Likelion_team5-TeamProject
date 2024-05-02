@@ -43,6 +43,7 @@ public class MainController {
             Long programId,
             Model model
     ) {
+
         Program program = programService.findById(programId);
         ProgramDto programDto = programService.findByProgramIdPlusCategory(programId);
 
@@ -55,7 +56,7 @@ public class MainController {
 
 //      강사 스케줄 리스트
         List<ScheduleDto> scheduleDto = scheduleService.getAllSchedulesByInstructorId(instructorId);
-        model.addAttribute("schedule", scheduleDto);
+        model.addAttribute("schedules", scheduleDto);
 
 //      programId에 해당하는 모든 user_program을 가져오고 user_program의 id로 리뷰 전부 가져오기
 //      programId에 해당하는 모든 user_program의 id가져오기
@@ -73,7 +74,31 @@ public class MainController {
 
         model.addAttribute("reviews", programReviews);
 
+        // 스케줄 정보를 데이터베이스에서 가져옵니다
+        List<ScheduleDto> schedules = scheduleService.getAllSchedules(instructorId);
+
+        // 스케줄 정보를 모델에 추가합니다
+        model.addAttribute("schedules", schedules);
+
+
         return "introduce";
+    }
+
+    @GetMapping("/introduce/program/all/{programId}")
+    @ResponseBody
+    public List<ScheduleDto> getAllSchedules(
+            @PathVariable("programId")
+            Long programId,
+            Model model) {
+        Program program = programService.findById(programId);
+
+//      Program의 instructorId를 가져와서 InstructorDto 가져오기
+        Long instructorId = program.getInstructorId();
+        return scheduleService.getAllSchedules(instructorId);
+    }
+    @PostMapping("introduce/program/{programId}/apply")
+    public String apply(){
+        return "main";
     }
 
     @GetMapping("/match")
@@ -81,18 +106,19 @@ public class MainController {
             Model model
     ) {
         List<Instructor> instructors = instructorService.findAll();
-      //  List<ProgramDto> programs = new ArrayList<>();
+        //  List<ProgramDto> programs = new ArrayList<>();
         List<ProgramMatchDto> programMatchDtos = new ArrayList<>();
-      //  model.addAttribute("programs", programs);
+        //  model.addAttribute("programs", programs);
         model.addAttribute("programMatchDtos", programMatchDtos);
         model.addAttribute("programMatch", new ProgramMatchDto());
         model.addAttribute("ex", instructors);
 
         return "match";
     }
+
     @PostMapping("/match/search")
     @ResponseBody
-    public List<ProgramMatchDto>  filterPrograms(
+    public List<ProgramMatchDto> filterPrograms(
             @RequestParam("siDo") String siDo,
             @RequestParam("siGunGu") String siGunGu,
             @RequestParam("dong") String dong,
@@ -100,7 +126,7 @@ public class MainController {
             @RequestParam("subCategoryId") Integer subCategoryId,
             Model model
     ) {
-        List<ProgramMatchDto> programMatchDtos  = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
+        List<ProgramMatchDto> programMatchDtos = programService.findProgramsByFilters(siDo, siGunGu, dong, mainCategoryId, subCategoryId);
         return programMatchDtos;
     }
 

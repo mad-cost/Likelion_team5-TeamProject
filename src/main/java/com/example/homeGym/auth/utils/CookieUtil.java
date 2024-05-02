@@ -17,7 +17,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_EXPIRATION);
-        cookie.setHttpOnly(false);
+     //   cookie.setHttpOnly(false);
         res.addCookie(cookie);
     }
 
@@ -36,7 +36,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(key, "");
         cookie.setPath("/");
         cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
+//        cookie.setHttpOnly(true);
 
         return cookie;
     }

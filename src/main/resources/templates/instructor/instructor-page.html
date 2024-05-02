@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>강사 프로필</title>
@@ -37,6 +37,10 @@
     </style>
 </head>
 <body>
+
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
+
+
 <div class="container mt-5">
     <div class="card">
         <div class="card-body">
