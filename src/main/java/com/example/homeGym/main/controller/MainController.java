@@ -9,9 +9,12 @@ import com.example.homeGym.instructor.repository.CommentRepository;
 import com.example.homeGym.instructor.repository.ScheduleRepository;
 import com.example.homeGym.instructor.service.*;
 import com.example.homeGym.user.dto.ReviewDto;
+import com.example.homeGym.user.entity.Apply;
 import com.example.homeGym.user.entity.User;
+import com.example.homeGym.user.service.ApplyService;
 import com.example.homeGym.user.service.ReviewService;
 import com.example.homeGym.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -33,7 +36,7 @@ public class MainController {
     private final UserService userService;
     private final CommentServiceImp commentServiceImp;
     private final ScheduleService scheduleService;
-    private final ScheduleRepository scheduleRepository;
+    private final ApplyService applyService;
 
 
     //  프로그램 소개 페이지
@@ -96,10 +99,26 @@ public class MainController {
         Long instructorId = program.getInstructorId();
         return scheduleService.getAllSchedules(instructorId);
     }
+
+
     @PostMapping("introduce/program/{programId}/apply")
-    public String apply(){
-        return "main";
+    public String apply(@PathVariable("programId") Long programId, HttpServletRequest request) {
+        String week = request.getParameter("week");
+        String time = request.getParameter("time");
+        String count = request.getParameter("count");
+
+        Apply apply = new Apply();
+
+        apply.setAble_week(Week.valueOf(week));
+        apply.setAble_time(Time.valueOf(time));
+        apply.setCount(Integer.parseInt(count));
+
+        applyService.saveApply(apply);
+
+        return "redirect:/main/introduce/program/" + programId;
     }
+
+
 
     @GetMapping("/match")
     public String match(
