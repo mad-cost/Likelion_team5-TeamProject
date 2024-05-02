@@ -3,15 +3,11 @@ package com.example.homeGym.main.controller;
 import com.example.homeGym.instructor.dto.InstructorDto;
 import com.example.homeGym.instructor.dto.ProgramDto;
 import com.example.homeGym.instructor.dto.ProgramMatchDto;
-import com.example.homeGym.instructor.entity.Comment;
-import com.example.homeGym.instructor.entity.Instructor;
-import com.example.homeGym.instructor.entity.Program;
-import com.example.homeGym.instructor.entity.UserProgram;
+import com.example.homeGym.instructor.dto.ScheduleDto;
+import com.example.homeGym.instructor.entity.*;
 import com.example.homeGym.instructor.repository.CommentRepository;
-import com.example.homeGym.instructor.service.CommentServiceImp;
-import com.example.homeGym.instructor.service.InstructorService;
-import com.example.homeGym.instructor.service.ProgramService;
-import com.example.homeGym.instructor.service.UserProgramService;
+import com.example.homeGym.instructor.repository.ScheduleRepository;
+import com.example.homeGym.instructor.service.*;
 import com.example.homeGym.user.dto.ReviewDto;
 import com.example.homeGym.user.entity.User;
 import com.example.homeGym.user.service.ReviewService;
@@ -36,6 +32,8 @@ public class MainController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final CommentServiceImp commentServiceImp;
+    private final ScheduleService scheduleService;
+    private final ScheduleRepository scheduleRepository;
 
 
     //  프로그램 소개 페이지
@@ -54,6 +52,10 @@ public class MainController {
         Long instructorId = program.getInstructorId();
         InstructorDto instructorDto = instructorService.findById(instructorId);
         model.addAttribute("instructor", instructorDto);
+
+//      강사 스케줄 리스트
+        List<ScheduleDto> scheduleDto = scheduleService.getAllSchedulesByInstructorId(instructorId);
+        model.addAttribute("schedule", scheduleDto);
 
 //      programId에 해당하는 모든 user_program을 가져오고 user_program의 id로 리뷰 전부 가져오기
 //      programId에 해당하는 모든 user_program의 id가져오기
