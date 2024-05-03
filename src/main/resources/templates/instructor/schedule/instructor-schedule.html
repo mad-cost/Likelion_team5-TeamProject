@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructor Schedule</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #scheduleTableContainer {
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .selected {
+            background-color: #8a2be2; /* 연보라색 */
+        }
+        /* 드롭다운 선택 요소의 스타일 조정 */
+        .form-select {
+            padding: 8px; /* 선택 요소의 내부 여백 */
+            border-radius: 5px; /* 모서리를 둥글게 */
+            border: 1px solid #ccc; /* 회색 테두리 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+            transition: all 0.2s ease-in-out; /* 스타일 변화 효과 */
+        }
+
+        /* 선택 요소에 호버 및 포커스 효과 추가 */
+        .form-select:hover,
+        .form-select:focus {
+            border-color: #007BFF; /* 테두리 색상을 파란색으로 변경 */
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* 파란색 그림자 */
+        }
+
+        /* 선택 요소들의 간격 조정 */
+        .form-row .col-auto {
+            margin-right: 10px; /* 각 선택 요소 간의 간격 */
+        }
+
+    </style>
+</head>
+<body>
+<!--네비바-->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
+
+<div class="container mt-5">
+    <h2 th:text="${instructorName} + '님의 스케줄'"></h2>
+
+    <!-- 주소 등록 섹션 추가 -->
+    <div class="card mb-3 mt-3">
+        <div class="card-header">주소 등록</div>
+        <div class="card-body">
+            <form th:action="@{'/instructor/schedule/address'}" method="post">
+                <div class="form-row">
+                    <div class="col-auto">
+                        <label for="siDoSelect" class="form-label"></label>
+                        <select id="siDoSelect" name="siDo" class="form-select mr-2">
+                            <option value="">시도 선택</option>
+                            <!-- SiDo options will be dynamically populated here -->
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <label for="siGunGuSelect" class="form-label"></label>
+                        <select id="siGunGuSelect" name="siGunGu" class="form-select mr-2">
+                            <option value="">시군구 선택</option>
+                            <!-- SiGunGu options will be dynamically populated here -->
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <label for="dongSelect" class="form-label"></label>
+                        <select id="dongSelect" name="dong" class="form-select mr-2">
+                            <option value="">동 선택</option>
+                            <!-- Dong options will be dynamically populated here -->
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-outline-primary">주소 등록</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 주소 목록 섹션 추가 -->
+    <div class="card mb-3 mt-3 address-section">
+        <div class="card-header">주소 목록</div>
+        <div class="card-body">
+            <table id="addressTable" class="table">
+                <thead>
+                <tr>
+                    <th>시도</th>
+                    <th>시군구</th>
+                    <th>동</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody th:each="address : ${instructorAddresses}">
+                <tr>
+                    <td th:text="${address.siDo}"></td>
+                    <td th:text="${address.siGunGu}"></td>
+                    <td th:text="${address.dong}"></td>
+                    <td>
+                        <table>
+                            <!-- 주소 삭제 폼 -->
+                            <form th:action="@{'/instructor/schedule/address/' + ${address.id}}" method="post"
+                                  onsubmit="return confirm('주소를 삭제하시겠습니까?');">
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button type="submit" class="btn btn-outline-danger">삭제</button>
+                            </form>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="card mb-3">
+        <div class="card-header" style="padding: 15px 15px 15px 15px; line-height: 1.5; display: flex; align-items: center;"> <!-- 패딩 및 라인 높이 조정 -->
+            스케줄표
+            <button id="saveButton" class="btn btn-outline-info" style="margin-left: auto; padding: 8px 16px;  border: 1px solid #17a2b8; border-radius: 5px;">스케줄 저장</button>
+        </div>
+        <div class="card-body">
+            <div id="scheduleTableContainer"></div>
+        </div>
+    </div>
+
+    <!-- 중앙 정렬을 위한 div 추가 -->
+    <div class="d-flex justify-content-center">
+
+    </div>
+    <div class="d-flex justify-content-center">
+    <a href="/instructor" class="btn btn-outline-primary mb-5">프로필로 돌아가기</a>
+    </div>
+</div>
+    <!-- Bootstrap JS 및 Popper.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initializeTable();
+            fetchSavedSchedules();
+
+            document.getElementById("saveButton").onclick = function () {
+                Promise.all([deleteCanceledSchedules(), saveSelectedSchedules()]) // 두 작업을 병렬로 수행
+                    .then(() => fetchSavedSchedules()) // 완료 후 저장된 스케줄 다시 불러오기
+                    .catch(error => console.error('Error processing schedules:', error)); // 에러 처리
+            };
+        });
+
+        function fetchSavedSchedules() {
+            fetch("/instructor/schedule/all") // DB에서 가져오는 엔드포인트
+                .then(response => response.json())
+                .then(data => {
+                    displaySavedSchedules(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching saved schedules:', error);
+                });
+        }
+
+        // 저장된 스케줄을 표시하는 함수
+        function displaySavedSchedules(savedSchedules) {
+            const table = document.getElementById("scheduleTable");
+            const cells = table.querySelectorAll(".cell");
+            // 모든 셀의 선택 상태를 초기화
+            cells.forEach(cell => cell.classList.remove("selected"));
+
+            // 저장된 스케줄에 해당하는 셀의 선택 상태를 변경합니다.
+            savedSchedules.forEach(schedule => {
+                const {week, time, id} = schedule;
+                const cell = table.querySelector(`td[data-week="${week}"][data-time="${time}"]`);
+                if (cell) {
+                    cell.classList.add("selected");
+                    cell.setAttribute("data-id", id); // 스케줄 ID를 HTML 속성으로 저장
+                }
+            });
+        }
+
+        // 요일과 시간대 정보
+        const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+        const times = ["SIX_TO_NINE", "NINE_TO_TWELVE", "TWELVE_TO_FIFTEEN", "FIFTEEN_TO_EIGHTEEN", "EIGHTEEN_TO_TWENTY_ONE", "TWENTY_ONE_TO_TWENTY_FOUR"];
+
+        // 시간대 정보를 Enum의 description으로 변경하는 함수
+        function getTimeDescription(timeEnum) {
+            switch (timeEnum) {
+                case "SIX_TO_NINE":
+                    return "6시 - 9시";
+                case "NINE_TO_TWELVE":
+                    return "9시 - 12시";
+                case "TWELVE_TO_FIFTEEN":
+                    return "12시 - 15시";
+                case "FIFTEEN_TO_EIGHTEEN":
+                    return "15시 - 18시";
+                case "EIGHTEEN_TO_TWENTY_ONE":
+                    return "18시 - 21시";
+                case "TWENTY_ONE_TO_TWENTY_FOUR":
+                    return "21시 - 24시";
+                default:
+                    return "";
+            }
+        }
+
+        // enum 값에 따라 요일과 시간대를 가져옴
+        function getDayName(dayEnum) {
+            switch (dayEnum) {
+                case "MONDAY":
+                    return "월";
+                case "TUESDAY":
+                    return "화";
+                case "WEDNESDAY":
+                    return "수";
+                case "THURSDAY":
+                    return "목";
+                case "FRIDAY":
+                    return "금";
+                case "SATURDAY":
+                    return "토";
+                case "SUNDAY":
+                    return "일";
+                default:
+                    return "";
+            }
+        }
+
+        // 시간대 정보를 description으로 변환하여 사용
+        for (const time of times) {
+            console.log(getTimeDescription(time)); // 이렇게 사용하면 description으로 출력됩니다.
+        }
+
+        // 선택된 스케줄을 저장하는 배열
+        let selectedSchedules = [];
+        // 선택을 취소한 스케줄을 저장하는 배열
+        let canceledSchedules = [];
+
+        // 테이블을 생성하고 초기화하는 함수
+        function initializeTable() {
+            const scheduleTableContainer = document.getElementById("scheduleTableContainer");
+            const table = document.createElement("table");
+            table.id = "scheduleTable";
+            const headerRow = table.insertRow();
+            headerRow.insertCell(); // 빈 셀 추가
+
+            // 요일 헤더 생성
+            for (const week of days) {
+                const th = document.createElement("th");
+                th.textContent = getDayName(week);
+                headerRow.appendChild(th);
+            }
+
+            // 시간대별 행 생성
+            for (const time of times) {
+                const row = table.insertRow();
+                const timeCell = row.insertCell();
+                timeCell.textContent = getTimeDescription(time);
+
+                // 각 요일별 셀 생성
+                for (const week of days) {
+                    const cell = row.insertCell();
+                    cell.classList.add("cell");
+                    cell.setAttribute("data-week", week);
+                    cell.setAttribute("data-time", time);
+                    cell.onclick = function () {
+                        toggleCellColor(this, week, time);
+                    };
+                }
+            }
+
+            scheduleTableContainer.appendChild(table);
+        }
+
+
+        function toggleCellColor(cell, week, time) {
+            if (cell.classList.contains("selected")) {
+                cell.classList.remove("selected");
+                const scheduleId = cell.getAttribute("data-id"); // ID 속성에서 가져옴
+                removeSelectedSchedule(week, time, scheduleId);
+            } else {
+                cell.classList.add("selected");
+                addSelectedSchedule(week, time);
+            }
+        }
+
+        function addSelectedSchedule(week, time) {
+            selectedSchedules.push({week, time});
+        }
+
+        function removeSelectedSchedule(week, time, scheduleId) {
+            selectedSchedules = selectedSchedules.filter(schedule => !(schedule.week === week && schedule.time === time));
+            canceledSchedules.push({week, time, id: scheduleId}); // ID와 함께 추가
+        }
+
+        // 선택된 스케줄과 선택을 취소한 스케줄을 함께 서버로 전송하여 삭제하는 함수
+        function deleteCanceledSchedules() {
+            if (canceledSchedules.length === 0) {
+                return Promise.resolve();  // 선택을 취소한 스케줄이 없으면 아무 작업도 수행하지 않음
+            }
+
+            fetch("/instructor/schedule/delete", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(canceledSchedules.map(schedule => ({
+                    week: schedule.week,
+                    time: schedule.time,
+                    id: schedule.id // ID 포함
+                })))
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete canceled schedules');
+                    }
+                    alert('선택을 취소한 스케줄이 성공적으로 삭제되었습니다.');
+                    canceledSchedules = []; // 선택을 취소한 스케줄 배열 초기화
+                    fetchSavedSchedules(); // 저장된 스케줄 다시 불러오기
+                })
+
+        }
+
+        // 선택된 스케줄을 저장하는 함수
+        function saveSelectedSchedules() {
+            if (selectedSchedules.length === 0) {
+                return Promise.resolve(); // 선택된 스케줄이 없으면 바로 해결된 프라미스를 반환
+            }
+            fetch("/instructor/schedule/save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(selectedSchedules.map(schedule => ({
+                    week: schedule.week, // Enum 값을 문자열로 변환
+                    time: schedule.time  // Enum 값을 문자열로 변환
+                })))
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to save schedules');
+                    }
+                    alert('스케줄이 성공적으로 저장되었습니다.');
+                    selectedSchedules = []; // 선택된 스케줄 배열 초기화
+                    fetchSavedSchedules(); // 저장된 스케줄 다시 불러오기
+                })
+                .catch(error => {
+                    console.error('Error saving schedules:', error);
+                    alert('스케줄 저장에 실패했습니다.');
+                });
+
+        }
+
+
+        // =============================== 주소 검색 ====================================
+        $(document).ready(function () {
+
+            $.getJSON("address/siDo", function (data) {
+                var siDoSelect = $("#siDoSelect");
+                $.each(data, function (index, siDo) {
+                    siDoSelect.append($("<option></option>").attr("value", siDo).text(siDo));
+                });
+            });
+
+            $("#siDoSelect").change(function () {
+                var siDo = $(this).val();
+                $("#siGunGuSelect").empty().append("<option value=''>시군구 선택</option>");
+                $("#dongSelect").empty().append("<option value=''>동 선택</option>");
+
+                if (!siDo) return;
+
+                $.getJSON("address/siGunGu", {siDo: siDo}, function (data) {
+                    var siGunGuSelect = $("#siGunGuSelect");
+                    $.each(data, function (index, siGunGu) {
+                        siGunGuSelect.append($("<option></option>").attr("value", siGunGu).text(siGunGu));
+                    });
+                });
+            });
+
+            $("#siGunGuSelect").change(function () {
+                var siGunGu = $(this).val();
+                $("#dongSelect").empty().append("<option value=''>동 선택</option>");
+
+                if (!siGunGu) return;
+
+                $.getJSON("address/dong", {siGunGu: siGunGu}, function (data) {
+                    var dongSelect = $("#dongSelect");
+                    $.each(data, function (index, dong) {
+                        dongSelect.append($("<option></option>").attr("value", dong).text(dong));
+                    });
+                });
+            });
+
+        })
+
+    </script>
+</body>
+</html>

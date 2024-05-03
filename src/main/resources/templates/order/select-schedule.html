@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        #scheduleTableContainer {
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            transition: background-color 0.3s;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .outer-card {
+            background-color: #f8f9fa; /* 밖의 카드 배경색 */
+            border: none;
+        }
+
+        .selected {
+            background-color: #8a2be2; /* 보라색으로 지정, 필요한 경우 변경 */
+            color: white; /* 텍스트 색상도 변경 가능 */
+        }
+
+        .review-stars {
+            color: #f1c40f; /* 별점 색상 */
+            margin-bottom: 10px;
+        }
+
+        .inner-card {
+            background-color: #ffffff; /* 안의 카드 배경색 */
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 1rem; /* 설명 크기 */
+            color: #6c757d; /* 설명 색상 */
+        }
+
+        .card-count {
+            font-size: 1.2rem; /* 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+        }
+
+        .card-countTwo {
+            font-size: 1.0rem; /* 회차 크기 */
+            font-weight: bold; /* 회차 굵기 */
+        }
+
+        .card.inner-card a {
+            text-decoration: none;
+        }
+
+        .heart-icon {
+            font-size: 2rem; /* 아이콘 크기 */
+            color: red; /* 아이콘 색상 */
+        }
+
+        .heart-link {
+            position: absolute; /* 절대 위치 */
+            top: 50%; /* 중앙 정렬을 위해 상단 50%로 설정 */
+            right: 0; /* 오른쪽 정렬 */
+            transform: translateY(-50%); /* 수직으로 중앙 정렬 */
+            margin-right: 30px; /* 오른쪽으로부터 30px 간격 */
+        }
+
+    </style>
+
+
+</head>
+
+
+<body>
+<div class="container mt-5">
+    <div class="card mb-3">
+        <div class="col-md-12 mb-4">
+            <div class="card outer-card">
+
+                <div class="card-body text-center">
+                    <h2 class="card-title">강사 스케줄</h2>
+                    <div class="card-body">
+                        <p>강사님의 스케줄에 맞게 프로그램을 신청해 주세요 (신청 후 조정 가능합니다)</p>
+                        <div id="scheduleTableContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-header bg-primary text-white">원하는 스케줄 선택 (수업은 1시간 동안 진행됩니다)</div>
+        <div class="card-body">
+            <form id="applyForm" th:action="@{'/main/introduce/program/' + ${program.id} + '/apply'}" method="post">
+                <div class="form-group">
+                    <label for="week" class="form-label">요일</label>
+                    <select id="week" name="week" class="form-control" required>
+                        <option value="">요일 선택</option>
+                        <option th:each="week : ${T(com.example.homeGym.instructor.entity.Week).values()}"
+                                th:value="${week}" th:text="${week.koreanName}">Week slot
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="time" class="form-label">시간</label>
+                    <select id="time" name="time" class="form-control" required>
+                        <option value="">시간 선택</option>
+                        <option th:each="time : ${T(com.example.homeGym.instructor.entity.Time).values()}"
+                                th:value="${time}" th:text="${time.description}">Time slot
+                        </option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="price1" th:value="${program?.price1 ?: 0}">
+                <input type="hidden" id="price10" th:value="${program?.price10 ?: 0}">
+                <input type="hidden" id="price20" th:value="${program?.price20 ?: 0}">
+                <input type="hidden" id="programId" th:value="${program.id}">
+                <input type="hidden" id="userId" th:value="${user.id}">
+
+                <div class="form-group">
+                    <label for="count" class="form-label">회차권 선택</label>
+                    <select id="count" name="count" class="form-control" required onchange="calculateAmount()">
+                        <option value="">회차권 선택</option>
+                        <option value="1">1회</option>
+                        <option value="10">10회</option>
+                        <option value="20">20회</option>
+                    </select>
+                    <input type="hidden" id="amount" name="amount" value="">
+                </div>
+
+                <button type="submit" class="btn btn-primary">신청하기</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function calculateAmount() {
+        var count = document.getElementById("count").value;
+        var amountInput = document.getElementById("amount");
+        var price1 = document.getElementById("price1").value;
+        var price10 = document.getElementById("price10").value;
+        var price20 = document.getElementById("price20").value;
+
+        if (count === "1") {
+            amountInput.value = price1;
+        } else if (count === "10") {
+            amountInput.value = price10;
+        } else if (count === "20") {
+            amountInput.value = price20;
+        } else {
+            amountInput.value = ""; // 회차권을 선택하지 않은 경우 가격을 비웁니다.
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeTable();
+        const programId = document.getElementById("programId").value; // HTML에서 programId 가져오기
+        fetchSchedules(programId); // 가져온 programId를 함수에 전달
+    });
+
+    function fetchSchedules(programId) {
+        fetch(`/main/introduce/program/all/${programId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Schedules fetched:", data); // 데이터를 콘솔에 출력
+                displaySavedSchedules(data);
+            })
+            .catch(error => console.error('Error fetching schedules:', error));
+    }
+
+    function displaySavedSchedules(savedSchedules) {
+        const table = document.getElementById("scheduleTable");
+        const cells = table.querySelectorAll(".cell");
+        // 모든 셀의 선택 상태를 초기화
+        cells.forEach(cell => cell.classList.remove("selected"));
+
+        // 저장된 스케줄에 해당하는 셀의 선택 상태를 변경합니다.
+        savedSchedules.forEach(schedule => {
+            const {week, time, id} = schedule;
+            const cell = table.querySelector(`td[data-week="${week}"][data-time="${time}"]`);
+            if (cell) {
+                cell.classList.add("selected");
+                cell.setAttribute("data-id", id); // 스케줄 ID를 HTML 속성으로 저장
+            }
+        });
+    }
+
+    // 요일과 시간대 정보
+    const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    const times = ["SIX_TO_NINE", "NINE_TO_TWELVE", "TWELVE_TO_FIFTEEN", "FIFTEEN_TO_EIGHTEEN", "EIGHTEEN_TO_TWENTY_ONE", "TWENTY_ONE_TO_TWENTY_FOUR"];
+
+    // 시간대 정보를 Enum의 description으로 변경하는 함수
+    function getTimeDescription(timeEnum) {
+        switch (timeEnum) {
+            case "SIX_TO_NINE":
+                return "6시 - 9시";
+            case "NINE_TO_TWELVE":
+                return "9시 - 12시";
+            case "TWELVE_TO_FIFTEEN":
+                return "12시 - 15시";
+            case "FIFTEEN_TO_EIGHTEEN":
+                return "15시 - 18시";
+            case "EIGHTEEN_TO_TWENTY_ONE":
+                return "18시 - 21시";
+            case "TWENTY_ONE_TO_TWENTY_FOUR":
+                return "21시 - 24시";
+            default:
+                return "";
+        }
+    }
+
+    // enum 값에 따라 요일과 시간대를 가져옴
+    function getDayName(dayEnum) {
+        switch (dayEnum) {
+            case "MONDAY":
+                return "월";
+            case "TUESDAY":
+                return "화";
+            case "WEDNESDAY":
+                return "수";
+            case "THURSDAY":
+                return "목";
+            case "FRIDAY":
+                return "금";
+            case "SATURDAY":
+                return "토";
+            case "SUNDAY":
+                return "일";
+            default:
+                return "";
+        }
+    }
+
+
+    // 테이블을 생성하고 초기화하는 함수
+    function initializeTable() {
+        const scheduleTableContainer = document.getElementById("scheduleTableContainer");
+        const table = document.createElement("table");
+        table.id = "scheduleTable";
+        const headerRow = table.insertRow();
+        headerRow.insertCell(); // 빈 셀 추가
+
+        // 요일 헤더 생성
+        for (const week of days) {
+            const th = document.createElement("th");
+            th.textContent = getDayName(week);
+            headerRow.appendChild(th);
+        }
+
+        // 시간대별 행 생성
+        for (const time of times) {
+            const row = table.insertRow();
+            const timeCell = row.insertCell();
+            timeCell.textContent = getTimeDescription(time);
+
+            // 각 요일별 셀 생성
+            for (const week of days) {
+                const cell = row.insertCell();
+                cell.classList.add("cell");
+                cell.setAttribute("data-week", week);
+                cell.setAttribute("data-time", time);
+                cell.onclick = function () {
+                    toggleCellColor(this, week, time);
+                };
+            }
+        }
+
+        scheduleTableContainer.appendChild(table);
+    }
+
+
+</script>
+
+</body>
+</html>

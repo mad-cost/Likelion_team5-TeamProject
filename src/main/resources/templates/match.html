@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        #programs-container {
+            display: flex; /* Use flexbox for alignment */
+            flex-wrap: wrap; /* Allow multiple rows */
+            gap: 1rem; /* Space between cards */
+        }
+
+        .instructor-info {
+            display: flex; /* 수평 정렬을 위해 flex 설정 */
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+        }
+
+        .instructor-info p {
+            font-size: 2rem; /* 글씨 크기를 2배로 증가 */
+            font-weight: bold; /* 글씨 굵기 설정 */
+        }
+
+        .outer-card {
+            background-color: #f8f9fa; /* 밖의 카드 배경색 */
+            border: none;
+        }
+
+        .card-outer {
+            background-color: #f8f9fa; /* 카드 배경색 */
+            border: none;
+            border-radius: 10px; /* 모서리 둥글게 */
+        }
+
+        .card-body {
+            padding: 1rem; /* 내부 패딩 추가 */
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 */
+            margin-bottom: 0.5rem; /* 하단 간격 */
+        }
+
+        .card-description {
+            font-size: 1rem; /* 설명 크기 */
+            color: #6c757d; /* 설명 색상 */
+        }
+
+        .card-footer {
+            font-size: 0.9rem; /* 하단 추가 정보 크기 */
+            color: #6c757d; /* 추가 정보 색상 */
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 1rem; /* 설명 크기 */
+            color: #6c757d; /* 설명 색상 */
+        }
+
+
+        .card.inner-card a {
+            text-decoration: none;
+        }
+
+        .card-body.position-relative.d-flex.align-items-center img.rounded-circle {
+            border-radius: 50%; /* 원형 모양으로 만듭니다. */
+        }
+
+        /* 이름과 성별을 나란히 정렬하는 CSS */
+        .card-body.position-relative.d-flex.align-items-center div {
+            margin-right: 30px; /* 이름과 성별 사이의 간격 조절 */
+            display: flex; /* 내부 요소들을 수평으로 정렬하기 위해 flex로 설정 */
+            align-items: center; /* 내부 요소들을 수직으로 중앙 정렬 */
+        }
+
+        .card-body.position-relative.d-flex.align-items-center p {
+            margin-right: 10px; /* 이름과 성별 사이의 간격 조절 */
+        }
+
+        /*검색 바에서 사용*/
+        select {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        select:focus {
+            outline: none;
+        }
+
+    </style>
+</head>
+<body>
+<!--네비바-->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4"><b>방구석 운동왕</b></h1>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card outer-card">
+                <div class="card-body">
+                    <h2 class="card-title" style="text-align: center"><b>운동 전문가 찾기</b></h2>
+
+                    <hr>
+                    <!-- 주소 등록 섹션 추가 -->
+                    <div class="card mb-3 mt-3">
+                        <div class="card-header">정보 설정하기
+                            <button id="findExpertsButton" class="btn btn-primary float-end">맞는 전문가 찾기!</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="filterForm">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <label for="siDoSelect" class="form-label"></label>
+                                            <select id="siDoSelect" name="siDo" class="form-select mr-2">
+                                                <option value="">시도 선택</option>
+                                                <!-- SiDo options will be dynamically populated here -->
+                                            </select>
+                                        </div>
+                                        <div class="col-auto">
+                                            <label for="siGunGuSelect" class="form-label"></label>
+                                            <select id="siGunGuSelect" name="siGunGu" class="form-select mr-2">
+                                                <option value="">시군구 선택</option>
+                                                <!-- SiGunGu options will be dynamically populated here -->
+                                            </select>
+                                        </div>
+                                        <div class="col-auto">
+                                            <label for="dongSelect" class="form-label"></label>
+                                            <select id="dongSelect" name="dong" class="form-select mr-2">
+                                                <option value="">동 선택</option>
+                                                <!-- Dong options will be dynamically populated here -->
+                                            </select>
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <div class="form-group">
+                                                <label for="mainCategoryId"></label>
+                                                <select class="form-control" id="mainCategoryId"
+                                                        th:field="*{programMatch.mainCategoryId}" required>
+                                                    <option value="">카테고리 선택</option>
+                                                    <option value="1">Yoga</option>
+                                                    <option value="2">Prenatal/Postnatal</option>
+                                                    <option value="3">Exercise</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="form-group">
+                                                <label for="subCategoryId"></label>
+                                                <select class="form-control" id="subCategoryId"
+                                                        th:field="*{programMatch.subCategoryId}" required>
+                                                    <option value="">서브 카테고리 선택</option>
+                                                    <!-- 서브 카테고리 옵션은 JavaScript를 통해 동적으로 채워짐 -->
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- 추가된 hidden 필드 -->
+                                    <input type="hidden" th:field="*{programMatch.subCategoryId}"
+                                           id="hiddenSubCategoryId"/>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과를 표시할 영역 추가 -->
+        <div class="container mt-5 mb-5">
+            <div id="programs-container">
+                <!-- Program cards will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // =============================== 주소 검색 ====================================
+    $(document).ready(function () {
+
+        $.getJSON("/instructor/address/siDo", function (data) {
+            var siDoSelect = $("#siDoSelect");
+            $.each(data, function (index, siDo) {
+                siDoSelect.append($("<option></option>").attr("value", siDo).text(siDo));
+            });
+        });
+
+        $("#siDoSelect").change(function () {
+            var siDo = $(this).val();
+            $("#siGunGuSelect").empty().append("<option value=''>시군구 선택</option>");
+            $("#dongSelect").empty().append("<option value=''>동 선택</option>");
+
+            if (!siDo) return;
+
+            $.getJSON("/instructor/address/siGunGu", {siDo: siDo}, function (data) {
+                var siGunGuSelect = $("#siGunGuSelect");
+                $.each(data, function (index, siGunGu) {
+                    siGunGuSelect.append($("<option></option>").attr("value", siGunGu).text(siGunGu));
+                });
+            });
+        });
+
+        $("#siGunGuSelect").change(function () {
+            var siGunGu = $(this).val();
+            $("#dongSelect").empty().append("<option value=''>동 선택</option>");
+
+            if (!siGunGu) return;
+
+            $.getJSON("/instructor/address/dong", {siGunGu: siGunGu}, function (data) {
+                var dongSelect = $("#dongSelect");
+                $.each(data, function (index, dong) {
+                    dongSelect.append($("<option></option>").attr("value", dong).text(dong));
+                });
+            });
+        });
+
+
+        $("#findExpertsButton").click(function () {
+            const siDo = $("#siDoSelect").val();
+            const siGunGu = $("#siGunGuSelect").val();
+            const dong = $("#dongSelect").val();
+            const mainCategoryId = $("#mainCategoryId").val();
+            const subCategoryId = $("#subCategoryId").val();
+
+            $.ajax({
+                url: "/main/match/search",
+                type: "POST",
+                data: {
+                    siDo,
+                    siGunGu,
+                    dong,
+                    mainCategoryId,
+                    subCategoryId,
+                },
+                success: function (data) {
+                    const programsContainer = $("#programs-container");
+                    programsContainer.empty(); // 기존 내용 제거
+
+                    data.forEach(function (program) {
+                        const card = `
+                      <div class="card outer-card" data-program-id="${program.id}" style="cursor: pointer;">
+                            <div class="card-body">
+                                <h2 class="card-title">${program.title}</h2>
+                                <div class="d-flex flex-column align-items-center mt-2 instructor-info">
+                                    <img src="${program.instructorProfileImageUrl}" class="rounded-circle" style="width: 150px; height: 150px;">
+                                    <p>${program.instructorName}</p>
+                                </div>
+                                <p class="card-description">${program.description}</p>
+                        </div>
+                    </div>
+                `;
+                        programsContainer.append(card); // 동적으로 카드 추가
+                    });
+                },
+                error: function (error) {
+                    console.error("Error:", error);
+                }
+            });
+        });
+
+        // jQuery를 사용하여 프로그램 카드를 클릭할 때 이벤트 처리
+        $(document).ready(function () {
+            $("#programs-container").on("click", ".card", function () {
+                // 클릭된 카드의 programId 가져오기
+                const programId = $(this).data("program-id");
+
+                // 소개 페이지로 이동
+                window.location.href = `/main/introduce/program/${programId}`;
+            });
+        });
+
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('mainCategoryId').addEventListener('change', function () {
+            const subCategories = {
+                '1': {'Yoga': 1}, // Yoga
+                '2': {'Prenatal/Postnatal Care': 2}, // Prenatal/Postnatal
+                '3': {'Diet': 3, 'Strength': 4, 'Pain Management': 5} // Exercise
+            };
+
+            const category = this.value;
+            const subCategorySelect = document.getElementById('subCategoryId');
+            subCategorySelect.innerHTML = '<option value="">Select Subcategory</option>'; // 초기화
+
+            if (subCategories[category]) {
+                Object.keys(subCategories[category]).forEach(function (name) {
+                    const id = subCategories[category][name];
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = name;
+                    subCategorySelect.appendChild(option);
+                });
+            }
+        });
+
+        // 폼 제출 시 서브 카테고리 값을 hidden field에 설정
+        document.getElementById('programForm').addEventListener('submit', function () {
+            const selectedSubCategory = document.getElementById('subCategoryId').value;
+            document.getElementById('hiddenSubCategoryId').value = selectedSubCategory; // hidden 필드에 서브 카테고리 ID 설정
+        });
+    });
+
+
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

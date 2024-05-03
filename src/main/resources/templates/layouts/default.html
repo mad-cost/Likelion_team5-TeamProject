@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Layout Page</title>
 </head>
 <body>
+<header>
+    <!-- 공통 헤더 -->
+</header>
+<!-- 네비게이션 바 프래그먼트 포함 -->
+<nav th:replace="~{fragments/navbar :: navbarFragment}"></nav>
 
+
+
+<th:block layout:fragment="content"></th:block>
+        <!-- 메인 컨텐츠 섹션, 각 페이지의 내용이 여기에 들어감 -->
+
+
+<footer th:replace="fragments/footer::footer"></footer>
 </body>
 </html>
