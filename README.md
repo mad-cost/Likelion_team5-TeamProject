@@ -42,8 +42,33 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 > * 유저 목록 - 서비스를 이용중인 모든 유저를 보여주고 유저의 이름, 이메일, 성별, 상태를 알려준다 <br>
 > * 강사 목록 - 서비스를 이용중인 모든 강사를 보여주고 강사의 이름, 이메일, 전화번호, 성별, 상태를 알려준다 <br>
 
+`/admin/user/{userId}` 유저 상세 페이지 <br>
+> * 유저가 수강 중인 수업을 전부 볼 수 있다<br>
+> * 전액환불, 회차환불, 수정하기 버튼 만들어주기
+> * 전액 환불 - 유저 프로그램의 `state`를 환불 상태(CANCEL)로 바꿔준다 <br>
+> * 회차 환불 - 결제 금액에서 1회당 금액을 계산하여 환불해주고, `state`와 `LocalDateTime`을 수정해준다     
+>```java
+>    public void refund(Long userProgramId){
+>        UserProgram userProgram = userProgramRepository.findById(userProgramId).orElseThrow();
+>        // 프로그램 결제 금액
+>        int amount = userProgram.getAmount(); 
+>        int maxCount = userProgram.getMaxCount(); //최종 회차
+>        int count = userProgram.getCount(); // 진행 중인 회차 
+>        // 1회당 금액
+>        int result = amount/maxCount;
+>        // 진행 횟수에 따른 환불 금액
+>        result = result * count;
+>        userProgram.setAmount(result);
+>        userProgram.setState(UserProgram.UserProgramState.FINISH);
+>        userProgram.setEndTime(LocalDateTime.now());
+>        userProgramRepository.save(userProgram);
+>        UserProgramDto.fromEntity(userProgram);
+>    }
+>```
+> * 수정하기 -
+
 `/admin/instructor/accept` 강사 승인 페이지 <br>
-> 강사의 `state`가 강사 신청 대기 중(REGISTRATION_PENDING)인 강사를 모두 가져오고, 승인, 거절 버튼 만들어주기 <br>
+> 강사의 `state`가 신청 대기 중(REGISTRATION_PENDING)인 강사를 모두 가져오고, 승인, 거절 버튼 만들어주기 <br>
 > * 승인 - 강사의 `roles`를 ROLE_INSTRUCTOR로 바꿔주고, `state`를 ACTIVE로 바꿔준다 <br>
 > * 거절 - DB에서 데이터 삭제 <br>
 
@@ -59,11 +84,12 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 > * 거절하기 - DB에서 데이터 삭제 <br>
 
 `/admin/program/modification` 프로그램 수정 페이지 <br>
-> 프로그램의 `state`가 수정 대기 중(MODIFICATION_PENDING)인 프로그램을 모두 가져오고, 수정하기 버튼 만들어 주기 <br>
+> 프로그램의 `state`가 수정 대기 중(MODIFICATION_PENDING)인 프로그램을 모두 가져오고, 수정하기 버튼 만들어주기 <br>
 > * 수정하기 - 프로그램의 `state`를 프로그램 진행 중(IN_PROGRESS)으로 바꿔준다 <br>
 
 `/admin/program/deletion` 프로그램 삭제 페이지 <br>
-
+> 프로그램의 `state`가 삭제 대기 중(DELETION_PENDING)인 프로그램을 모두 가져오고, 삭제하기 버튼 만들어주기 <br>
+> * 삭제하기 - 프로그램의 `state`를 프로그램 삭제 완료(DELETION_COMPLETE)로 바꿔준다 <br>
 
 관리자 페이지의 프론트는 `반응형 웹 템플릿`을 이용하였다
 
