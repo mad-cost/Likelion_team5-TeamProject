@@ -32,6 +32,7 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 > * 인기 강사 - 강사의 상태가 ACTIVE이고, 메달이 Gold인 강사들 중에서 랜덤으로 3명 가져오기 <br>
 > * 회원 후기 - 별점이 5점인 리뷰만 가져와서 보여주기 (Pageable 사용)
 >```java
+>    // Pageable 사용하기
 >    @Transactional
 >    public Page<Review> findAllStarIsFive(int page, int pageSize){
 >        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending()); // id를 기준으로 역순으로 정렬
@@ -65,8 +66,51 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 >        UserProgramDto.fromEntity(userProgram);
 >    }
 >```
-> * 수정하기 -
+> * 수정하기 - 유저 프로그램의 `count`를 입력한 숫자로 수정해준다<br>
 
+`/admin/instructor/{instructorId}` 강사 상세 페이지 <br>
+> 강사가 수강 중인 수업을 전부 볼 수 있다 <br>
+> 강사가 모든 프로그램으로부터 벌이들인 총 금액을 볼 수 있다 <br>
+> 강사가 각 각의 프로그램으로 벌어들인 총 수익, 이번 달 수익을 볼 수 있다 <br>
+> 강사에게 메달을 수여할 수 있다 <br>
+> * 메달 수여하기 - Gold, Sliver, Bronze, Unranked 버튼을 눌러서 메달 수여
+> ```java
+>   // 하나의 form요소에서 '여러가지 input btn'에 대하여 선택한 btn의 값 보내기
+>     <form class="d-flex align-items-center justify-content-between" th:action="@{'/admin/instructor/'+${instructor.id}+'/medal'} " method="post">
+>         <p class="mb-0 d-flex align-items-center justify-content-between">
+>           <code>메달 수여하기</code><a class="me-2"></a>
+>             <input type="submit" class="btn btn-warning" value="Gold" name="Gold"><a class="me-1"></a>
+>             <input type="submit" class="btn btn-secondary" value="Silver" name="Silver"><a class="me-1"></a>
+>             <input type="submit" class="btn btn-brown" value="Bronze" name="Bronze"><a class="me-1"></a>
+>             <input type="submit" class="btn btn-primary" value="Unranked" name="Unranked"><a class="me-1"></a>
+>         </p>
+>     </form>
+>     
+>   // URL을 통해 보낸 값을 Controller에서 받아주는 방법      
+>     @PostMapping("/{instructorId}/medal")
+>        public String medal(
+>           @PathVariable("instructorId")
+>              Long instructorId,
+>              @RequestParam(value = "Gold", required = false) String Gold,
+>              @RequestParam(value = "Silver", required = false) String Silver,
+>              @RequestParam(value = "Bronze", required = false) String Bronze,
+>              @RequestParam(value = "Unranked", required = false) String Unranked
+>        )
+>```
+> #### 금액 표기하기
+> * 금액 표기하기 - 가독성 향상을 위해 `Integer`로 선언된 값을 프론트에서 1000단위 마다 콤마 찍어주기 ex) 50000 -> 50,000 <br>
+> * 금액 표기하기 - `NumberUtils`클래스를 만들어서 사용 / 단, 콤마(,)는 문자열이기 때문에 String타입에 저장 
+> ```java
+>   // 금액 표기하기
+>     @Component
+>       public class NumberUtils {
+>          public String addCommasToNumber(int number) {
+>            DecimalFormat formatter = new DecimalFormat("#,###");
+>            return formatter.format(number);
+>          }
+>       }
+>```
+            
 `/admin/instructor/accept` 강사 승인 페이지 <br>
 > 강사의 `state`가 신청 대기 중(REGISTRATION_PENDING)인 강사를 모두 가져오고, 승인, 거절 버튼 만들어주기 <br>
 > * 승인 - 강사의 `roles`를 ROLE_INSTRUCTOR로 바꿔주고, `state`를 ACTIVE로 바꿔준다 <br>
@@ -91,15 +135,25 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 > 프로그램의 `state`가 삭제 대기 중(DELETION_PENDING)인 프로그램을 모두 가져오고, 삭제하기 버튼 만들어주기 <br>
 > * 삭제하기 - 프로그램의 `state`를 프로그램 삭제 완료(DELETION_COMPLETE)로 바꿔준다 <br>
 
+`/admin/settlement` 정산하기 <br>
+> 강사의 정산 신청 금액과 정산 신청 날짜를 보여주고, 정산하기를 클릭하면 정산 완료로 바꿔준다<br>
+> * 정산하기 - `SettlementState`를 정산 대기 중(SETTLEMENT_PENDING)에서 정산 완료(COMPLETE)로 바꿔준다.
+> * 금액 표기하기 - [이동하기](#금액-표기하기)
+> * 날짜 표기하기 - 가독성 향상을 위해 `LocalDateTime`로 선언된 값을 프론트에서 yyyy-mm-dd로 만들어주기  
+>```java
+>   // 날짜를 yyyy-mm-dd 모습으로 바꿔주기 ex) 2024-05-23 16:33:12.000000 -> 2024-05-23  
+>     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+>       log.info("GetCompleteTime 수정 전 : {} ", settlement.getCompleteTime()); // 2024-05-23 16:33:12.000000
+>       String dateCompleteTime = settlement.getCompleteTime().format(formatter);
+>
+>       log.info("GetCompleteTime 수정 후 : {} ", dateCompleteTime); // 2024-05-23
+>       settlement.setDateCompleteTime(dateCompleteTime);
+>```
+
 관리자 페이지의 프론트는 `반응형 웹 템플릿`을 이용하였다
 
-
-
-
-
-
-## 간략히 보기 👀
-[여기를 눌러 주세요](https://github.com/mad-cost/Likelion_team6/blob/main/md/sixsenses.md "Click")
+## 배포 과정 간략히 보기 👀
+[여기를 눌러 주세요](https://github.com/mad-cost/Likelion_team5/blob/main/md/homeGym.md "Click")
 
 ## 회고 🤔
 첫 팀 프로젝트를 하면서 가장 고민했던 점은 '역할 분담과 협업' 이었던 것 같다. <br>
