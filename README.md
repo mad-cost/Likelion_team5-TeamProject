@@ -154,7 +154,7 @@ homeGym은 외부에서의 운동이 어려운 상황이거나(노인, 임산부
 
 ## 배포 과정 간략히 보기 👀
 [여기를 눌러 주세요](https://github.com/mad-cost/Likelion_team5/blob/main/md/homeGym.md "Click")
-
+<img src="img/num.png12">
 ## 회고 🤔
 첫 팀 프로젝트를 하면서 가장 고민했던 점은 '역할 분담과 협업' 이었던 것 같다. <br>
 - 역할 <br>
