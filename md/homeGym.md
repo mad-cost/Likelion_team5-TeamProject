@@ -59,24 +59,26 @@
 
 * EC2에서 이미지 pull 받기 <br>
   * EC2 ip에 접속하기
-   > ssh -i {키페어 이름} ubuntu@<퍼블릭IPv4> <br>
-   ex) ssh -i aws_homeGym.pem ubuntu@3.34.195.158
-
-
+    > ssh -i {키페어 이름} ubuntu@<퍼블릭IPv4> <br>
+    > ex) ssh -i aws_homeGym.pem ubuntu@3.34.195.158 <br>
+  * [참고] NCP에서 SSH접속 방법 <br>
+    > ssh root@{서버 접속용 공인 IP} -p <외부 포트> <br>
+    > ex) ssh root@106.10.43.168 -p 1024
+  
   * 도커 허브 리포지토리에 있는 이미지 pull받기
     > docker pull dockerjun123/homegym
   * 생성된 이미지로 컨테이너 실행
     > docker run -d -p 8080:8080 dockerjun123/homegym
-    * 실행중인 컨테이너 확인해보기
-       * `mysql`과 `redis`도 함께 실행중인 모습을 볼 수 있다 <br>
-       > docker ps
+  * 실행 중인 컨테이너 확인해보기
+    * `mysql`과 `redis`도 함께 실행 중인 모습을 볼 수 있다 <br>
+      > docker ps
 
       ![실행중인 컨테이너](/img/num14.png)
 <hr>
 
 * Nginx 설치 및 보안 그룹 설정
   * 동시 접속 처리에 특화된 웹서버
-  * 클라이언트로 부터 HTTP요청을 받아 서버로 요청을 전달한다
+  * 클라이언트로부터 HTTP요청을 받아 서버로 요청을 전달한다
   * Nginx 설치
     > * nginx서버 프로그램 설치 <br>
     sudo apt-get install nginx <br>
@@ -85,15 +87,16 @@
   * nginx 실행 확인 <br>
     * [참고] Nginx의 기본 포트는 80번이다
     * active가 녹색으로 뜨면, nginx실행 성공 <br>
-    > sudo systemctl status nginx <br>
+      > sudo systemctl status nginx <br>
   
     ![Nginx](/img/num15.png)
-  * 주소창에 ip 주소를 넣으면 Nginx의 첫 페이지를 볼 수 있다
-    ![Nginx](/img/num16.png)
+    
+  * 주소창에 ip 주소를 넣으면 Nginx의 첫 페이지를 볼 수 있다 <br>
+  ![Nginx](/img/num16.png)
   
 * ### HTTP요청을 서버로 전달하기
 ###### Nginx 설정
-  ```java
+```java
   server {
     listen 80;
     server_name <서버 ip 주소>;
@@ -106,29 +109,30 @@
     }
 
   }
-  ```
-  1. `<서버 ip 주소>` 로 보내지는 HTTP 요청을 컴퓨터 내의 `8080` 포트로 전달하는 설정 파일이다. <br>
-  2. 여기의 <서버 ip 주소> 를 인스턴스의 IP 주소로 변경하고, `/etc/nginx/sites-enabled/` 폴더에 넣어준다. <br>
-  3. 아래 명령을 실행하면 해당 폴더로 이동
-    > cd /etc/nginx/sites-enabled/
-  4. `vi` 명령을 이용하면 파일을 생성할 수 있다.
-    > sudo vi spring_boot
-  5. 설정파일을 붙여넣고 `:wq`로 저장해주기
+```
+  1. `<서버 ip 주소>` 로 보내지는 HTTP 요청을 컴퓨터 내의 `8080` 포트로 전달하는 설정 파일이다
+  2. 여기의 <서버 ip 주소> 를 인스턴스의 IP 주소로 변경하고, `/etc/nginx/sites-enabled/` 폴더에 넣어준다
+  3. 아래 명령을 실행하면 해당 폴더로 이동 <br>
+  > cd /etc/nginx/sites-enabled/
+  4. `vi` 명령을 이용하면 파일을 생성할 수 있다
+  > sudo vi spring_boot
+  5. Nginx 설정파일을 붙여넣고 `:wq`로 저장해주기
   6. systemctl을 이용해 Nginx를 재시작하기.
-    > sudo systemctl restart nginx.service
-  7. 이후 주소창에 `:8080 을 제외`하고 IP 주소를 입력하면 된다.
+  > sudo systemctl restart nginx.service
+  7. 이후 주소창에 `:8080 을 제외`하고 IP 주소를 입력하면 된다
 <hr>
 
 * Gabia 도메인 연결 https://www.gabia.com
-  * 컴퓨터의 ip주소는 인간 친화적이지 않으므로, 인간 친화적인 DNS주소를 이용한다.
+  * 컴퓨터의 IP주소는 인간 친화적이지 않으므로, 인간 친화적인 DNS주소를 이용한다
     ![가비아](/img/num8.png)
   1. `My가비아`페이지로 이동
   2. DNS 관리툴에서 사용하고자 하는 도메인 설정으로 이동
   3. `레코드 수정`버튼을 클릭하여 레코드 추가
-  4. 도메인이 실제로 어떤 IP주소를 나타내는지를 알려주는 `A타입 레코드`와, 다른 도메인과 동일한 도메인임을 나타내는 `CNAME타입 레코드`를 `추가`해 준다.
+  4. 도메인이 실제로 어떤 IP주소를 나타내는지를 알려주는 `A타입 레코드`와, <br>
+  다른 도메인과 동일한 도메인임을 나타내는 `CNAME타입 레코드`를 `추가`해 준다 <br>
      ![가비아DNS](/img/num17.png)
 * Nginx 재설정  
-  1. ip주소가 바꼈으므로 `server_name`부분을 가비아에서 설정한 도메인으로 변경해준다 [이동하기](#Nginx-설정)
+  1. ip주소가 바꼈으므로 `server_name`부분을 `가비아에서 설정한 도메인`으로 변경해준다 [이동하기](#Nginx-설정)
   2. Nginx 재실행
     > sudo systemctl restart nginx.service
 
@@ -141,18 +145,18 @@
 * CerBot
   * 무료 SSL인증서를 Nginx에 바로 적용시켜주는 Certbot 이라는 소프트웨어를 사용 
 * Cerbot 설치하기
-  *   certbot은 apt가 아닌 `snap`이라는 다른 소프트웨어 관리 도구를 이용해 설치를 한다
-  > * 명령어 순서대로 입력하기 <br> 
-    sudo snap install core; sudo snap refresh core <br>
-    sudo snap install --classic certbot <br>
-    sudo ln -s /snap/bin/certbot /usr/bin/certbot # 바로가기를 생성 <br>
+  * certbot은 apt가 아닌 `snap`이라는 다른 소프트웨어 관리 도구를 이용해 설치를 한다
+    > * 명령어 순서대로 입력하기 <br> 
+        sudo snap install core; sudo snap refresh core <br>
+        sudo snap install --classic certbot <br>
+        sudo ln -s /snap/bin/certbot /usr/bin/certbot # 바로가기를 생성 <br>
   * `--nginx` 옵션과 함깨 실행합니다.
     > sudo certbot --nginx
   * 이 후 사용자 동의를 구하는 것들
     1. 이용약관 : `y`
     2. 정기적 수신 동의 : `n`
     3. TLS를 적용할 도메인 : `1`
-       > ex) 1: homegym.site
+      > ex) 1: homegym.site
     4. ###### 인증서를 받아와서 적용하는 과정
   
   1. 실행이 끝나면 일시적으로 자신의 사이트에 접속이 불가해지는데,
