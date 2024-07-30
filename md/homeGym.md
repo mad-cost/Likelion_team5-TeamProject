@@ -43,7 +43,7 @@
 * Docker Image <br> 
   * 도커 이미지 만드는 명령어
     > docker build -t [도커아이디/리포지토리이름] <br>
-     ex) docker build -t dockerjun123/homegym
+     ex) docker build -t dockerjun123/homegym .
   * 생성된 이미지 확인   
     > docker images
 <hr>
